@@ -1,165 +1,178 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
+using System.Linq;
+using MyUtility;
 
 public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
 {
-    const int minRoomSize = 6;
-    const int maxRoomSize = 10;
+    //id
+    public int id;
 
-    Room[,] room;
+    //部屋の数
+	public static int sequenceSizeX;
+	public static int sequenceSizeY;
 
-	//＊＊＊＊＊＊＊＊＊＊　　オブジェクト　　＊＊＊＊＊＊＊＊＊＊
-    public GameObject player;
-    public GameObject[] enemy;
+    //部屋の最大サイズ
+    static int minRoomSize;
+    static int maxRoomSize;
 
-    //＊＊＊＊＊＊＊＊＊＊　　prefab　　＊＊＊＊＊＊＊＊＊＊
-    public GameObject square;			//床のprefab
-    public GameObject pathSquare;		//小路のprefab
+    //データをロードしてパラメータを作成
+    public void getDungeonData(int number)
+    {
+        XmlNodeList nodes = XMLReader.Instance.dungeonNodes;
+        XmlNode tempNode = nodes[number];
 
+		int count = 0;
+		Floor.Instance.enemyDictionary.Clear ();
 
+        id = int.Parse(tempNode.Attributes.GetNamedItem("id").Value);
 
+        foreach (XmlNode node in tempNode.ChildNodes)
+        {
+			if (node.Name == "floorSizeX") { sequenceSizeX = int.Parse(node.InnerText); }
+			if (node.Name == "floorSizeY") { sequenceSizeY = int.Parse(node.InnerText); }
+            if (node.Name == "minRoomSize") { minRoomSize = int.Parse(node.InnerText); }
+            if (node.Name == "maxRoomSize") { maxRoomSize = int.Parse(node.InnerText); }
+			//enemyDictionaryの作成
+			if(node.Name == "enemy")
+			{
+				int EnemyID = int.Parse(node.Attributes.GetNamedItem("EnemyID").Value);
+				int frequency = int.Parse(node.Attributes.GetNamedItem("frequency").Value);
 
+				Floor.Instance.enemyDictionary.Add (EnemyID, frequency);
+				Debug.Log ("idは" + Floor.Instance.enemyDictionary.ElementAt(count).Key);
+				Debug.Log ("出現率は" + Floor.Instance.enemyDictionary.ElementAt(count).Value);
+				count ++;
+			}
+        }
+    }
+
+    public Room[,] room;
+	
     public override void Awake()
     {
         base.Awake();
-
         DontDestroyOnLoad(this.gameObject);
-
-        Floor.Instance.setFloor(3, 4);
-		Floor.Instance.createTest();
     }
 
-    //＊＊＊＊＊＊＊＊＊＊　　Floorクラス　　＊＊＊＊＊＊＊＊＊＊
-    public class Floor
+    /// <summary>
+    /// ダンジョンの階層ひとつを管理するシングルトンクラス
+    /// </summary>
+    public class Floor : Singleton<Floor>
     {
-		public bool inPreparation = false;
-
-        //シングルトン
-        Floor() { }
-        public static Floor instance = new Floor();
-        public static Floor Instance
-        {
-            get { return instance; }
-        }
-
+        //部屋クラスを管理
         public Room[,] room;
 
-        Size size;
-        public class Size
-        {
-            public int wide;
-            public int height;
+        //部屋の並びのサイズ
+        public MyVector2 sequenceSize;
 
-            Size(int x, int y)
-            {
-                wide = x;
-                height = y;
-            }
-            public static Size createSize(int x, int y) { return new Size(x, y); }
-        }
+		//ダンジョンに出現する敵の管理（ID、確率）
+		public Dictionary<int, int> enemyDictionary = new Dictionary<int, int>();
+		//ダンジョンに出現するアイテムの管理（ID、確率）
+//		public Dictionary<int, int> itemDictionary = new Dictionary<int, int>();
 
         public void setFloor(int x, int y)
         {
-            size = Size.createSize(x, y);
-            room = new Room[size.wide + 1, size.height + 1];
+            sequenceSize = new MyVector2(x, y);
+            room = new Room[sequenceSize.x, sequenceSize.y];
         }
 
+		//一番最初の処理
         public void createTest()
         {
-            for (int n = 0; n < size.height; n++)
+            //予め部屋のデータを登録
+            for (int n = 0; n < sequenceSize.y; n++)
             {
-                for (int m = 0; m < size.wide; m++)
+                for (int m = 0; m < sequenceSize.x; m++)
                 {
-                    room[m, n] = Room.createRoomTest(size.wide, size.height, m, n);
+                    room[m, n] = Room.createRoomTest(m, n);
                 }
             }
 
-            int tmpX = Random.Range(0, size.wide);
-            int tmpY = Random.Range(0, size.height);
+            //部屋をランダムに選ぶ
+            int tmpX = Random.Range(0, sequenceSize.x);
+            int tmpY = Random.Range(0, sequenceSize.y);
+
+            //選ばれた部屋を実体化
             room[tmpX, tmpY].createStage();
-			room[tmpX, tmpY].randomizeToSquare2(DungeonManager.Instance.player);
-			for (int i=0; i<DungeonManager.Instance.enemy.Length; i++) {
-				room[tmpX, tmpY].randomizeToSquare2 (DungeonManager.Instance.enemy[i]);
-			}
+
+            room[tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character[0]);
+			for (int i = 1; i < ObjectManager.Instance.character.Count(); i++)
+            {
+				room[tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character[i]);
+            }
         }
 
-        public void createNext(int x, int y)
+        public void createNext(MyVector2 sequence)
         {
-			if (room[x, y].isBuild == false)
-			{
-				room[x, y].createStage();
-			}          
+			if (room[sequence.x, sequence.y].isBuild == false)
+            {
+				room[sequence.x, sequence.y].createStage();
+            }
         }
 
-        public void destroyPrevious(int x, int y)
+		public void destroyPrevious(MyVector2 sequence)
         {
-            room[x, y].destroyStage();
+			room[sequence.x, sequence.y].destroyStage();
         }
 
-		public void randomizeToSquare(int x, int y, GameObject obj)
+        public void randomizeToSquare(MyVector2 sequence, GameObject obj)
+        {
+			room[sequence.x, sequence.y].randomizeToSquare2(obj);
+        }
+
+		public int getRandomEnemy()
 		{
-			room [x, y].randomizeToSquare2 (obj);
+			int accumulation = 0;
+			int randomNumber = Random.Range (1, enemyDictionary.Values.Sum());
+			for (int i = 0; i < enemyDictionary.Count; i++)
+			{
+				if((enemyDictionary.ElementAt(i).Value + accumulation) >= randomNumber)
+				{
+					return enemyDictionary.ElementAt(i).Key;
+				}
+				accumulation += enemyDictionary.ElementAt(i).Value;
+			}
+			return 0;
 		}
 
+		//用確認
+		public void prepareEnemy()
+		{
+			//ランダムに部屋を選ぶ
+			int tmpX = Random.Range(0, sequenceSize.x);
+			int tmpY = Random.Range(0, sequenceSize.y);
+
+			int i = getRandomEnemy ();
+			room[tmpX, tmpY].enemyList.Add (new EnemyContainer(i));
+		}		
 	}
 
-    //＊＊＊＊＊＊＊＊＊＊　　Roomクラス　　＊＊＊＊＊＊＊＊＊＊
+	/// <summary>
+	/// 階層内の部屋を管理する各クラス
+	/// </summary>
     public class Room
     {
-        public Size size;
-        public Position position;
-        public Path path;
+		public List<EnemyContainer> enemyList = new List<EnemyContainer>();
 
-        public bool isBuild = false;
-
-        //プレイヤーがいるかどうか
-        public bool isPlayerIn;
-
-        //大きさクラス
-        public class Size
+        //大きさ
+        public MyVector2 size;
+        public static MyVector2 randomCreateSize()
         {
-            public int wide;
-            public int height;
-
-            protected Size(int x, int y)
-            {
-                wide = x;
-                height = y;
-            }
-            public static Size randomCreateSize()
-            {
-                return new Size(Random.Range(minRoomSize, maxRoomSize + 1),
-                                Random.Range(minRoomSize, maxRoomSize + 1));
-            }
+            return new MyVector2(Random.Range(minRoomSize, maxRoomSize + 1), Random.Range(minRoomSize, maxRoomSize + 1));
         }
 
-        //位置クラス
-        public class Position
+        //シークエンス中の位置
+        public MyVector2 sequence;
+        public static MyVector2 createPosition(int x, int y)
         {
-            public int maxRow;
-            public int maxColumn;
-            public int row;				//横（列）
-            public int column;			//縦（行）
-
-            //跡でずれを導入（shiftRow）
-
-            //コンストラクタ
-            protected Position(int maxX, int maxY, int x, int y)
-            {
-                maxRow = maxX;
-                maxColumn = maxY;
-                row = x;
-                column = y;
-            }
-            //インスタンスの作成
-            public static Position createPosition(int maxX, int maxY, int x, int y)
-            {
-                return new Position(maxX, maxY, x, y);
-            }
+            return new MyVector2(x, y);
         }
 
         //小路クラス
+        public Path path;
         public class Path
         {
             public int up;
@@ -174,22 +187,31 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                 left = l;
                 right = r;
             }
-            public static Path randomCreatePath(Size tempSize)
+            public static Path randomCreatePath(MyVector2 tempSize)
             {
-                return new Path(Random.Range(0, tempSize.height), Random.Range(0, tempSize.height),
-                                Random.Range(0, tempSize.wide), Random.Range(0, tempSize.wide));
+                return new Path(Random.Range(0, tempSize.y), Random.Range(0, tempSize.y),
+                                Random.Range(0, tempSize.x), Random.Range(0, tempSize.x));
             }
         }
 
+
+
+		//実体化しているかどうか
+        public bool isBuild = false;
+
+        //プレイヤーがいるかどうか
+        public bool isPlayerIn;
+
         //コンストラクタ（サイズ、ポジション）
-        protected Room(Size tempSize, Position tempPosition)
+        protected Room(MyVector2 size, MyVector2 position)
         {
-            size = tempSize;
-            position = tempPosition;
+            this.size = size;
+            this.sequence = position;
         }
-        public static Room createRoomTest(int maxX, int maxY, int x, int y)
+
+        public static Room createRoomTest(int x, int y)
         {
-            var room = new Room(Size.randomCreateSize(), Position.createPosition(maxX, maxY, x, y));
+            var room = new Room(randomCreateSize(), createPosition(x, y));
             room.path = Path.randomCreatePath(room.size);
             return room;
         }
@@ -197,139 +219,135 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         //＊＊＊＊＊テスト、ステージの生成＊＊＊＊＊
         public void createStage()
         {
-            for (int n = 0; n < size.wide; n++)
+            GameObject square = PrefabManager.Instance.square;
+            for (int n = 0; n < size.x; n++)
             {
-                for (int m = 0; m < size.height; m++)
+                for (int m = 0; m < size.y; m++)
                 {
-                    int x = (m + position.row * (maxRoomSize + 3)) * 10;
-                    int z = (n + position.column * (maxRoomSize + 3)) * 10;
-
-					GameObject tmp = Instantiate(DungeonManager.Instance.square, new Vector3(x, 50, z), Quaternion.identity) as GameObject;
-					tmp.GetComponent<AbstractSquare>().position = AbstractSquare.Position.createPosition(position.row,position.column);
+                    int x = (m + sequence.x * (maxRoomSize + 3)) * 10;
+                    int z = (n + sequence.y * (maxRoomSize + 3)) * 10;
+                    GameObject tmp = Instantiate(square, new Vector3(x, 50, z), Quaternion.identity) as GameObject;
+                    tmp.GetComponent<AbstractSquare>().sequence = new MyVector2(sequence.x, sequence.y);
                 }
             }
             createStagePath();
+
+			if (enemyList.Count () != 0)
+			{
+				foreach(var n in enemyList)
+				{
+					var obj = Instantiate (n.prefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+					obj.GetComponent<AbstractCharacterObject>().parameter = n.parameter;
+					Debug.Log(n.parameter.cName + "ですにゃあ");
+					Debug.Log(obj.GetComponent<AbstractCharacterObject>().parameter.cName + "ですにゃん");
+					randomizeToSquare2(obj);
+				}
+			}
+			enemyList.Clear ();
+
             isBuild = true;
         }
 
-
+        //小路を設置
         void createStagePath()
         {
+            GameObject pathSquare = PrefabManager.Instance.pathSquare;
             GameObject tmp;
+
             int tmpX;
             int tmpZ;
 
             //up
-            if (position.column + 1 != position.maxColumn)
+            if (sequence.y != Floor.Instance.sequenceSize.y-1)
             {
-                tmpX = (path.up + position.row * (maxRoomSize + 3)) * 10;
-                tmpZ = (size.wide + position.column * (maxRoomSize + 3)) * 10;
-                tmp = Instantiate(DungeonManager.Instance.pathSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
-                tmp.GetComponent<Renderer>().material.color = Color.blue;
-                tmp.GetComponent<PathSquare>().setPathSquare(position.row, position.column, 0, 1, PathSquare.Direction.up);
-				tmp.GetComponent<PathSquare>().type = AbstractSquare.Type.Path;
+                tmpX = (path.up + sequence.x * (maxRoomSize + 3)) * 10;
+                tmpZ = (size.x + sequence.y * (maxRoomSize + 3)) * 10;
+                tmp = Instantiate(pathSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
+                tmp.GetComponent<Renderer>().material.color = new Color(0.3f, 0.3f, 1.0f, 1.0f);
+                tmp.GetComponent<PathSquare>().setPathSquare(sequence.x, sequence.y, 0, 1, PathSquare.Direction.up);
+                tmp.GetComponent<PathSquare>().type = AbstractSquare.Type.Path;
             }
 
             //down
-            if (position.column != 0)
+            if (sequence.y != 0)
             {
-                tmpX = (path.down + position.row * (maxRoomSize + 3)) * 10;
-                tmpZ = -10 + (position.column * (maxRoomSize + 3)) * 10;
-                tmp = Instantiate(DungeonManager.Instance.pathSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
-                tmp.GetComponent<Renderer>().material.color = Color.blue;
-                tmp.GetComponent<PathSquare>().setPathSquare(position.row, position.column, 0, -1, PathSquare.Direction.down);
-            	tmp.GetComponent<PathSquare>().type = AbstractSquare.Type.Path;
-			}
+                tmpX = (path.down + sequence.x * (maxRoomSize + 3)) * 10;
+                tmpZ = -10 + (sequence.y * (maxRoomSize + 3)) * 10;
+                tmp = Instantiate(pathSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
+                tmp.GetComponent<Renderer>().material.color = new Color(0.3f, 0.3f, 1.0f, 1.0f);
+                tmp.GetComponent<PathSquare>().setPathSquare(sequence.x, sequence.y, 0, -1, PathSquare.Direction.down);
+                tmp.GetComponent<PathSquare>().type = AbstractSquare.Type.Path;
+            }
 
             //left
-            if (position.row != 0)
+            if (sequence.x != 0)
             {
-                tmpX = (position.row * (maxRoomSize + 3) - 1) * 10;
-                tmpZ = (path.left + position.column * (maxRoomSize + 3)) * 10;
-                tmp = Instantiate(DungeonManager.Instance.pathSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
-                tmp.GetComponent<Renderer>().material.color = Color.blue;
-                tmp.GetComponent<PathSquare>().setPathSquare(position.row, position.column, -1, 0, PathSquare.Direction.left);
-				tmp.GetComponent<PathSquare>().type = AbstractSquare.Type.Path;
+                tmpX = (sequence.x * (maxRoomSize + 3) - 1) * 10;
+                tmpZ = (path.left + sequence.y * (maxRoomSize + 3)) * 10;
+                tmp = Instantiate(pathSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
+                tmp.GetComponent<Renderer>().material.color = new Color(0.3f, 0.3f, 1.0f, 1.0f);
+                tmp.GetComponent<PathSquare>().setPathSquare(sequence.x, sequence.y, -1, 0, PathSquare.Direction.left);
+                tmp.GetComponent<PathSquare>().type = AbstractSquare.Type.Path;
             }
 
             //right
-            if (position.row + 1 != position.maxRow)
+            if (sequence.x != Floor.Instance.sequenceSize.x-1)
             {
-                tmpX = (size.height + position.row * (maxRoomSize + 3)) * 10;
-                tmpZ = (path.left + position.column * (maxRoomSize + 3)) * 10;
-                tmp = Instantiate(DungeonManager.Instance.pathSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
-                tmp.GetComponent<Renderer>().material.color = Color.blue;
-                tmp.GetComponent<PathSquare>().setPathSquare(position.row, position.column, 1, 0, PathSquare.Direction.right);
-				tmp.GetComponent<PathSquare>().type = AbstractSquare.Type.Path;
+                tmpX = (size.y + sequence.x * (maxRoomSize + 3)) * 10;
+                tmpZ = (path.left + sequence.y * (maxRoomSize + 3)) * 10;
+                tmp = Instantiate(pathSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
+                tmp.GetComponent<Renderer>().material.color = new Color(0.3f, 0.3f, 1.0f, 1.0f);
+                tmp.GetComponent<PathSquare>().setPathSquare(sequence.x, sequence.y, 1, 0, PathSquare.Direction.right);
+                tmp.GetComponent<PathSquare>().type = AbstractSquare.Type.Path;
             }
         }
 
+        //ステージを廃棄
         public void destroyStage()
         {
+            //床を消す
             foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Square"))
             {
                 Destroy(obj);
             }
-			//実体化フラグをオフ
+
+            //敵を消す
+            foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Character"))
+            {
+                if (obj.GetComponent<AbstractCharacterObject>().type == AbstractCharacterObject.Type.Enemy)
+                {
+					var i = obj.GetComponent<AbstractCharacterObject>().parameter;
+					enemyList.Add(new EnemyContainer(i));
+                    Destroy(obj);
+                }
+            }
+
+            //アイテム・罠を消す
+
+            //実体化フラグをオフ
             isBuild = false;
         }
 
-		//オブジェクトをランダムなマスに配置
-		public void randomizeToSquare2(GameObject obj)
-		{
-			ObjectManager.Instance.setSquare ();
+        //オブジェクトをランダムなマスに配置
+        public void randomizeToSquare2(GameObject obj)
+        {
+            //すべての床を取得
+            ObjectManager.Instance.setSquare();
 
-			var tmpSquare = new List<GameObject> ();
-			foreach (var check in ObjectManager.Instance.square)
-			{
-				if(checkRoomAndSquare(check.GetComponent<AbstractSquare>()))
-				{
-					tmpSquare.Add(check);
-				}
-			}
-			var tmpObj = tmpSquare [Random.Range (0, tmpSquare.Count)];
+            //床のリスト
+            var tmpSquare = from n in ObjectManager.Instance.square
+                            where n.GetComponent<AbstractSquare>().type == AbstractSquare.Type.Normal
+                                && n.GetComponent<AbstractSquare>().sequence.isEqual(this.sequence)
+                                && n.GetComponent<AbstractSquare>().isCharacterOn() == false
+                            select n;
 
-			if (tmpObj.GetComponent<AbstractSquare> ().type == AbstractSquare.Type.Path)
-			{
-				Debug.Log("もう一回！");
-				randomizeToSquare2(obj);
-			}
-			
-			var tmpX = tmpObj.transform.position.x;
-			var tmpZ = tmpObj.transform.position.z;
-			int count = 0;
-			
-			foreach (GameObject check in GameObject.FindGameObjectsWithTag("Character"))
-			{
-				if(obj != check){
-					if(check.transform.position.x == tmpX && check.transform.position.z == tmpZ)
-					{
-						count++;
-					}
-				}
-			}
-			if(count>0)
-			{
-				Debug.Log("重複nyaa!");
-				randomizeToSquare2(obj);
-			}
-			else obj.transform.position = new Vector3 (tmpX, 55f, tmpZ);
-			
-		}
+			//床のリストからランダムに取得
+            var tmpObj = tmpSquare.ElementAt(Random.Range(0, tmpSquare.Count()));
 
-		bool checkRoomAndSquare(AbstractSquare square)
-		{
-			if (square.position.row == this.position.row)
-			{
-				if(square.position.column == this.position.column)
-				{
-					return true;
-				}
-			}
-			return false;
-		}
+			//取得した位置へ移動
+            obj.transform.position = new Vector3(tmpObj.transform.position.x, 55f, tmpObj.transform.position.z);
+        }
+
+        //＊＊＊＊＊＊＊＊＊＊　　Roomクラスここまで　　＊＊＊＊＊＊＊＊＊＊
     }
-
-    //＊＊＊＊＊＊＊＊＊＊　　Roomクラスここまで　　＊＊＊＊＊＊＊＊＊＊
-
 }

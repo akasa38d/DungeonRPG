@@ -13,6 +13,8 @@ public class FadeManager : SingletonMonoBehaviour<FadeManager>
     /// <summary>フェード中かどうか</summary>
     public bool isFading = false;
 
+    public delegate void SomeEvent();
+
     public override void Awake()
     {
         base.Awake();
@@ -41,9 +43,9 @@ public class FadeManager : SingletonMonoBehaviour<FadeManager>
     /// </summary>
     /// <param name='scene'>シーン名</param>
     /// <param name='interval'>暗転にかかる時間(秒)</param>
-    public void LoadLevel(float interval)
+    public void LoadLevel(float interval, SomeEvent someevent)
     {
-        StartCoroutine(TransScene(interval));
+        StartCoroutine(TransScene(interval, someevent));
     }
 
     /// <summary>
@@ -51,7 +53,7 @@ public class FadeManager : SingletonMonoBehaviour<FadeManager>
     /// </summary>
     /// <param name='scene'>シーン名</param>
     /// <param name='interval'>暗転にかかる時間(秒)</param>
-    private IEnumerator TransScene(float interval)
+    private IEnumerator TransScene(float interval, SomeEvent someevent)
     {
         //だんだん暗く
         this.isFading = true;
@@ -65,6 +67,9 @@ public class FadeManager : SingletonMonoBehaviour<FadeManager>
 
         //シーン切替
         //		Application.LoadLevel (scene);
+
+        //テスト
+        if (someevent != null) { someevent(); }
 
         //だんだん明るく
         time = 0;

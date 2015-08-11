@@ -1,57 +1,85 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class EnemyObject : AbstractCharacterObject
 {
-    //行動回数カウント
-    int testCount = 0;
+    AttackWay myAttack;
 
-    //周囲の床
-    //    List<GameObject> aroundFloor = new List<GameObject>();
-    //周囲のキャラクター
-    List<GameObject> aroundCharacter = new List<GameObject>();
-
-    //処理
-    public override void operation()
+    public void Start()
     {
-        base.operation();
+        this.type = Type.Enemy;
+        myAttack = new AttackWay("キック", 30, null);
+        Debug.Log("名前は" + this.parameter.cName);
+		Debug.Log ("IDは" + this.parameter.id);
+
+		Debug.Log ("攻撃手段：" + myAttack.name);
     }
+
+    //基本処理
+    public override void operation() { base.operation(); }
 
     //スタンバイフェイズ
-    protected override void startOperation()
-    {
-        getAroundCharacter(aroundCharacter);
-        process = Process.Main;
-    }
-
-    //周囲の敵を取得
-    protected override void getAroundCharacter(List<GameObject> list)
-    {
-        list.Clear();
-        GameObject obj = GameObject.Find("Player");
-        {
-            list.Add(obj);
-        }
-    }
+    protected override void startOperation() { base.startOperation(); }
 
     //メインフェイズ
     protected override void mainOperation()
     {
-        testCount++;
-        Debug.Log("Enemy" + id + "は" + testCount + "回行動しました");
-        process = Process.End;
+        searchTarget();
     }
 
     //エンドフェイズ
-    protected override void endOperation()
+    protected override void endOperation() { base.endOperation(); }
+
+    protected override void nextOperation() { base.nextOperation(); }
+
+
+    //ターゲットを探して行動（メインフェイズ）
+    void searchTarget()
     {
-        //フェイズを戻す
-        process = Process.Next;
+        var target = ObjectManager.Instance.character[0];
+
+        if (checkOneDistance(this.gameObject, target))
+        {
+            attackToTarget(target);
+        }
+        else
+        {
+            moveTowardTarget(target);
+        }
     }
 
-    protected override void nextOperation()
+    //攻撃（仮）
+    void attackToTarget(GameObject target)
     {
-        base.nextOperation();
+        base.attackTarget(myAttack, target);
+    }
+
+    //移動
+    void moveTowardTarget(GameObject target)
+    {
+        int x = 0;
+        int y = 0;
+
+        int tempX = (int)target.transform.position.x - (int)this.transform.position.x;
+
+        int tempY = (int)target.transform.position.z - (int)this.transform.position.z;
+
+        if (tempX != 0) { x = tempX / Mathf.Abs(tempX) * 10; }
+
+        if (tempY != 0) { y = tempY / Mathf.Abs(tempY) * 10; }
+
+        foreach (GameObject obj in ObjectManager.Instance.square)
+        {
+            if (obj.transform.position.x == this.transform.position.x + x
+                && obj.transform.position.z == this.transform.position.z + y)
+            {
+                if (!obj.GetComponent<AbstractSquare>().isCharacterOn())
+                {
+                    movePosition(obj);
+                    break;
+                }
+            }
+        }
+        process = Process.End;
     }
 }

@@ -1,34 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
+using MyUtility;
 
 public abstract class AbstractSquare : MonoBehaviour
 {
-    //位置
-    [SerializeField]
-    public Position position;
-    [System.Serializable]
-    public class Position
-    {
-        public int row;
-        public int column;
-        public Position(int x, int y)
-        {
-            row = x;
-            column = y;
-        }
-        public static Position createPosition(int x, int y)
-        {
-            return new Position(x, y);
-        }
-    }
-
     //オブジェクト
     public GameObject character;
     public GameObject item;
     public GameObject trap;
 
+    //位置
+    [SerializeField]
+    public MyVector2 sequence;
+
     public enum Type { Normal, Path, Stair };
-	[SerializeField]
+    [SerializeField]
     public Type type;
 
     //コンストラクタ
@@ -47,6 +33,24 @@ public abstract class AbstractSquare : MonoBehaviour
         }
         return false;
     }
+
+    //誰かが乗っているか（タイプ指定）
+    public virtual bool isCharacterOn(AbstractCharacterObject.Type type)
+    {
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Character"))
+        {
+            if (checkZeroDistance(obj))
+            {
+                if (obj.GetComponent<AbstractCharacterObject>().type == type)
+                {
+                    character = obj;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     //アイテムが乗っているか
     public virtual bool isItemOn()
     {
@@ -60,6 +64,7 @@ public abstract class AbstractSquare : MonoBehaviour
         }
         return false;
     }
+
     //罠があるか
     public virtual bool isTrapOn()
     {
@@ -73,15 +78,14 @@ public abstract class AbstractSquare : MonoBehaviour
         }
         return false;
     }
+
     //対象のオブジェクトが乗っているか（汎用）
     public virtual bool checkZeroDistance(GameObject obj)
     {
-        if (obj.transform.position.x == this.transform.position.x)
+        if (obj.transform.position.x == this.transform.position.x
+            && obj.transform.position.z == this.transform.position.z)
         {
-            if (obj.transform.position.z == this.transform.position.z)
-            {
-                return true;
-            }
+            return true;
         }
         return false;
     }

@@ -1,49 +1,69 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
+/// <summary>
+/// ターンを管理するシングルトンのクラス
+/// </summary>
 public class TurnManager : SingletonMonoBehaviour<TurnManager>
 {
-    public int turnCount = 0;
-	public bool inPreparation = false;
+	//ターンプレイヤー
+    public int turnCharacter = 0;
+	//ターンカウント
+	public int turnCount = 0;
 
-	public override void Awake()
-	{
-		base.Awake ();
-	}
+    public override void Awake() { base.Awake(); }
 
     //処理
     public void operation()
     {
-		StartCoroutine (operationCoroutine ());
+        StartCoroutine(operationCoroutine());
     }
 
-	IEnumerator operationCoroutine()
-	{
-		var turnPlayer = ObjectManager.Instance.characterScript;
+    IEnumerator operationCoroutine()
+    {
+        var turnPlayer = ObjectManager.Instance.characterScript;
 
-		turnPlayer [turnCount].operation ();
+		turnPlayer[turnCharacter].operation();
 
-		//もしフェーディングしてるなら
-		while (FadeManager.Instance.isFading)
+        //もしフェーディングしているなら
+        while (FadeManager.Instance.isFading)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+
+		if (turnPlayer[turnCharacter].process == AbstractCharacterObject.Process.Next)
+        {
+			turnPlayer[turnCharacter].process = AbstractCharacterObject.Process.Start;
+			turnCharacter++;
+        }
+
+        ObjectManager.Instance.setCharacter();
+        ObjectManager.Instance.setSquare();
+
+        //ループ
+		if (turnCharacter >= turnPlayer.Count)
 		{
-			yield return new WaitForEndOfFrame();
-		}
-		
-		if (turnPlayer [turnCount].process == AbstractCharacterObject.Process.Next) {
-			turnPlayer [turnCount].process = AbstractCharacterObject.Process.Start;
-			ObjectManager.Instance.setCharacter();
-			ObjectManager.Instance.setSquare();
+//			foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Effect"))
+//			{
+//				Destroy(obj);
+//			}
+
+			//０番のキャラクタへターンプレイヤーを変更
+			turnCharacter = 0;
+			//ターン数増加
 			turnCount++;
+
+			Debug.Log (turnCount + "ターン目開始");
+
+			//敵の出現
+			if (turnCount % 2 == 0)
+			{
+				DungeonManager.Floor.Instance.prepareEnemy();
+			}
 		}
-		//ループ
-		if (turnCount >= turnPlayer.Count) { turnCount = 0;	}
-	}
+    }
 
-
-	public void makeEvent()
-	{
-
-	}
 
 }

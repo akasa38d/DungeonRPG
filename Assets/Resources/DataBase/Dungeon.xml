@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dungeons>
+    <dungeon id="0">
+        <floorSizeX>2</floorSizeX>
+        <floorSizeY>2</floorSizeY>
+        <minRoomSize>6</minRoomSize>
+        <maxRoomSize>9</maxRoomSize>
+        <enemy EnemyID = "0" frequency = "10">太郎</enemy> 
+        <enemy EnemyID = "2" frequency = "10">２郎</enemy> 
+        <enemy EnemyID = "3" frequency = "10">４郎</enemy> 
+    </dungeon>
+    <dungeon id="1">
+        <floorSizeX>2</floorSizeX>
+        <floorSizeY>3</floorSizeY>
+        <minRoomSize>6</minRoomSize>
+        <maxRoomSize>9</maxRoomSize>
+        <enemy EnemyID = "0" frequency = "10">太郎</enemy> 
+        <enemy EnemyID = "3" frequency = "10">４郎</enemy> 
+    </dungeon>
+</dungeons>

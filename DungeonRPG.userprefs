@@ -1,13 +1,15 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\DungeonManager.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Item\Item.cs">
     <Files>
-      <File FileName="Assets\Scripts\DungeonManager.cs" Line="298" Column="43" />
-      <File FileName="Assets\Scripts\ObjectManager.cs" Line="22" Column="2" />
-      <File FileName="Assets\Scripts\DrawPosition.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\BottomText.cs" Line="1" Column="1" />
-      <File FileName="..\Laser_test (1)\Laser_test\Assets\Scripts\DungeonManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Item\Item.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ItemManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\DungeonManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\CharacterObject\PlayerObject.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\CharacterObject\AbstractCharacterObject.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\CharacterObject\EnemyParameter.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\CharacterObject\EnemyObject.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PrefabManager.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

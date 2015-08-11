@@ -1,22 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
-    // Use this for initialization
+	public GameObject testButton; 
+
     void Start()
     {
-        //TurnManagerクラスにオブジェクトを設定
-//        TurnManager.Instance.setObject();
-//		TurnManager.Instance.setComponent();
-//		ObjectManager.Instance.setSquare();
-		ObjectManager.Instance.setCharacter();
+        ObjectManager.Instance.setCharacter();
+
+        //ダンジョン生成
+        DungeonManager.Instance.getDungeonData(0);
+		DungeonManager.Floor.Instance.setFloor(DungeonManager.sequenceSizeX, DungeonManager.sequenceSizeY);
+        DungeonManager.Floor.Instance.createTest();
     }
 
-    // Update is called once per frame
     void Update()
     {
-		TurnManager.Instance.operation();
+        TurnManager.Instance.operation();
     }
 }

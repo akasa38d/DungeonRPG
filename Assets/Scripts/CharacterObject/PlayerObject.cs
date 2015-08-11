@@ -1,104 +1,65 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class PlayerObject : AbstractCharacterObject
 {
-    //移動ボタンのプレハブ
-    public GameObject moveButton;
-	public GameObject attackButton;
+	public Item[] item = new Item[6];
 
-    //周囲のキャラクター
-	[SerializeField]
-    List<GameObject> aroundCharacter = new List<GameObject>();
-
-    //処理
-    public override void operation()
+    public void Start()
     {
-        base.operation();
+        this.type = Type.Player;
+        this.parameter = PlayerParameter.getPlayerParameter("ジョニー", 30, 30);
+
+		item [0] = new SwordItem();
+		item [0].button = GameObject.Find ("ItemButton");
     }
+
+    //基本処理
+    public override void operation() { base.operation(); }
 
     //スタンバイフェイズ
     protected override void startOperation()
     {
-        //周囲の敵を取得
-        getAroundCharacter(aroundCharacter);
-
-        //移動用ボタンを生成
+        //移動ボタンを生成
         createMoveButton();
 
-		createAttackButton ();
-
-        //フェイズを進める
-        process = Process.Main;
-    }
-
-    //周囲の敵を取得
-    protected override void getAroundCharacter(List<GameObject> list)
-    {
-        list.Clear();
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Character"))
-        {
-            if (obj != this.gameObject)
-            {
-                list.Add(obj);
-            }
-        }
+        base.startOperation();
     }
 
     //メインフェイズ
     protected override void mainOperation() { }
 
     //エンドフェイズ
-    protected override void endOperation()
-    {
-        process = Process.Next;
-    }
+    protected override void endOperation() { base.endOperation(); }
 
-    protected override void nextOperation()
-    {
-        base.nextOperation();
-    }
+    //ターン終了
+    protected override void nextOperation() { }
 
-    //移動用ボタンを生成
-    void createMoveButton()
+	//移動用ボタンを生成
+    public void createMoveButton()
     {
-        foreach (GameObject floor in ObjectManager.Instance.square)
+		deleteButton ();
+
+        //prefabsの設定
+        GameObject moveButton = PrefabManager.Instance.moveButton;
+
+        foreach (var floor in ObjectManager.Instance.square)
         {
             if (checkOneDistance(this.gameObject, floor))
             {
-				if (!floor.GetComponent<AbstractSquare>().isCharacterOn())
-				{
-					var tmp = Instantiate(moveButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z), Quaternion.identity) as GameObject;
-					var tmpScript = tmp.GetComponent<MoveButton>();
-					tmpScript.square = floor;
-					tmpScript.moveDelegate = movePosition;
-				}
+                if (!floor.GetComponent<AbstractSquare>().isCharacterOn())
+                {
+                    var tmp = Instantiate(moveButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z), Quaternion.identity) as GameObject;
+                    var tmpScript = tmp.GetComponent<MoveButton>();
+                    tmpScript.square = floor;
+                    tmpScript.moveDelegate = movePosition;
+                }
             }
         }
     }
 
-
-	void createAttackButton()
-	{
-		foreach (GameObject floor in ObjectManager.Instance.square)
-		{
-			if (checkOneDistance(this.gameObject, floor))
-			{
-				if(floor.GetComponent<AbstractSquare>().isCharacterOn()){
-					var tmp = Instantiate(attackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z), Quaternion.identity) as GameObject;
-					var tmpScript = tmp.GetComponent<AttackButton>();
-					tmpScript.square = floor;
-					tmpScript.attackDelegate = attackEnemy;
-				}
-			}
-		}
-	}
-
-
-
-    //移動用ボタンを消去
-    void deleteButton()
+    //ボタンを消去
+    public void deleteButton()
     {
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Button"))
         {
@@ -106,80 +67,52 @@ public class PlayerObject : AbstractCharacterObject
         }
     }
 
+    public override IEnumerator DamagedCoroutine(int damage)
+    {
+        Debug.Log(this.parameter.cName + "は" + damage + "のダメージを受けた");
+        if (damage >= this.parameter.hp)
+        {
+            Debug.Log("アバーッ！！" + this.parameter.cName + "は爆発四散！");
+            Instantiate(PrefabManager.Instance.explosion, this.transform.position, Quaternion.identity);
+            callBack();
+            Debug.Log("なんちゃって");
+            yield return null;
+        }
+        else
+        {
+            this.parameter.hp -= damage;
+            callBack();
+        }
+        yield return null;
+    }
 
-	public void attackEnemy(GameObject obj)
+    //移動
+    public override void movePosition(GameObject obj)
+    {
+        //ボタンを消去
+        deleteButton();
+
+        base.movePosition(obj);
+    }
+
+	//UIにより使用
+	public void useItem(int num)
 	{
-		deleteButton();
-		Instantiate(ObjectManager.Instance.explosion, obj.transform.position, Quaternion.identity);
-
-		Destroy (obj);
-		Debug.Log(obj + "を破壊した");
-
-		process = Process.End;
+		if (item [num] != null)
+		{
+			item [num].buttonEvent ();
+		}
 	}
 
-
-
-    //キューブの移動
-    public void movePosition(GameObject obj)
-    {
-		deleteButton();
-		
-		this.transform.position = new Vector3(obj.transform.position.x, this.transform.position.y, obj.transform.position.z);
-		
-		Debug.Log(obj);
-		
-		obj.GetComponent<AbstractSquare>().enterThis();
-		
-		process = Process.End;
-    }
-
-    //********************ここからbool********************//
-
-    //チェビシェフ距離１を確認（起点、対象）
-    protected bool checkOneDistance(GameObject ob1, GameObject ob2)
-    {
-        //マンハッタン距離１なら
-        if (checkOneDistance_M(ob1, ob2)) { return true; }
-
-        //距離０なら
-        if (checkZeroDistance(ob1, ob2)) { return false; }
-
-        //カウント用変数
-        int checkCount = 0;
-        //オブジェクトを調べて
-        foreach (GameObject obj in ObjectManager.Instance.square)
-        {
-            //ob1のマンハッタン距離が１かつ
-            if (checkOneDistance_M(ob1, obj) && checkOneDistance_M(ob2, obj))
-            {
-                //カウントを増やす
-                checkCount++;
-            }
-        }
-        //カウントが２だったら
-        if (checkCount == 2) { return true; }
-
-        //ここまでの条件に当てはまらなかったら
-        return false;
-    }
-
-    //マンハッタン距離１を確認（起点、対象）
-    protected bool checkOneDistance_M(GameObject ob1, GameObject ob2)
-    {
-        Vector2 pos1 = new Vector2(ob1.transform.position.x, ob1.transform.position.z);
-        Vector2 pos2 = new Vector2(ob2.transform.position.x, ob2.transform.position.z);
-
-        if (Vector2.Distance(pos1, pos2) == 10) { return true; }
-        return false;
-    }
-
-    //距離０を確認（起点、対象）
-    protected bool checkZeroDistance(GameObject ob1, GameObject ob2)
-    {
-        Vector2 pos1 = new Vector2(ob1.transform.position.x, ob1.transform.position.z);
-        Vector2 pos2 = new Vector2(ob2.transform.position.x, ob2.transform.position.z);
-        if (pos1 == pos2) { return true; }
-        return false;
-    }
+	//ItemにInstantiateさせるためのもの
+	public GameObject pInstantiate(GameObject obj)
+	{
+		var n = Instantiate(obj) as GameObject;
+		return n;
+	}
+	public GameObject pInstantiate(GameObject obj, Vector3 vector3)
+	{
+		var n = Instantiate(obj, vector3, Quaternion.identity) as GameObject;
+		return n;
+	}
 }

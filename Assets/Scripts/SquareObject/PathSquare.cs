@@ -1,50 +1,50 @@
 ﻿using UnityEngine;
 using System.Collections;
+using MyUtility;
 
+/// <summary>
+/// 小路のクラス
+/// プレイヤーが乗ると次の部屋に移動する
+/// </summary>
 public class PathSquare : AbstractSquare
 {
-    public DungeonManager.Room room;
-
     public enum Direction { up, down, left, right }
     public Direction direction = Direction.down;
 
-    [SerializeField]
-    Position nextPosition;
+    public MyVector2 nextSequence;
 
-    public PathSquare()
-    {
-        type = Type.Path;
-    }
+    //コンストラクタ
+    public void Start() { type = Type.Path; }
 
     public void setPathSquare(int row, int column, int adjustX, int adjustY, Direction a)
     {
-        position = Position.createPosition(row, column);
-		nextPosition = Position.createPosition(row + adjustX, column + adjustY);
+        sequence = new MyVector2(row, column);
+		nextSequence = new MyVector2(row + adjustX, column + adjustY);
         direction = a;
     }
 
     public override void enterThis()
     {
-		StartCoroutine (enterThisCoroutine());
+        if (isCharacterOn(AbstractCharacterObject.Type.Player))
+        {
+            StartCoroutine(enterThisCoroutine());
+        }
     }
 
-	IEnumerator enterThisCoroutine()
-	{
-		var floor = DungeonManager.Floor.Instance;
-		
-		floor.inPreparation = true;
-		
-		FadeManager.Instance.LoadLevel(1);
-		Debug.Log(direction + "に移動！");
-		floor.destroyPrevious(position.row, position.column);
-		floor.createNext(nextPosition.row, nextPosition.column);
-		
-		floor.randomizeToSquare(nextPosition.row, nextPosition.column,DungeonManager.Instance.player);
-		TurnManager.Instance.turnCount = 0;
-		floor.inPreparation = false;
-		yield return null;
-	}
+    IEnumerator enterThisCoroutine()
+    {
+        var floor = DungeonManager.Floor.Instance;
 
+        FadeManager.Instance.LoadLevel(1, () => pathEvent(floor));
 
+        yield return null;
+    }
 
+    public void pathEvent(DungeonManager.Floor floor)
+    {
+        floor.destroyPrevious(sequence);
+		floor.createNext(nextSequence);
+		floor.randomizeToSquare(nextSequence, ObjectManager.Instance.character[0]);
+        TurnManager.Instance.turnCharacter = 0;
+    }
 }

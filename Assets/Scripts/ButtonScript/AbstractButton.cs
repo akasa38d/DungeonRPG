@@ -4,6 +4,7 @@ using System.Collections;
 public abstract class AbstractButton : MonoBehaviour
 {
     public GameObject square;
+    public delegate void SomeEvent(GameObject obj);
 
     public void Start()
     {
