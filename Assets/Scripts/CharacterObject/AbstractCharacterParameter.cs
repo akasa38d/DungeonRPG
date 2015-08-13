@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Xml;
 
 [System.Serializable]
 public abstract class AbstractCharacterParameter

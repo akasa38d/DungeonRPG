@@ -5,9 +5,6 @@ using System.Xml;
 [System.Serializable]
 public class EnemyParameter : AbstractCharacterParameter
 {
-    //コンストラクタ
-    EnemyParameter() { }
-
     //データをロードしてパラメータを作成
     public static EnemyParameter getEnemyParameter(int number)
     {

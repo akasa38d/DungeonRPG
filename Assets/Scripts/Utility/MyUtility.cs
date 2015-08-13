@@ -54,7 +54,4 @@ namespace MyUtility
 			return false;
 		}
     }
-
-
-
 }

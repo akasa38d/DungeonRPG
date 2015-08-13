@@ -5,9 +5,6 @@ using System.Xml;
 [System.Serializable]
 public class PlayerParameter : AbstractCharacterParameter
 {
-    //コンストラクタ
-    PlayerParameter() { }
-
     //パラメータを作成
     public static PlayerParameter getPlayerParameter(string cName, int maxHp, int atk)
     {

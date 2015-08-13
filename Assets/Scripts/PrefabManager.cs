@@ -34,4 +34,8 @@ public class PrefabManager : SingletonMonoBehaviour<PrefabManager>
 	}
 
 	public Sprite test;
+
+	public Sprite sword;
+	public Sprite flower;
+	public Sprite nullCard;
 }

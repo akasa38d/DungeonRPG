@@ -20,9 +20,10 @@ public abstract class AbstractCharacterObject : MonoBehaviour
     //ID（仮）
     public int id;
 
-    //パラメーター
-    [SerializeField]
-    public AbstractCharacterParameter parameter;
+	//パラメーター
+	[SerializeField]
+	public AbstractCharacterParameter parameter;
+
 
     //基本処理
     public virtual void operation()

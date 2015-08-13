@@ -8,29 +8,19 @@ public class Item
 	protected GameObject player;
 	protected PlayerObject playerScript;
 
-	public GameObject button;
-
-	protected GameObject graphic;
-
+	public virtual Sprite sprite { get; set; }
 	protected GameObject effect;
 
-	protected int power;
-	protected bool chain;
-	protected bool expendable;
-	protected bool magic;
+	//変数
+	public int id;
+	public int power;			//威力・効果
+	public bool chain;			//チェインできるかどうか
+	public bool expendable;		//消費するかどうか
+	public bool magic;			//魔法であるかどうか
 
-	public Item()
-	{
-	}
-
-	public virtual void buttonEvent ()
-	{
-		//ボタンを作成
-		createButton ();
-	}
-
-	public virtual void createButton(){}
-	
+	//ボタンを押した時に発生するイベント
+	public virtual void buttonEvent (){}
+	//実際に行われる処理処理
 	public virtual void operation(){}
 	public virtual void operation(GameObject obj){}
 }
@@ -38,8 +28,14 @@ public class Item
 /// <summary>
 /// 近接攻撃アイテム（仮）
 /// </summary>
+[System.Serializable]
 public class SwordItem : Item
 {
+	public override Sprite sprite {
+		get { return Resources.Load<Sprite> ("無題") as Sprite; }
+		set{}
+	}
+
 	public SwordItem()
 	{
 		//player関係の設定
@@ -50,14 +46,27 @@ public class SwordItem : Item
 		chain = false;
 		expendable = false;
 		magic = false;
+	}
 
-		var n = GameObject.Find ("ItemButton");
-		var image = n.GetComponent<Image> ();
-		image.sprite = Resources.Load<Sprite>("無題") as Sprite;
+	public SwordItem(int power)
+	{
+		//player関係の設定
+		this.player = GameObject.Find ("Player");
+		this.playerScript = player.GetComponent<PlayerObject> ();
+		
+		this.power = power;
+		this.chain = false;
+		this.expendable = false;
+		this.magic = false;
+	}
+
+	public override void buttonEvent()
+	{
+		createButton ();
 	}
 
 	//攻撃用ボタンを生成
-	public override void createButton()
+	public void createButton()
 	{
 		//prefabsの設定
 		var attackButton = PrefabManager.Instance.attackButton;

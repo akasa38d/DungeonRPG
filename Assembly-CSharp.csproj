@@ -60,7 +60,7 @@
      <Compile Include="Assets\Scripts\FadeManager.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Item\Item.cs" />
-     <Compile Include="Assets\Scripts\ItemManager.cs" />
+     <Compile Include="Assets\Scripts\Item\ItemManager.cs" />
      <Compile Include="Assets\Scripts\Junk\DrawPosition.cs" />
      <Compile Include="Assets\Scripts\Junk\FloorBuilder.cs" />
      <Compile Include="Assets\Scripts\Junk\XMLTest.cs" />

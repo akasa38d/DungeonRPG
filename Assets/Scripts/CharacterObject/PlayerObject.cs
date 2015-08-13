@@ -3,15 +3,10 @@ using System.Collections;
 
 public class PlayerObject : AbstractCharacterObject
 {
-	public Item[] item = new Item[6];
-
     public void Start()
     {
         this.type = Type.Player;
         this.parameter = PlayerParameter.getPlayerParameter("ジョニー", 30, 30);
-
-		item [0] = new SwordItem();
-		item [0].button = GameObject.Find ("ItemButton");
     }
 
     //基本処理
@@ -30,7 +25,10 @@ public class PlayerObject : AbstractCharacterObject
     protected override void mainOperation() { }
 
     //エンドフェイズ
-    protected override void endOperation() { base.endOperation(); }
+    protected override void endOperation() {
+		this.gameObject.GetComponent<ItemManager> ().turnEnd();
+		base.endOperation();
+	}
 
     //ターン終了
     protected override void nextOperation() { }
@@ -94,15 +92,6 @@ public class PlayerObject : AbstractCharacterObject
 
         base.movePosition(obj);
     }
-
-	//UIにより使用
-	public void useItem(int num)
-	{
-		if (item [num] != null)
-		{
-			item [num].buttonEvent ();
-		}
-	}
 
 	//ItemにInstantiateさせるためのもの
 	public GameObject pInstantiate(GameObject obj)
