@@ -49,6 +49,11 @@ public class FlowerItem : Item
 		//player関係の設定
 		this.player = GameObject.Find ("Player");
 		this.playerScript = player.GetComponent<PlayerObject> ();
+
+		power = 0;
+		chain = false;
+		expendable = false;
+		magic = false;
 	}
 
 	public override Sprite sprite {

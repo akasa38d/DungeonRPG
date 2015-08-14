@@ -39,7 +39,6 @@ public class PathSquare : AbstractSquare
 
         yield return null;
     }
-
     public void pathEvent(DungeonManager.Floor floor)
     {
         floor.destroyPrevious(sequence);

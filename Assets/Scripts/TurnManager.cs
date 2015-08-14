@@ -25,13 +25,25 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
     {
         var turnPlayer = ObjectManager.Instance.characterScript;
 
-		turnPlayer[turnCharacter].operation();
+		if (!FadeManager.Instance.isFading) {
+			turnPlayer [turnCharacter].operation ();
+			yield return null;
+		}
+
+		if (FadeManager.Instance.isFading)
+		{
+			turnPlayer[turnCharacter].process = AbstractCharacterObject.Process.Start;
+			turnCharacter = 0;
+			yield return 0;
+		}
 
         //もしフェーディングしているなら
         while (FadeManager.Instance.isFading)
         {
-            yield return new WaitForEndOfFrame();
+			yield return new WaitForEndOfFrame();
         }
+
+		yield return null;
 
 		if (turnPlayer[turnCharacter].process == AbstractCharacterObject.Process.Next)
         {
@@ -39,8 +51,7 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
 			turnCharacter++;
         }
 
-        ObjectManager.Instance.setCharacter();
-        ObjectManager.Instance.setSquare();
+		yield return null;
 
         //ループ
 		if (turnCharacter >= turnPlayer.Count)
@@ -60,9 +71,12 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
 			//敵の出現
 			if (turnCount % 2 == 0)
 			{
+				Debug.Log("敵の出現");
 				DungeonManager.Floor.Instance.prepareEnemy();
 			}
 		}
+
+		yield return null;
     }
 
 

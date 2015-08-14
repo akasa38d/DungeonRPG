@@ -19,6 +19,8 @@ public class ObjectManager : SingletonMonoBehaviour<ObjectManager>
 
     public void setCharacter()
     {
+		Debug.Log ("setダゼ！");
+
         //一旦クリアー
         character.Clear();
 

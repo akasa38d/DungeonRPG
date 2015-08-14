@@ -14,13 +14,19 @@ public class ItemManager : MonoBehaviour {
 	//仕様済み
 	public List<Item> usedCard = new List<Item> ();
 
+	public int usingNumber = -1;
 
 	//手札のUI
 	public GameObject[] cardUI = new GameObject[6];
+	public GameObject moveUI;
+
 	//カウント
 	public GameObject usedCount;
 	public GameObject trashCount;
 	public GameObject deckCount;
+
+	//準備中
+	public bool inProcess = false;
 
 	public void Start()
 	{
@@ -78,22 +84,21 @@ public class ItemManager : MonoBehaviour {
 	public void use(int handNumber)
 	{
 		Debug.Log ("このカードを使うぜ！");
-
+		
 		if (handCard [handNumber].id == 0)
 		{
 			Debug.Log ("カードがないぜ！");
 		}
-
+		
 		if (handCard [handNumber].id != 0)
-		{
-			usedCard.Add (handCard [handNumber]);
-			usedCount.GetComponent<Text> ().text = usedCard.Count ().ToString ();
-			handCard [handNumber] = new NullItem();
-			var image = cardUI[handNumber].GetComponent<Image> ();
-			image.sprite = handCard [handNumber].sprite;
+		{			
+			usingNumber = handNumber;
+			
+			handCard[handNumber].buttonEvent();			
 		}
-
 	}
+
+
 
 	public void draw (int handNumber)
 	{
@@ -117,6 +122,24 @@ public class ItemManager : MonoBehaviour {
 
 	}
 
+
+	public void preTurnEnd()
+	{
+		Debug.Log ("終了前だぜ！");
+		if (usingNumber != -1) {
+			//使用済みカードに追加
+			usedCard.Add (handCard [usingNumber]);
+			usedCount.GetComponent<Text> ().text = usedCard.Count ().ToString ();
+		
+			//使用したカードをnullカードに変更
+			handCard [usingNumber] = new NullItem ();
+			var image = cardUI [usingNumber].GetComponent<Image> ();
+			image.sprite = handCard [usingNumber].sprite;
+
+			usingNumber = -1;
+		}
+	}
+
 	public void turnEnd()
 	{
 		StartCoroutine ("turnEndCoroutine");
@@ -124,16 +147,13 @@ public class ItemManager : MonoBehaviour {
 
 	IEnumerator turnEndCoroutine()
 	{
-		Debug.Log ("ターンエンドだぜ！");
+		Debug.Log ("使用したカードを墓地に送るぜ！");
+		//使用したカードをトラッシュに送る
+		trashCard.AddRange (usedCard);
+		trashCount.GetComponent<Text> ().text = trashCard.Count ().ToString();
+		yield return null;
 
-		foreach (var n in usedCard)
-		{
-			Debug.Log ("使用したカードを墓地に送るぜ！");
-			trashCard.Add (n);
-			trashCount.GetComponent<Text> ().text = trashCard.Count ().ToString();
-			yield return null;
-		}
-
+		//使用したカードをクリア
 		usedCard.Clear ();
 		usedCount.GetComponent<Text> ().text = usedCard.Count ().ToString();
 		yield return null;

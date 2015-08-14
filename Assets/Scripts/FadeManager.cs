@@ -79,6 +79,7 @@ public class FadeManager : SingletonMonoBehaviour<FadeManager>
             time += Time.deltaTime;
             yield return 0;
         }
+
         this.isFading = false;
     }
 }

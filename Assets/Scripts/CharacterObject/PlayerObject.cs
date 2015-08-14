@@ -6,7 +6,7 @@ public class PlayerObject : AbstractCharacterObject
     public void Start()
     {
         this.type = Type.Player;
-        this.parameter = PlayerParameter.getPlayerParameter("ジョニー", 30, 30);
+        this.parameter = PlayerParameter.getPlayerParameter("赤ずきん", 30, 30);
     }
 
     //基本処理
@@ -15,6 +15,9 @@ public class PlayerObject : AbstractCharacterObject
     //スタンバイフェイズ
     protected override void startOperation()
     {
+		ObjectManager.Instance.setCharacter();
+		ObjectManager.Instance.setSquare();
+
         //移動ボタンを生成
         createMoveButton();
 
@@ -26,16 +29,28 @@ public class PlayerObject : AbstractCharacterObject
 
     //エンドフェイズ
     protected override void endOperation() {
+		this.gameObject.GetComponent<ItemManager> ().preTurnEnd ();
+
+		preTurnEnd ();
+
 		this.gameObject.GetComponent<ItemManager> ().turnEnd();
-		base.endOperation();
+
+		process = Process.Next;
 	}
 
     //ターン終了
     protected override void nextOperation() { }
 
+	public void moveButtonEvent()
+	{
+
+	}
+
 	//移動用ボタンを生成
     public void createMoveButton()
     {
+		this.gameObject.GetComponent<ItemManager> ().usingNumber = -1;
+
 		deleteButton ();
 
         //prefabsの設定

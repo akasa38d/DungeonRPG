@@ -11,7 +11,6 @@ public class EnemyObject : AbstractCharacterObject
         myAttack = new AttackWay("キック", 30, null);
         Debug.Log("名前は" + this.parameter.cName);
 		Debug.Log ("IDは" + this.parameter.id);
-
 		Debug.Log ("攻撃手段：" + myAttack.name);
     }
 
@@ -19,7 +18,11 @@ public class EnemyObject : AbstractCharacterObject
     public override void operation() { base.operation(); }
 
     //スタンバイフェイズ
-    protected override void startOperation() { base.startOperation(); }
+    protected override void startOperation() {
+		ObjectManager.Instance.setCharacter();
+		ObjectManager.Instance.setSquare();
+		base.startOperation();
+	}
 
     //メインフェイズ
     protected override void mainOperation()

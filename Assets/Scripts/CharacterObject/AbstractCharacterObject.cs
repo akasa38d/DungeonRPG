@@ -20,6 +20,9 @@ public abstract class AbstractCharacterObject : MonoBehaviour
     //ID（仮）
     public int id;
 
+	//追加ターン
+	public int additionalTurn = 0;
+
 	//パラメーター
 	[SerializeField]
 	public AbstractCharacterParameter parameter;
@@ -53,16 +56,32 @@ public abstract class AbstractCharacterObject : MonoBehaviour
     }
 
     //スタンバイフェイズ処理
-    protected virtual void startOperation() { process = Process.Main; }
+    protected virtual void startOperation()
+	{
+		process = Process.Main;
+	}
 
     //メインフェイズ処理
     protected virtual void mainOperation() { }
 
+	//エンドフェイズ前確認
+	protected virtual void preTurnEnd()
+	{
+		if (additionalTurn > 0) {
+			Debug.Log ("追加ターンだぜ！");
+			additionalTurn -= 1;
+			process = Process.Start;
+		}
+	}
+
     //エンドフェイズ処理
     protected virtual void endOperation()
     {
-        process = Process.Next;
+		preTurnEnd ();
+
+		process = Process.Next;
     }
+
 
     //仮
     protected virtual void nextOperation() { }
