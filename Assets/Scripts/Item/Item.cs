@@ -25,6 +25,44 @@ public class Item
 	public virtual void operation(GameObject obj){}
 }
 
+
+public class NullItem : Item
+{
+	public NullItem()
+	{
+		id = 0;
+	}
+
+	public override Sprite sprite {
+		get { return PrefabManager.Instance.nullCard; }
+		set{}
+	}
+}
+
+
+public class FlowerItem : Item
+{
+	public FlowerItem()
+	{
+		id = 1;
+
+		//player関係の設定
+		this.player = GameObject.Find ("Player");
+		this.playerScript = player.GetComponent<PlayerObject> ();
+	}
+
+	public override Sprite sprite {
+		get { return PrefabManager.Instance.flowerCard; }
+		set{}
+	}
+
+	public override void buttonEvent()
+	{
+		playerScript.process = AbstractCharacterObject.Process.End;
+	}
+}
+
+
 /// <summary>
 /// 近接攻撃アイテム（仮）
 /// </summary>
@@ -32,12 +70,14 @@ public class Item
 public class SwordItem : Item
 {
 	public override Sprite sprite {
-		get { return Resources.Load<Sprite> ("無題") as Sprite; }
+		get { return PrefabManager.Instance.swordCard; }
 		set{}
 	}
 
 	public SwordItem()
 	{
+		id = 2;
+
 		//player関係の設定
 		this.player = GameObject.Find ("Player");
 		this.playerScript = player.GetComponent<PlayerObject> ();

@@ -1,13 +1,34 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PrefabManager.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Item\ItemManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\Item\ItemManager.cs" Line="16" Column="2" />
-      <File FileName="Assets\Scripts\Item\Item.cs" Line="79" Column="20" />
-      <File FileName="Assets\Scripts\CharacterObject\PlayerObject.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\ObjectManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\PrefabManager.cs" Line="28" Column="3" />
+      <File FileName="Assets\Scripts\Item\ItemManager.cs" Line="70" Column="1" />
+      <File FileName="Assets\Scripts\Item\Item.cs" Line="36" Column="33" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Assembly-CSharp" expanded="True">
+            <Node name="Scripts" expanded="True">
+              <Node name="Item" expanded="True">
+                <Node name="ItemManager.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>deckCard.Count</Value>
+          <Value>trashCard.Count</Value>
+          <Value>usedCard.Count</Value>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

@@ -33,9 +33,8 @@ public class PrefabManager : SingletonMonoBehaviour<PrefabManager>
 //		Instantiate (enemyList [2]);
 	}
 
-	public Sprite test;
-
-	public Sprite sword;
-	public Sprite flower;
+	//カードのsprite
+	public Sprite swordCard;
+	public Sprite flowerCard;
 	public Sprite nullCard;
 }
