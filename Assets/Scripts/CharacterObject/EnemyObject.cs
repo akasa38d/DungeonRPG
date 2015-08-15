@@ -30,6 +30,9 @@ public class EnemyObject : AbstractCharacterObject
         searchTarget();
     }
 
+	//プリエンドフェイズ
+	protected override void preEndOperation() { base.preEndOperation(); }
+
     //エンドフェイズ
     protected override void endOperation() { base.endOperation(); }
 

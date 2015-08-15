@@ -30,11 +30,14 @@ public class ItemManager : MonoBehaviour {
 
 	public void Start()
 	{
-		for (int i=0; i < 6; i++){
+		for (int i=0; i < 2; i++){
 			deckCard.Add(new SwordItem()); 
 		}
 		for (int i=0; i < 6; i++){
 			deckCard.Add(new FlowerItem()); 
+		}
+		for (int i=0; i < 2; i++){
+			deckCard.Add(new BombItem()); 
 		}
 
 		draw(0);
@@ -65,18 +68,13 @@ public class ItemManager : MonoBehaviour {
 		{
 			Debug.Log("仕切り直しだぜ！");
 
-			foreach (var n in trashCard)
-			{
-				deckCard.Add(n);
-				deckCount.GetComponent<Text> ().text = deckCard.Count ().ToString();
-				yield return null;
-				trashCard.Remove(n);
-				trashCount.GetComponent<Text> ().text = trashCard.Count ().ToString();
-				yield return null;
-			}
+			deckCard.AddRange(trashCard);
+			deckCount.GetComponent<Text> ().text = deckCard.Count ().ToString();
 			yield return null;
 
-			draw (handNumber);
+			trashCard.Clear ();
+			trashCount.GetComponent<Text> ().text = trashCard.Count ().ToString();
+			yield return null;
 		}
 		yield return null;
 	}
@@ -98,28 +96,28 @@ public class ItemManager : MonoBehaviour {
 		}
 	}
 
-
-
 	public void draw (int handNumber)
+	{
+		StartCoroutine ("drawCoroutine", handNumber);
+	}
+
+	IEnumerator drawCoroutine(int handNumber)
 	{
 		if (deckCard.Count == 0)
 		{
 			shuffule (handNumber);
 		}
+		yield return null;
 
-		if (deckCard.Count != 0)
-		{
-			Debug.Log ("ドローするぜ！");
-			var n = deckCard.ElementAt (Random.Range (0, deckCard.Count ()));
-			handCard [handNumber] = n;
-			deckCard.Remove(n);
-			deckCount.GetComponent<Text> ().text = deckCard.Count ().ToString();
-
-			var image = cardUI[handNumber].GetComponent<Image> ();
-			image.sprite = handCard [handNumber].sprite;
-		}
-
-
+		Debug.Log ("ドローするぜ！");
+		var n = deckCard.ElementAt (Random.Range (0, deckCard.Count ()));
+		handCard [handNumber] = n;
+		deckCard.Remove(n);
+		deckCount.GetComponent<Text> ().text = deckCard.Count ().ToString();
+		
+		var image = cardUI[handNumber].GetComponent<Image> ();
+		image.sprite = handCard [handNumber].sprite;
+		yield return null;
 	}
 
 
@@ -142,29 +140,21 @@ public class ItemManager : MonoBehaviour {
 
 	public void turnEnd()
 	{
-		StartCoroutine ("turnEndCoroutine");
-	}
-
-	IEnumerator turnEndCoroutine()
-	{
 		Debug.Log ("使用したカードを墓地に送るぜ！");
 		//使用したカードをトラッシュに送る
 		trashCard.AddRange (usedCard);
 		trashCount.GetComponent<Text> ().text = trashCard.Count ().ToString();
-		yield return null;
-
+		
 		//使用したカードをクリア
 		usedCard.Clear ();
 		usedCount.GetComponent<Text> ().text = usedCard.Count ().ToString();
-		yield return null;
-
+		
 		for (int i=0; i<6; i++)
 		{
 			if(handCard[i].id == 0)
 			{
 				Debug.Log ("補充だぜ！");
 				draw (i);
-				yield return null;
 			}
 		}
 	}

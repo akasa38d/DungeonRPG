@@ -48,7 +48,9 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\ButtonScript\AbstractButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\AttackButton.cs" />
+     <Compile Include="Assets\Scripts\ButtonScript\ExtraAttackButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\MoveButton.cs" />
+     <Compile Include="Assets\Scripts\ButtonScript\SubAttackButton.cs" />
      <Compile Include="Assets\Scripts\CharacterObject\AbstractCharacterObject.cs" />
      <Compile Include="Assets\Scripts\CharacterObject\AbstractCharacterParameter.cs" />
      <Compile Include="Assets\Scripts\CharacterObject\EnemyObject.cs" />

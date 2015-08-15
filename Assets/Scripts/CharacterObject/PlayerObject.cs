@@ -1,12 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class PlayerObject : AbstractCharacterObject
 {
+	public GameObject lvCount;
+	public GameObject hpCount;
+	public GameObject spCount;
+
     public void Start()
     {
         this.type = Type.Player;
         this.parameter = PlayerParameter.getPlayerParameter("赤ずきん", 30, 30);
+
+		lvCount.GetComponent<Text> ().text = parameter.lv.ToString();
+		hpCount.GetComponent<Text> ().text = parameter.hp.ToString() + " / " + parameter.maxHp.ToString();
+		spCount.GetComponent<Text> ().text = parameter.sp.ToString();
     }
 
     //基本処理
@@ -20,22 +29,24 @@ public class PlayerObject : AbstractCharacterObject
 
         //移動ボタンを生成
         createMoveButton();
-
+		//基本処理
         base.startOperation();
     }
 
     //メインフェイズ
     protected override void mainOperation() { }
 
+	//プリエンドフェイズ
+	protected override void preEndOperation()
+	{
+		this.gameObject.GetComponent<ItemManager> ().preTurnEnd ();
+		base.preEndOperation ();
+	}
+
     //エンドフェイズ
     protected override void endOperation() {
-		this.gameObject.GetComponent<ItemManager> ().preTurnEnd ();
-
-		preTurnEnd ();
-
 		this.gameObject.GetComponent<ItemManager> ().turnEnd();
-
-		process = Process.Next;
+		base.endOperation ();
 	}
 
     //ターン終了

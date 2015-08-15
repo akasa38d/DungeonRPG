@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class MoveButton : AbstractButton
 {
-    public SomeEvent moveDelegate;
+    public Action<GameObject> moveDelegate;
 
     new void Start() { base.Start(); }
 

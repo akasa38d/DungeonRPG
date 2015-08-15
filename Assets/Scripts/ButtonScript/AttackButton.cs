@@ -1,14 +1,10 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 public class AttackButton : AbstractButton
 {
-	public delegate void AttackEvent2(GameObject obj);
-	public AttackEvent2 attackDelegate2;   
-
-
-
-    public AbstractCharacterObject.AttackWay attackWay;
+	public Action<GameObject> attackDelegate;
 
     new void Start() { base.Start(); }
 
@@ -21,6 +17,6 @@ public class AttackButton : AbstractButton
     new void OnMouseUpAsButton()
     {
         base.OnMouseUpAsButton();
-        attackDelegate2(square.GetComponent<AbstractSquare>().character);
+        attackDelegate(square.GetComponent<AbstractSquare>().character);
     }
 }

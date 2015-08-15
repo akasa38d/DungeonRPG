@@ -13,7 +13,9 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
 	//ターンカウント
 	public int turnCount = 0;
 
-    public override void Awake() { base.Awake(); }
+    public override void Awake() {
+		base.Awake();
+	}
 
     //処理
     public void operation()
@@ -25,10 +27,8 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
     {
         var turnPlayer = ObjectManager.Instance.characterScript;
 
-		if (!FadeManager.Instance.isFading) {
-			turnPlayer [turnCharacter].operation ();
-			yield return null;
-		}
+		turnPlayer [turnCharacter].operation ();
+		yield return null;
 
 		if (FadeManager.Instance.isFading)
 		{
