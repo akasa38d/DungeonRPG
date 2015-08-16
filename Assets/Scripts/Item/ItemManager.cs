@@ -158,4 +158,18 @@ public class ItemManager : MonoBehaviour {
 			}
 		}
 	}
+
+	public void Update()
+	{
+		if (this.gameObject.GetComponent<PlayerObject> ().process != AbstractCharacterObject.Process.Main) {
+			foreach (var n in cardUI) {
+				n.GetComponent<Button> ().interactable = false;
+			}
+		} 
+		if(this.gameObject.GetComponent<PlayerObject> ().process == AbstractCharacterObject.Process.Main){
+			foreach (var n in cardUI) {
+				n.GetComponent<Button> ().interactable = true;
+			}
+		}
+	}
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using MyUtility;
+using System.Linq;
 
 public abstract class AbstractSquare : MonoBehaviour
 {
@@ -94,4 +95,13 @@ public abstract class AbstractSquare : MonoBehaviour
     public virtual void enterThis() { }
     //調べた時
     public virtual void checkThis() { }
+
+	public GameObject[] aroundSquare(int i)
+	{
+		var aSquare = from n in ObjectManager.Instance.square
+			where Mathf.Abs (this.transform.position.x - n.transform.position.x) <= i * 10
+				&& Mathf.Abs (this.transform.position.z - n.transform.position.z) <= i * 10
+				select n;
+		return aSquare.ToArray();
+	}
 }

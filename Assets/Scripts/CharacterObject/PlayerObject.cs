@@ -15,7 +15,7 @@ public class PlayerObject : AbstractCharacterObject
 
 		lvCount.GetComponent<Text> ().text = parameter.lv.ToString();
 		hpCount.GetComponent<Text> ().text = parameter.hp.ToString() + " / " + parameter.maxHp.ToString();
-		spCount.GetComponent<Text> ().text = parameter.sp.ToString();
+		spCount.GetComponent<Text> ().text = parameter.sp.ToString() + " / " + parameter.maxSp.ToString();
     }
 
     //基本処理

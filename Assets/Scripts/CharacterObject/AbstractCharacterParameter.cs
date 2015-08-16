@@ -9,6 +9,7 @@ public abstract class AbstractCharacterParameter
     public string cName;
     public int maxHp;
     public int hp;
+	public int maxSp;
 	public int sp;
     public int atk;
 }

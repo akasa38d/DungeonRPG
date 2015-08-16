@@ -4,7 +4,7 @@ using System.Collections;
 
 public class AttackButton : AbstractButton
 {
-	public Action<GameObject> attackDelegate;
+	public Action<GameObject> attack;
 
     new void Start() { base.Start(); }
 
@@ -17,6 +17,6 @@ public class AttackButton : AbstractButton
     new void OnMouseUpAsButton()
     {
         base.OnMouseUpAsButton();
-        attackDelegate(square.GetComponent<AbstractSquare>().character);
+        attack(square.GetComponent<AbstractSquare>().character);
     }
 }

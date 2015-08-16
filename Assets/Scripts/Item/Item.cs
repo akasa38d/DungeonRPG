@@ -63,9 +63,6 @@ public class FlowerItem : Item
 	public FlowerItem()
 	{
 		id = 1;
-
-
-
 		power = 0;
 		chain = false;
 		expendable = false;
@@ -93,7 +90,6 @@ public class SwordItem : Item
 	{
 		//id(仮)
 		id = 2;
-
 		//変数のセット
 		power = 99;
 		chain = false;
@@ -138,7 +134,7 @@ public class SwordItem : Item
 					var tmp = playerScript.pInstantiate(attackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
 					var tmpScript = tmp.GetComponent<AttackButton>();
 					tmpScript.square = floor;
-					tmpScript.attackDelegate = this.operation;
+					tmpScript.attack = this.operation;
 				}
 			}
 		}
@@ -187,57 +183,56 @@ public class BombItem :Item
 	void createButton()
 	{
 		//prefabsの設定
-		var attackButton = PrefabManager.Instance.attackButton;
+		var extraAttackButton = PrefabManager.Instance.extraAttackButton;
+		var subAttackButton = PrefabManager.Instance.subAttackButton;
 		
 		//既存のボタンを削除
 		playerScript.deleteButton ();
 		
 		foreach (var floor in ObjectManager.Instance.square)
 		{
-			//プレイヤからの距離が１の床で
-			if (playerScript.checkDistance(player, floor, 3))
+			//プレイヤからの距離が３の床で
+			if (playerScript.checkDistance(player, floor, 2))
 			{
-				//キャラクターが乗っているなら
-				if (floor.GetComponent<AbstractSquare>().isCharacterOn())
-				{
-					var tmp = playerScript.pInstantiate(attackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
-					var tmpScript = tmp.GetComponent<AttackButton>();
-					tmpScript.square = floor;
-					tmpScript.attackDelegate = this.operation;
-				}
+				var tmp = playerScript.pInstantiate(extraAttackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
+				var tmpScript = tmp.GetComponent<ExtraAttackButton>();
+				tmpScript.square = floor;
+				tmpScript.attack = this.operation;
+			}
+			//プレイヤからの距離が３の床で
+			if (playerScript.checkDistance(player, floor, 3) && !playerScript.checkDistance(player, floor, 2))
+			{
+				playerScript.pInstantiate(subAttackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
 			}
 		}
 	}
 
-	public override void operation (GameObject obj)
+	public override void operation (GameObject square)
 	{
-		var targetList = from c in ObjectManager.Instance.character
-			where c.GetComponent<AbstractCharacterObject>().checkOneDistance(c, obj)
-				select c;
-
-		Debug.Log (targetList.Count());
-
-		foreach (var n in targetList) {
-			Debug.Log ("爆弾で攻撃！");
-			//ターンエンドのためのコールバックをセット
-			n.GetComponent<AbstractCharacterObject> ().callBack = () => {};
-			//攻撃のエフェクト
-			if (effect != null) {
-				playerScript.pInstantiate (effect, n.transform.position);
+		try{
+			foreach(var n in square.GetComponent<AbstractSquare> ().aroundSquare (1))
+			{
+				if (effect != null) { playerScript.pInstantiate(effect, n.transform.position); }
 			}
-			//ダメージ処理
-			n.GetComponent<AbstractCharacterObject> ().beDameged (this.power);
+
+			var target = from n in square.GetComponent<AbstractSquare> ().aroundSquare (1)
+				where n.GetComponent<AbstractSquare> ().isCharacterOn()
+				select n;
+			foreach (var n in target)
+			{
+				var c = n.GetComponent<AbstractSquare> ().character;
+				Debug.Log ("爆弾で攻撃！");
+				//ターンエンドのためのコールバックをセット
+				c.GetComponent<AbstractCharacterObject> ().callBack = () => {};
+				//ダメージ処理
+				c.GetComponent<AbstractCharacterObject> ().beDameged (this.power);
+			}
+		}
+		finally
+		{
+			playerScript.process = AbstractCharacterObject.Process.PreEnd;
 		}
 
-		Debug.Log("爆弾で攻撃！");
-		//ターンエンドのためのコールバックをセット
-		obj.GetComponent<AbstractCharacterObject>().callBack = () => playerScript.process = AbstractCharacterObject.Process.PreEnd;
-		//攻撃のエフェクト
-		if (effect != null) { playerScript.pInstantiate(effect, obj.transform.position); }
-		//ダメージ処理
-		obj.GetComponent<AbstractCharacterObject>().beDameged(this.power);
-
-		playerScript.process = AbstractCharacterObject.Process.PreEnd;
 	}
 
 }

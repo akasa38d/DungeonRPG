@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public abstract class AbstractButton : MonoBehaviour
 {
@@ -9,31 +8,21 @@ public abstract class AbstractButton : MonoBehaviour
 	public Color onMouseEnterColor;
 	public Color onMouseUpAsButtonCollor;
 
-    public void Start()
+    public virtual void Start()
     {
 		this.defaultColor = new Color(1.0f, 1.0f, 1.0f, 0.5f);
 		this.onMouseEnterColor = new Color (1.0f, 0.1f, 0.1f, 0.5f);
 		this.onMouseUpAsButtonCollor = new Color(0.2f, 0.1f, 0.1f, 1.0f);
-        this.GetComponent<Collider>().GetComponent<Renderer>().material.color = defaultColor;
+		getColor (defaultColor);
 	}
 
-    public void OnMouseEnter()
-    {
-		this.GetComponent<Collider>().GetComponent<Renderer>().material.color = onMouseEnterColor;
-    }
+	public virtual void OnMouseEnter()   {	getColor(onMouseEnterColor);   }
 
-    public void OnMouseExit()
-    {
-		this.GetComponent<Collider>().GetComponent<Renderer>().material.color = defaultColor;
-    }
+	public virtual void OnMouseExit()   {	getColor (defaultColor);  }
 
-    public void OnMouseDown()
-    {
-		this.GetComponent<Collider>().GetComponent<Renderer>().material.color = onMouseUpAsButtonCollor;
-    }
+	public virtual void OnMouseDown()   {	getColor(onMouseUpAsButtonCollor);   }
 
-    public void OnMouseUpAsButton()
-    {
-        this.GetComponent<Collider>().GetComponent<Renderer>().material.color = defaultColor;
-    }
+	public virtual void OnMouseUpAsButton()   {       getColor(defaultColor);   }
+
+	public virtual void getColor(Color color){	GetComponent<Collider> ().GetComponent<Renderer> ().material.color = color;}
 }

@@ -15,6 +15,8 @@ public class PrefabManager : SingletonMonoBehaviour<PrefabManager>
     //Button系
     public GameObject attackButton;
     public GameObject moveButton;
+	public GameObject extraAttackButton;
+	public GameObject subAttackButton;
 
     //effect系
     public GameObject explosion;
@@ -30,7 +32,6 @@ public class PrefabManager : SingletonMonoBehaviour<PrefabManager>
 		enemyList.Add (0, Resources.Load ("EnemyPrefabs/Enemy") as GameObject);
 		enemyList.Add (2, Resources.Load ("EnemyPrefabs/Enemy mk2") as GameObject);
 		enemyList.Add (3, Resources.Load ("EnemyPrefabs/Enemy mk3") as GameObject);
-//		Instantiate (enemyList [2]);
 	}
 
 	//カードのsprite

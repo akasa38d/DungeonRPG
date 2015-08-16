@@ -84,8 +84,42 @@ public class EnemyObject : AbstractCharacterObject
                     movePosition(obj);
                     break;
                 }
+
+
+				//ゴリ押し
+				if (obj.GetComponent<AbstractSquare>().isCharacterOn())
+				{
+
+					foreach (GameObject obj2 in ObjectManager.Instance.square)
+					{
+						if (obj2.transform.position.x == this.transform.position.x
+						    && obj2.transform.position.z == this.transform.position.z + y)
+						{
+							if (!obj2.GetComponent<AbstractSquare>().isCharacterOn())
+							{
+								movePosition(obj2);
+								break;
+							}
+						}
+						if (obj2.transform.position.x == this.transform.position.x + x
+						    && obj2.transform.position.z == this.transform.position.z)
+						{
+							if (!obj2.GetComponent<AbstractSquare>().isCharacterOn())
+							{
+								movePosition(obj2);
+								break;
+							}
+						}
+					}
+				}
+
+
             }
+
         }
+
+
+
         process = Process.End;
     }
 }
