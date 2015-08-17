@@ -39,18 +39,20 @@ public class ItemContainer
         Bomb = 3
     }
 
+	//IDから生成（出現率と合わせ、XMLから生成）
     public ItemContainer(int id)
     {
         this.item = getItem(id);
         this.vector3 = new Vector3(-1, -1, -1);
     }
-
+	//一度出現させたデータを元に再生成
     public ItemContainer(Item item, Vector3 vector3)
     {
         this.item = item;
         this.vector3 = vector3;
     }
 
+	//IDから対応するアイテムを格納
     public Item getItem(int id)
     {
         if (id == 1) { return new FlowerItem(); }
