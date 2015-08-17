@@ -216,8 +216,8 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             var room = new Room(randomCreateSize(), createPosition(x, y));
             room.path = Path.randomCreatePath(room.size);
 
-            room.itemList.Add(new ItemContainer(2));
-            room.itemList.Add(new ItemContainer(1));
+			room.itemList.Add(new ItemContainer((int)ItemContainer.type.Sword));
+            room.itemList.Add(new ItemContainer((int)ItemContainer.type.Flower));
             Debug.Log(room.itemList[1].item);
 
             return room;
@@ -272,10 +272,6 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                 }
             }
             itemList.Clear();
-
-
-
-
 
             isBuild = true;
         }
@@ -354,7 +350,19 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                 }
             }
 
-            //アイテム・罠を消す
+			//アイテムを消す
+			foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Item"))
+			{
+				Debug.Log(GameObject.FindGameObjectsWithTag("Item").Count());
+				var i = obj.GetComponent<FieldItem>().item;
+				var v = obj.transform.position;
+				itemList.Add(new ItemContainer(i,v));
+				Destroy(obj);
+			}
+
+			//罠を消す
+
+
 
             //実体化フラグをオフ
             isBuild = false;

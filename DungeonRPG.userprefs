@@ -1,17 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Item\ItemManager.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ObjectBuilder.cs">
     <Files>
-      <File FileName="Assets\Scripts\Item\FieldItem.cs" Line="6" Column="19" />
-      <File FileName="Assets\Scripts\Item\ItemManager.cs" Line="167" Column="3" />
-      <File FileName="Assets\Scripts\Item\Item.cs" Line="85" Column="16" />
-      <File FileName="Assets\Scripts\DungeonManager.cs" Line="263" Column="7" />
-      <File FileName="Assets\Scripts\CharacterObject\EnemyParameter.cs" Line="6" Column="57" />
-      <File FileName="Assets\Scripts\ObjectBuilder.cs" Line="41" Column="2" />
-      <File FileName="Assets\Scripts\PrefabManager.cs" Line="28" Column="25" />
-      <File FileName="Assets\Scripts\SquareObject\AbstractSquare.cs" Line="79" Column="10" />
-      <File FileName="Assets\Scripts\SquareObject\PathSquare.cs" Line="28" Column="9" />
-      <File FileName="Assets\Scripts\SquareObject\PlaneSquare.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Item\Item.cs" Line="227" Column="14" />
+      <File FileName="Assets\Scripts\Item\FieldItem.cs" Line="9" Column="29" />
+      <File FileName="Assets\Scripts\Item\ItemManager.cs" Line="164" Column="2" />
+      <File FileName="Assets\Scripts\DungeonManager.cs" Line="6" Column="17" />
+      <File FileName="Assets\Scripts\ObjectBuilder.cs" Line="43" Column="6" />
+      <File FileName="Assets\Scripts\GameManager.cs" Line="16" Column="2" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -19,10 +15,9 @@
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Scripts" expanded="True">
               <Node name="CharacterObject" expanded="True" />
-              <Node name="Item" expanded="True">
-                <Node name="ItemManager.cs" selected="True" />
-              </Node>
+              <Node name="Item" expanded="True" />
               <Node name="SquareObject" expanded="True" />
+              <Node name="ObjectBuilder.cs" selected="True" />
             </Node>
           </Node>
         </State>

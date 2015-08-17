@@ -6,8 +6,6 @@ using System.Linq;
 [System.Serializable]
 public abstract class Item
 {
-
-
     protected GameObject player;
     protected PlayerObject playerScript;
 
@@ -33,9 +31,6 @@ public abstract class Item
     //実際に行われる処理処理
     public virtual void operation() { }
     public virtual void operation(GameObject obj) { }
-
-
-
 }
 
 /// <summary>

@@ -34,9 +34,9 @@ public class ItemContainer
     public enum type
     {
         NullCard = 0,
-        Flower,
-        Sword,
-        Bomb
+        Flower = 1,
+        Sword = 2,
+        Bomb = 3
     }
 
     public ItemContainer(int id)
