@@ -1,8 +1,9 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\CharacterObject\EnemyObject.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Item\ItemManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\CharacterObject\EnemyObject.cs" Line="88" Column="5" />
+      <File FileName="Assets\Scripts\Item\ItemManager.cs" Line="181" Column="19" />
+      <File FileName="Assets\Scripts\Item\Item.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -10,10 +11,10 @@
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Scripts" expanded="True">
               <Node name="ButtonScript" expanded="True" />
-              <Node name="CharacterObject" expanded="True">
-                <Node name="EnemyObject.cs" selected="True" />
+              <Node name="CharacterObject" expanded="True" />
+              <Node name="Item" expanded="True">
+                <Node name="ItemManager.cs" selected="True" />
               </Node>
-              <Node name="Item" expanded="True" />
               <Node name="SquareObject" expanded="True" />
             </Node>
           </Node>
@@ -27,6 +28,7 @@
           <Value>deckCard.Count</Value>
           <Value>trashCard.Count</Value>
           <Value>usedCard.Count</Value>
+          <Value>cardUI</Value>
         </State>
       </Pad>
     </Pads>

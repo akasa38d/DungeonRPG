@@ -45,7 +45,7 @@ public class ItemManager : MonoBehaviour {
 		draw(2);
 		draw(3);
 		draw(4);
-		draw(5);
+		setNullCard (5);
 
 		usedCount.GetComponent<Text> ().text = usedCard.Count ().ToString();
 		trashCount.GetComponent<Text> ().text = trashCard.Count ().ToString();
@@ -130,9 +130,7 @@ public class ItemManager : MonoBehaviour {
 			usedCount.GetComponent<Text> ().text = usedCard.Count ().ToString ();
 		
 			//使用したカードをnullカードに変更
-			handCard [usingNumber] = new NullItem ();
-			var image = cardUI [usingNumber].GetComponent<Image> ();
-			image.sprite = handCard [usingNumber].sprite;
+			setNullCard(usingNumber);
 
 			usingNumber = -1;
 		}
@@ -149,7 +147,7 @@ public class ItemManager : MonoBehaviour {
 		usedCard.Clear ();
 		usedCount.GetComponent<Text> ().text = usedCard.Count ().ToString();
 		
-		for (int i=0; i<6; i++)
+		for (int i=0; i<5; i++)
 		{
 			if(handCard[i].id == 0)
 			{
@@ -167,9 +165,24 @@ public class ItemManager : MonoBehaviour {
 			}
 		} 
 		if(this.gameObject.GetComponent<PlayerObject> ().process == AbstractCharacterObject.Process.Main){
-			foreach (var n in cardUI) {
-				n.GetComponent<Button> ().interactable = true;
+			for(int i = 0; i < 6; i ++)
+			{
+				if(handCard[i].id != 0)
+				{
+					cardUI[i].GetComponent<Button> ().interactable = true;
+				}
+				else{
+					cardUI[i].GetComponent<Button> ().interactable = false;
+				}
 			}
 		}
+	}
+
+	//手札の指定したカードを空にする
+	void setNullCard(int handNumber)
+	{
+		handCard [handNumber] = new NullItem ();
+		var image = cardUI [handNumber].GetComponent<Image> ();
+		image.sprite = handCard [handNumber].sprite;
 	}
 }
