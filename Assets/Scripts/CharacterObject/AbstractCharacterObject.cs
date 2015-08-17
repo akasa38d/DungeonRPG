@@ -20,12 +20,12 @@ public abstract class AbstractCharacterObject : MonoBehaviour
     //ID（仮）
     public int id;
 
-	//追加ターン
-	public int additionalTurn = 0;
+    //追加ターン
+    public int additionalTurn = 0;
 
-	//パラメーター
-	[SerializeField]
-	public AbstractCharacterParameter parameter;
+    //パラメーター
+    [SerializeField]
+    public AbstractCharacterParameter parameter;
 
 
     //基本処理
@@ -41,10 +41,10 @@ public abstract class AbstractCharacterObject : MonoBehaviour
             case Process.Main:
                 this.mainOperation();
                 break;
-			//エンドフェイズ
-			case Process.PreEnd:
-				this.preEndOperation();
-				break;
+            //エンドフェイズ
+            case Process.PreEnd:
+                this.preEndOperation();
+                break;
             //エンドフェイズ
             case Process.End:
                 this.endOperation();
@@ -61,29 +61,32 @@ public abstract class AbstractCharacterObject : MonoBehaviour
 
     //スタンバイフェイズ処理
     protected virtual void startOperation()
-	{
-		process = Process.Main;
-	}
+    {
+        process = Process.Main;
+    }
 
     //メインフェイズ処理
     protected virtual void mainOperation() { }
 
-	//エンドフェイズ前確認
-	protected virtual void preEndOperation()
-	{
-		if (additionalTurn > 0) {
-			Debug.Log ("追加ターンだぜ！");
-			additionalTurn -= 1;
-			process = Process.Start;
-		} else {
-			process = Process.End;
-		}
-	}
+    //エンドフェイズ前確認
+    protected virtual void preEndOperation()
+    {
+        if (additionalTurn > 0)
+        {
+            Debug.Log("追加ターンだぜ！");
+            additionalTurn -= 1;
+            process = Process.Start;
+        }
+        else
+        {
+            process = Process.End;
+        }
+    }
 
     //エンドフェイズ処理
     protected virtual void endOperation()
     {
-		process = Process.Next;
+        process = Process.Next;
     }
 
 
@@ -171,7 +174,7 @@ public abstract class AbstractCharacterObject : MonoBehaviour
     //********************ここからbool********************//
 
     //チェビシェフ距離１を確認（起点、対象）
-	public bool checkOneDistance(GameObject ob1, GameObject ob2)
+    public bool checkOneDistance(GameObject ob1, GameObject ob2)
     {
         //マンハッタン距離１なら
         if (checkOneDistance_M(ob1, ob2)) { return true; }
@@ -216,14 +219,16 @@ public abstract class AbstractCharacterObject : MonoBehaviour
         return false;
     }
 
-	//仮
-	public bool checkDistance(GameObject obj1, GameObject obj2, int i)
-	{
-		if (Mathf.Abs (obj1.transform.position.x - obj2.transform.position.x) <= i * 10) {
-			if (Mathf.Abs (obj1.transform.position.z - obj2.transform.position.z) <= i * 10) {
-				return true;
-			}
-		}
-		return false;
-	}
+    //仮
+    public bool checkDistance(GameObject obj1, GameObject obj2, int i)
+    {
+        if (Mathf.Abs(obj1.transform.position.x - obj2.transform.position.x) <= i * 10)
+        {
+            if (Mathf.Abs(obj1.transform.position.z - obj2.transform.position.z) <= i * 10)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

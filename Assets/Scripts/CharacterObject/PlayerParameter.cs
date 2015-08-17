@@ -9,13 +9,13 @@ public class PlayerParameter : AbstractCharacterParameter
     public static PlayerParameter getPlayerParameter(string cName, int maxHp, int atk)
     {
         var parameter = new PlayerParameter();
-		parameter.cName = cName;
-		parameter.lv = 1;
-		parameter.maxHp = maxHp;
-		parameter.atk = atk;
-		parameter.hp = parameter.maxHp;
-		parameter.maxSp = 100;
-		parameter.sp = parameter.maxSp;
+        parameter.cName = cName;
+        parameter.lv = 1;
+        parameter.maxHp = maxHp;
+        parameter.atk = atk;
+        parameter.hp = parameter.maxHp;
+        parameter.maxSp = 100;
+        parameter.sp = parameter.maxSp;
         return parameter;
     }
 }

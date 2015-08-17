@@ -19,7 +19,7 @@ public class PathSquare : AbstractSquare
     public void setPathSquare(int row, int column, int adjustX, int adjustY, Direction a)
     {
         sequence = new MyVector2(row, column);
-		nextSequence = new MyVector2(row + adjustX, column + adjustY);
+        nextSequence = new MyVector2(row + adjustX, column + adjustY);
         direction = a;
     }
 
@@ -42,8 +42,8 @@ public class PathSquare : AbstractSquare
     public void pathEvent(DungeonManager.Floor floor)
     {
         floor.destroyPrevious(sequence);
-		floor.createNext(nextSequence);
-		floor.randomizeToSquare(nextSequence, ObjectManager.Instance.character[0]);
+        floor.createNext(nextSequence);
+        floor.randomizeToSquare(nextSequence, ObjectManager.Instance.character[0]);
         TurnManager.Instance.turnCharacter = 0;
     }
 }

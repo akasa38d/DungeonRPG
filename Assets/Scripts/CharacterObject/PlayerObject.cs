@@ -4,18 +4,18 @@ using UnityEngine.UI;
 
 public class PlayerObject : AbstractCharacterObject
 {
-	public GameObject lvCount;
-	public GameObject hpCount;
-	public GameObject spCount;
+    public GameObject lvCount;
+    public GameObject hpCount;
+    public GameObject spCount;
 
     public void Start()
     {
         this.type = Type.Player;
         this.parameter = PlayerParameter.getPlayerParameter("赤ずきん", 30, 30);
 
-		lvCount.GetComponent<Text> ().text = parameter.lv.ToString();
-		hpCount.GetComponent<Text> ().text = parameter.hp.ToString() + " / " + parameter.maxHp.ToString();
-		spCount.GetComponent<Text> ().text = parameter.sp.ToString() + " / " + parameter.maxSp.ToString();
+        lvCount.GetComponent<Text>().text = parameter.lv.ToString();
+        hpCount.GetComponent<Text>().text = parameter.hp.ToString() + " / " + parameter.maxHp.ToString();
+        spCount.GetComponent<Text>().text = parameter.sp.ToString() + " / " + parameter.maxSp.ToString();
     }
 
     //基本処理
@@ -24,45 +24,46 @@ public class PlayerObject : AbstractCharacterObject
     //スタンバイフェイズ
     protected override void startOperation()
     {
-		ObjectManager.Instance.setCharacter();
-		ObjectManager.Instance.setSquare();
+        ObjectManager.Instance.setCharacter();
+        ObjectManager.Instance.setSquare();
 
         //移動ボタンを生成
         createMoveButton();
-		//基本処理
+        //基本処理
         base.startOperation();
     }
 
     //メインフェイズ
     protected override void mainOperation() { }
 
-	//プリエンドフェイズ
-	protected override void preEndOperation()
-	{
-		this.gameObject.GetComponent<ItemManager> ().preTurnEnd ();
-		base.preEndOperation ();
-	}
+    //プリエンドフェイズ
+    protected override void preEndOperation()
+    {
+        this.gameObject.GetComponent<ItemManager>().preTurnEnd();
+        base.preEndOperation();
+    }
 
     //エンドフェイズ
-    protected override void endOperation() {
-		this.gameObject.GetComponent<ItemManager> ().turnEnd();
-		base.endOperation ();
-	}
+    protected override void endOperation()
+    {
+        this.gameObject.GetComponent<ItemManager>().turnEnd();
+        base.endOperation();
+    }
 
     //ターン終了
     protected override void nextOperation() { }
 
-	public void moveButtonEvent()
-	{
+    public void moveButtonEvent()
+    {
 
-	}
+    }
 
-	//移動用ボタンを生成
+    //移動用ボタンを生成
     public void createMoveButton()
     {
-		this.gameObject.GetComponent<ItemManager> ().usingNumber = -1;
+        this.gameObject.GetComponent<ItemManager>().usingNumber = -1;
 
-		deleteButton ();
+        deleteButton();
 
         //prefabsの設定
         GameObject moveButton = PrefabManager.Instance.moveButton;
@@ -119,15 +120,15 @@ public class PlayerObject : AbstractCharacterObject
         base.movePosition(obj);
     }
 
-	//ItemにInstantiateさせるためのもの
-	public GameObject pInstantiate(GameObject obj)
-	{
-		var n = Instantiate(obj) as GameObject;
-		return n;
-	}
-	public GameObject pInstantiate(GameObject obj, Vector3 vector3)
-	{
-		var n = Instantiate(obj, vector3, Quaternion.identity) as GameObject;
-		return n;
-	}
+    //ItemにInstantiateさせるためのもの
+    public GameObject pInstantiate(GameObject obj)
+    {
+        var n = Instantiate(obj) as GameObject;
+        return n;
+    }
+    public GameObject pInstantiate(GameObject obj, Vector3 vector3)
+    {
+        var n = Instantiate(obj, vector3, Quaternion.identity) as GameObject;
+        return n;
+    }
 }

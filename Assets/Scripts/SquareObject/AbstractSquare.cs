@@ -7,7 +7,7 @@ public abstract class AbstractSquare : MonoBehaviour
 {
     //オブジェクト
     public GameObject character;
-    public GameObject item;
+    public GameObject fieldItem;
     public GameObject trap;
 
     //位置
@@ -59,7 +59,7 @@ public abstract class AbstractSquare : MonoBehaviour
         {
             if (checkZeroDistance(obj))
             {
-                this.item = obj;
+                this.fieldItem = obj;
                 return true;
             }
         }
@@ -92,16 +92,26 @@ public abstract class AbstractSquare : MonoBehaviour
     }
 
     //乗った時
-    public virtual void enterThis() { }
+    public virtual void enterThis()
+    {
+        if (isCharacterOn(AbstractCharacterObject.Type.Player))
+        {
+            if (isItemOn())
+            {
+                fieldItem.GetComponent<FieldItem>().operation();
+            }
+        }
+    }
+
     //調べた時
     public virtual void checkThis() { }
 
-	public GameObject[] aroundSquare(int i)
-	{
-		var aSquare = from n in ObjectManager.Instance.square
-			where Mathf.Abs (this.transform.position.x - n.transform.position.x) <= i * 10
-				&& Mathf.Abs (this.transform.position.z - n.transform.position.z) <= i * 10
-				select n;
-		return aSquare.ToArray();
-	}
+    public GameObject[] aroundSquare(int i)
+    {
+        var aSquare = from n in ObjectManager.Instance.square
+                      where Mathf.Abs(this.transform.position.x - n.transform.position.x) <= i * 10
+                          && Mathf.Abs(this.transform.position.z - n.transform.position.z) <= i * 10
+                      select n;
+        return aSquare.ToArray();
+    }
 }

@@ -11,8 +11,8 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
     public int id;
 
     //部屋の数
-	public static int sequenceSizeX;
-	public static int sequenceSizeY;
+    public static int sequenceSizeX;
+    public static int sequenceSizeY;
 
     //部屋の最大サイズ
     static int minRoomSize;
@@ -24,33 +24,33 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         XmlNodeList nodes = XMLReader.Instance.dungeonNodes;
         XmlNode tempNode = nodes[number];
 
-		int count = 0;
-		Floor.Instance.enemyDictionary.Clear ();
+        int count = 0;
+        Floor.Instance.enemyDictionary.Clear();
 
         id = int.Parse(tempNode.Attributes.GetNamedItem("id").Value);
 
         foreach (XmlNode node in tempNode.ChildNodes)
         {
-			if (node.Name == "floorSizeX") { sequenceSizeX = int.Parse(node.InnerText); }
-			if (node.Name == "floorSizeY") { sequenceSizeY = int.Parse(node.InnerText); }
+            if (node.Name == "floorSizeX") { sequenceSizeX = int.Parse(node.InnerText); }
+            if (node.Name == "floorSizeY") { sequenceSizeY = int.Parse(node.InnerText); }
             if (node.Name == "minRoomSize") { minRoomSize = int.Parse(node.InnerText); }
             if (node.Name == "maxRoomSize") { maxRoomSize = int.Parse(node.InnerText); }
-			//enemyDictionaryの作成
-			if(node.Name == "enemy")
-			{
-				int EnemyID = int.Parse(node.Attributes.GetNamedItem("EnemyID").Value);
-				int frequency = int.Parse(node.Attributes.GetNamedItem("frequency").Value);
+            //enemyDictionaryの作成
+            if (node.Name == "enemy")
+            {
+                int EnemyID = int.Parse(node.Attributes.GetNamedItem("EnemyID").Value);
+                int frequency = int.Parse(node.Attributes.GetNamedItem("frequency").Value);
 
-				Floor.Instance.enemyDictionary.Add (EnemyID, frequency);
-				Debug.Log ("idは" + Floor.Instance.enemyDictionary.ElementAt(count).Key);
-				Debug.Log ("出現率は" + Floor.Instance.enemyDictionary.ElementAt(count).Value);
-				count ++;
-			}
+                Floor.Instance.enemyDictionary.Add(EnemyID, frequency);
+                Debug.Log("idは" + Floor.Instance.enemyDictionary.ElementAt(count).Key);
+                Debug.Log("出現率は" + Floor.Instance.enemyDictionary.ElementAt(count).Value);
+                count++;
+            }
         }
     }
 
     public Room[,] room;
-	
+
     public override void Awake()
     {
         base.Awake();
@@ -68,10 +68,10 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         //部屋の並びのサイズ
         public MyVector2 sequenceSize;
 
-		//ダンジョンに出現する敵の管理（ID、確率）
-		public Dictionary<int, int> enemyDictionary = new Dictionary<int, int>();
-		//ダンジョンに出現するアイテムの管理（ID、確率）
-//		public Dictionary<int, int> itemDictionary = new Dictionary<int, int>();
+        //ダンジョンに出現する敵の管理（ID、確率）
+        public Dictionary<int, int> enemyDictionary = new Dictionary<int, int>();
+        //ダンジョンに出現するアイテムの管理（ID、確率）
+        //		public Dictionary<int, int> itemDictionary = new Dictionary<int, int>();
 
         public void setFloor(int x, int y)
         {
@@ -79,7 +79,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             room = new Room[sequenceSize.x, sequenceSize.y];
         }
 
-		//一番最初の処理
+        //一番最初の処理
         public void createTest()
         {
             //予め部屋のデータを登録
@@ -99,63 +99,64 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             room[tmpX, tmpY].createStage();
 
             room[tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character[0]);
-			for (int i = 1; i < ObjectManager.Instance.character.Count(); i++)
+            for (int i = 1; i < ObjectManager.Instance.character.Count(); i++)
             {
-				room[tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character[i]);
+                room[tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character[i]);
             }
         }
 
         public void createNext(MyVector2 sequence)
         {
-			if (room[sequence.x, sequence.y].isBuild == false)
+            if (room[sequence.x, sequence.y].isBuild == false)
             {
-				room[sequence.x, sequence.y].createStage();
+                room[sequence.x, sequence.y].createStage();
             }
         }
 
-		public void destroyPrevious(MyVector2 sequence)
+        public void destroyPrevious(MyVector2 sequence)
         {
-			room[sequence.x, sequence.y].destroyStage();
+            room[sequence.x, sequence.y].destroyStage();
         }
 
         public void randomizeToSquare(MyVector2 sequence, GameObject obj)
         {
-			room[sequence.x, sequence.y].randomizeToSquare2(obj);
+            room[sequence.x, sequence.y].randomizeToSquare2(obj);
         }
 
-		public int getRandomEnemy()
-		{
-			int accumulation = 0;
-			int randomNumber = Random.Range (1, enemyDictionary.Values.Sum());
-			for (int i = 0; i < enemyDictionary.Count; i++)
-			{
-				if((enemyDictionary.ElementAt(i).Value + accumulation) >= randomNumber)
-				{
-					return enemyDictionary.ElementAt(i).Key;
-				}
-				accumulation += enemyDictionary.ElementAt(i).Value;
-			}
-			return 0;
-		}
+        public int getRandomEnemy()
+        {
+            int accumulation = 0;
+            int randomNumber = Random.Range(1, enemyDictionary.Values.Sum());
+            for (int i = 0; i < enemyDictionary.Count; i++)
+            {
+                if ((enemyDictionary.ElementAt(i).Value + accumulation) >= randomNumber)
+                {
+                    return enemyDictionary.ElementAt(i).Key;
+                }
+                accumulation += enemyDictionary.ElementAt(i).Value;
+            }
+            return 0;
+        }
 
-		//用確認
-		public void prepareEnemy()
-		{
-			//ランダムに部屋を選ぶ
-			int tmpX = Random.Range(0, sequenceSize.x);
-			int tmpY = Random.Range(0, sequenceSize.y);
+        //用確認
+        public void prepareEnemy()
+        {
+            //ランダムに部屋を選ぶ
+            int tmpX = Random.Range(0, sequenceSize.x);
+            int tmpY = Random.Range(0, sequenceSize.y);
 
-			int i = getRandomEnemy ();
-			room[tmpX, tmpY].enemyList.Add (new EnemyContainer(i));
-		}		
-	}
+            int i = getRandomEnemy();
+            room[tmpX, tmpY].enemyList.Add(new EnemyContainer(i));
+        }
+    }
 
-	/// <summary>
-	/// 階層内の部屋を管理する各クラス
-	/// </summary>
+    /// <summary>
+    /// 階層内の部屋を管理する各クラス
+    /// </summary>
     public class Room
     {
-		public List<EnemyContainer> enemyList = new List<EnemyContainer>();
+        public List<EnemyContainer> enemyList = new List<EnemyContainer>();
+        public List<ItemContainer> itemList = new List<ItemContainer>();
 
         //大きさ
         public MyVector2 size;
@@ -170,6 +171,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         {
             return new MyVector2(x, y);
         }
+
 
         //小路クラス
         public Path path;
@@ -196,7 +198,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
 
 
 
-		//実体化しているかどうか
+        //実体化しているかどうか
         public bool isBuild = false;
 
         //プレイヤーがいるかどうか
@@ -213,6 +215,11 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         {
             var room = new Room(randomCreateSize(), createPosition(x, y));
             room.path = Path.randomCreatePath(room.size);
+
+            room.itemList.Add(new ItemContainer(2));
+            room.itemList.Add(new ItemContainer(1));
+            Debug.Log(room.itemList[1].item);
+
             return room;
         }
 
@@ -232,18 +239,43 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             }
             createStagePath();
 
-			if (enemyList.Count () != 0)
-			{
-				foreach(var n in enemyList)
-				{
-					var obj = Instantiate (n.prefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
-					obj.GetComponent<AbstractCharacterObject>().parameter = n.parameter;
-					Debug.Log(n.parameter.cName + "ですにゃあ");
-					Debug.Log(obj.GetComponent<AbstractCharacterObject>().parameter.cName + "ですにゃん");
-					randomizeToSquare2(obj);
-				}
-			}
-			enemyList.Clear ();
+            //敵の生成
+            if (enemyList.Count() != 0)
+            {
+                foreach (var n in enemyList)
+                {
+                    var obj = Instantiate(n.prefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+                    obj.GetComponent<AbstractCharacterObject>().parameter = n.parameter;
+                    Debug.Log(n.parameter.cName + "ですにゃあ");
+                    Debug.Log(obj.GetComponent<AbstractCharacterObject>().parameter.cName + "ですにゃん");
+                    randomizeToSquare2(obj);
+                }
+            }
+            enemyList.Clear();
+
+            //アイテムの生成
+            if (itemList.Count() != 0)
+            {
+                foreach (var n in itemList)
+                {
+                    if (n.vector3 != new Vector3(-1, -1, -1))
+                    {
+                        var obj = Instantiate(PrefabManager.Instance.item, n.vector3, Quaternion.identity) as GameObject;
+                        obj.GetComponent<FieldItem>().item = n.item;
+                    }
+                    if (n.vector3 == new Vector3(-1, -1, -1))
+                    {
+                        var obj = Instantiate(PrefabManager.Instance.item) as GameObject;
+                        obj.GetComponent<FieldItem>().item = n.item;
+                        randomizeToSquare2(obj);
+                    }
+                }
+            }
+            itemList.Clear();
+
+
+
+
 
             isBuild = true;
         }
@@ -258,7 +290,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             int tmpZ;
 
             //up
-            if (sequence.y != Floor.Instance.sequenceSize.y-1)
+            if (sequence.y != Floor.Instance.sequenceSize.y - 1)
             {
                 tmpX = (path.up + sequence.x * (maxRoomSize + 3)) * 10;
                 tmpZ = (size.x + sequence.y * (maxRoomSize + 3)) * 10;
@@ -291,7 +323,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             }
 
             //right
-            if (sequence.x != Floor.Instance.sequenceSize.x-1)
+            if (sequence.x != Floor.Instance.sequenceSize.x - 1)
             {
                 tmpX = (size.y + sequence.x * (maxRoomSize + 3)) * 10;
                 tmpZ = (path.left + sequence.y * (maxRoomSize + 3)) * 10;
@@ -316,8 +348,8 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             {
                 if (obj.GetComponent<AbstractCharacterObject>().type == AbstractCharacterObject.Type.Enemy)
                 {
-					var i = obj.GetComponent<AbstractCharacterObject>().parameter;
-					enemyList.Add(new EnemyContainer(i));
+                    var i = obj.GetComponent<AbstractCharacterObject>().parameter;
+                    enemyList.Add(new EnemyContainer(i));
                     Destroy(obj);
                 }
             }
@@ -341,10 +373,10 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                                 && n.GetComponent<AbstractSquare>().isCharacterOn() == false
                             select n;
 
-			//床のリストからランダムに取得
+            //床のリストからランダムに取得
             var tmpObj = tmpSquare.ElementAt(Random.Range(0, tmpSquare.Count()));
 
-			//取得した位置へ移動
+            //取得した位置へ移動
             obj.transform.position = new Vector3(tmpObj.transform.position.x, 55f, tmpObj.transform.position.z);
         }
 

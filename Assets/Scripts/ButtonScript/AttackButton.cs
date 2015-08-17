@@ -4,7 +4,7 @@ using System.Collections;
 
 public class AttackButton : AbstractButton
 {
-	public Action<GameObject> attack;
+    public Action<GameObject> attack;
 
     new void Start() { base.Start(); }
 

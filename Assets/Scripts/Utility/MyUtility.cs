@@ -28,7 +28,7 @@ namespace MyUtility
 
     /// <summary>
     /// 二つの値を扱うクラス
-	/// ジェネリックからintのみに変更
+    /// ジェネリックからintのみに変更
     /// </summary>
     public class MyVector2
     {
@@ -40,18 +40,18 @@ namespace MyUtility
             this.x = x;
             this.y = y;
         }
-		public MyVector2(MyVector2 myVector2)
-		{
-			this.x = myVector2.x;
-			this.y = myVector2.y;
-		}
-		public bool isEqual(MyVector2 myVector2)
-		{
-			if (this.x == myVector2.x && this.y == myVector2.y)
-			{
-				return true;
-			}
-			return false;
-		}
+        public MyVector2(MyVector2 myVector2)
+        {
+            this.x = myVector2.x;
+            this.y = myVector2.y;
+        }
+        public bool isEqual(MyVector2 myVector2)
+        {
+            if (this.x == myVector2.x && this.y == myVector2.y)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

@@ -10,19 +10,20 @@ public class EnemyObject : AbstractCharacterObject
         this.type = Type.Enemy;
         myAttack = new AttackWay("キック", 30, null);
         Debug.Log("名前は" + this.parameter.cName);
-		Debug.Log ("IDは" + this.parameter.id);
-		Debug.Log ("攻撃手段：" + myAttack.name);
+        Debug.Log("IDは" + this.parameter.id);
+        Debug.Log("攻撃手段：" + myAttack.name);
     }
 
     //基本処理
     public override void operation() { base.operation(); }
 
     //スタンバイフェイズ
-    protected override void startOperation() {
-		ObjectManager.Instance.setCharacter();
-		ObjectManager.Instance.setSquare();
-		base.startOperation();
-	}
+    protected override void startOperation()
+    {
+        ObjectManager.Instance.setCharacter();
+        ObjectManager.Instance.setSquare();
+        base.startOperation();
+    }
 
     //メインフェイズ
     protected override void mainOperation()
@@ -30,8 +31,8 @@ public class EnemyObject : AbstractCharacterObject
         searchTarget();
     }
 
-	//プリエンドフェイズ
-	protected override void preEndOperation() { base.preEndOperation(); }
+    //プリエンドフェイズ
+    protected override void preEndOperation() { base.preEndOperation(); }
 
     //エンドフェイズ
     protected override void endOperation() { base.endOperation(); }
@@ -86,32 +87,32 @@ public class EnemyObject : AbstractCharacterObject
                 }
 
 
-				//ゴリ押し
-				if (obj.GetComponent<AbstractSquare>().isCharacterOn())
-				{
+                //ゴリ押し
+                if (obj.GetComponent<AbstractSquare>().isCharacterOn())
+                {
 
-					foreach (GameObject obj2 in ObjectManager.Instance.square)
-					{
-						if (obj2.transform.position.x == this.transform.position.x
-						    && obj2.transform.position.z == this.transform.position.z + y)
-						{
-							if (!obj2.GetComponent<AbstractSquare>().isCharacterOn())
-							{
-								movePosition(obj2);
-								break;
-							}
-						}
-						if (obj2.transform.position.x == this.transform.position.x + x
-						    && obj2.transform.position.z == this.transform.position.z)
-						{
-							if (!obj2.GetComponent<AbstractSquare>().isCharacterOn())
-							{
-								movePosition(obj2);
-								break;
-							}
-						}
-					}
-				}
+                    foreach (GameObject obj2 in ObjectManager.Instance.square)
+                    {
+                        if (obj2.transform.position.x == this.transform.position.x
+                            && obj2.transform.position.z == this.transform.position.z + y)
+                        {
+                            if (!obj2.GetComponent<AbstractSquare>().isCharacterOn())
+                            {
+                                movePosition(obj2);
+                                break;
+                            }
+                        }
+                        if (obj2.transform.position.x == this.transform.position.x + x
+                            && obj2.transform.position.z == this.transform.position.z)
+                        {
+                            if (!obj2.GetComponent<AbstractSquare>().isCharacterOn())
+                            {
+                                movePosition(obj2);
+                                break;
+                            }
+                        }
+                    }
+                }
 
 
             }

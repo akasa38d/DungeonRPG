@@ -8,14 +8,15 @@ using System.Linq;
 /// </summary>
 public class TurnManager : SingletonMonoBehaviour<TurnManager>
 {
-	//ターンプレイヤー
+    //ターンプレイヤー
     public int turnCharacter = 0;
-	//ターンカウント
-	public int turnCount = 0;
+    //ターンカウント
+    public int turnCount = 0;
 
-    public override void Awake() {
-		base.Awake();
-	}
+    public override void Awake()
+    {
+        base.Awake();
+    }
 
     //処理
     public void operation()
@@ -27,56 +28,56 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
     {
         var turnPlayer = ObjectManager.Instance.characterScript;
 
-		turnPlayer [turnCharacter].operation ();
-		yield return null;
+        turnPlayer[turnCharacter].operation();
+        yield return null;
 
-		if (FadeManager.Instance.isFading)
-		{
-			turnPlayer[turnCharacter].process = AbstractCharacterObject.Process.Start;
-			turnCharacter = 0;
-			yield return 0;
-		}
+        if (FadeManager.Instance.isFading)
+        {
+            turnPlayer[turnCharacter].process = AbstractCharacterObject.Process.Start;
+            turnCharacter = 0;
+            yield return 0;
+        }
 
         //もしフェーディングしているなら
         while (FadeManager.Instance.isFading)
         {
-			yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
         }
 
-		yield return null;
+        yield return null;
 
-		if (turnPlayer[turnCharacter].process == AbstractCharacterObject.Process.Next)
+        if (turnPlayer[turnCharacter].process == AbstractCharacterObject.Process.Next)
         {
-			turnPlayer[turnCharacter].process = AbstractCharacterObject.Process.Start;
-			turnCharacter++;
+            turnPlayer[turnCharacter].process = AbstractCharacterObject.Process.Start;
+            turnCharacter++;
         }
 
-		yield return null;
+        yield return null;
 
         //ループ
-		if (turnCharacter >= turnPlayer.Count)
-		{
-//			foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Effect"))
-//			{
-//				Destroy(obj);
-//			}
+        if (turnCharacter >= turnPlayer.Count)
+        {
+            //			foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Effect"))
+            //			{
+            //				Destroy(obj);
+            //			}
 
-			//０番のキャラクタへターンプレイヤーを変更
-			turnCharacter = 0;
-			//ターン数増加
-			turnCount++;
+            //０番のキャラクタへターンプレイヤーを変更
+            turnCharacter = 0;
+            //ターン数増加
+            turnCount++;
 
-			Debug.Log (turnCount + "ターン目開始");
+            Debug.Log(turnCount + "ターン目開始");
 
-			//敵の出現
-			if (turnCount % 2 == 0)
-			{
-				Debug.Log("敵の出現");
-				DungeonManager.Floor.Instance.prepareEnemy();
-			}
-		}
+            //敵の出現
+            if (turnCount % 2 == 0)
+            {
+                Debug.Log("敵の出現");
+                DungeonManager.Floor.Instance.prepareEnemy();
+            }
+        }
 
-		yield return null;
+        yield return null;
     }
 
 
