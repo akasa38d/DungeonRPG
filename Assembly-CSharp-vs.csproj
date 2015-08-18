@@ -73,6 +73,8 @@
      <Compile Include="Assets\Scripts\SquareObject\PathSquare.cs" />
      <Compile Include="Assets\Scripts\SquareObject\PlaneSquare.cs" />
      <Compile Include="Assets\Scripts\TurnManager.cs" />
+     <Compile Include="Assets\Scripts\UI\CardButton.cs" />
+     <Compile Include="Assets\Scripts\UI\LockButton.cs" />
      <Compile Include="Assets\Scripts\Utility\MyUtility.cs" />
      <Compile Include="Assets\Scripts\Utility\SingletonMonoBehaviour.cs" />
      <Compile Include="Assets\Scripts\XMLReader.cs" />

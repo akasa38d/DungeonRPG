@@ -31,6 +31,10 @@ public abstract class Item
     //実際に行われる処理処理
     public virtual void operation() { }
     public virtual void operation(GameObject obj) { }
+	public virtual void changeOperation()
+	{
+		playerScript.process = AbstractCharacterObject.Process.PreEnd;
+	}
 }
 
 /// <summary>
@@ -69,11 +73,6 @@ public class FlowerItem : Item
         chain = false;
         expendable = false;
         magic = false;
-    }
-
-    public override void buttonEvent()
-    {
-        playerScript.process = AbstractCharacterObject.Process.PreEnd;
     }
 }
 

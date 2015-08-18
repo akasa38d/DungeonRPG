@@ -1,23 +1,21 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ObjectBuilder.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Item\ItemManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\Item\ItemManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Item\Item.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Item\FieldItem.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\DungeonManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\ObjectBuilder.cs" Line="39" Column="17" />
-      <File FileName="Assets\Scripts\GameManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Item\ItemManager.cs" Line="215" Column="2" />
+      <File FileName="Assets\Scripts\Item\Item.cs" Line="74" Column="28" />
+      <File FileName="Assets\Scripts\UI\CardButton.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\UI\LockButton.cs" Line="8" Column="3" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Scripts" expanded="True">
-              <Node name="CharacterObject" expanded="True" />
-              <Node name="Item" expanded="True" />
-              <Node name="SquareObject" expanded="True" />
-              <Node name="ObjectBuilder.cs" selected="True" />
+              <Node name="Item" expanded="True">
+                <Node name="ItemManager.cs" selected="True" />
+              </Node>
+              <Node name="UI" expanded="True" />
             </Node>
           </Node>
         </State>

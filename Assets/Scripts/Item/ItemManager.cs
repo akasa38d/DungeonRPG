@@ -83,22 +83,49 @@ public class ItemManager : MonoBehaviour
         yield return null;
     }
 
-    public void use(int handNumber)
+
+	//カードの選択
+	public bool[] isSelect = new bool[6] {false,false,false,false,false,false};
+	public void select(int handNumber)
+	{
+		if (handCard[handNumber].id == 0)
+		{
+			Debug.Log("カードがないぜ！");
+		}
+
+		if (handCard [handNumber].id != 0) {
+			if (!isSelect [handNumber]) {
+				use (handNumber);
+				return;
+			}
+			if (isSelect [handNumber]) {
+				change (handNumber);
+				return;
+			}
+		}
+	}
+
+    void use(int handNumber)
     {
+		switchingSelect (handNumber, true);
+
         Debug.Log("このカードを使うぜ！");
+        
+        usingNumber = handNumber;
 
-        if (handCard[handNumber].id == 0)
-        {
-            Debug.Log("カードがないぜ！");
-        }
-
-        if (handCard[handNumber].id != 0)
-        {
-            usingNumber = handNumber;
-
-            handCard[handNumber].buttonEvent();
-        }
+        handCard[handNumber].buttonEvent();
     }
+
+	void change(int handNumber)
+	{
+		switchingSelect (handNumber, false);
+
+		usingNumber = handNumber;
+
+		handCard [handNumber].changeOperation ();
+	}
+
+
 
     public void draw(int handNumber)
     {
@@ -152,6 +179,11 @@ public class ItemManager : MonoBehaviour
         usedCard.Clear();
         usedCount.GetComponent<Text>().text = usedCard.Count().ToString();
 
+		for (int i = 0; i < 6; i ++)
+		{
+			switchingSelect(i, false);
+		}
+
         for (int i = 0; i < 5; i++)
         {
             if (handCard[i].id == 0)
@@ -168,7 +200,7 @@ public class ItemManager : MonoBehaviour
         {
             foreach (var n in cardUI)
             {
-                n.GetComponent<Button>().interactable = false;
+				n.GetComponent<Button>().interactable = false;
             }
         }
 
@@ -179,7 +211,6 @@ public class ItemManager : MonoBehaviour
                 cardUI[i].GetComponent<Button>().interactable = true;
             }
         }
-
     }
 
     //カードの取得
@@ -189,4 +220,15 @@ public class ItemManager : MonoBehaviour
         var image = cardUI[handNumber].GetComponent<Image>();
         image.sprite = handCard[handNumber].sprite;
     }
+
+	public void switchingSelect(int number, bool flag)
+	{
+		isSelect[number] = flag;
+		var child = cardUI[number].transform.FindChild("change");
+		child.GetComponent<Text> ().enabled = flag;
+	}
+	public void ResetSelect(int handNumber)
+	{
+		switchingSelect(handNumber, false);
+	}
 }
