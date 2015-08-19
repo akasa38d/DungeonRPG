@@ -375,10 +375,11 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
 
             //床のリスト
             var tmpSquare = from n in ObjectManager.Instance.square
-                            where n.GetComponent<AbstractSquare>().type == AbstractSquare.Type.Normal
-                                && n.GetComponent<AbstractSquare>().sequence.isEqual(this.sequence)
-                                && n.GetComponent<AbstractSquare>().isCharacterOn() == false
-                            select n;
+				where n.GetComponent<AbstractSquare>().type == AbstractSquare.Type.Normal
+					&& n.GetComponent<AbstractSquare>().sequence.isEqual(this.sequence)
+					&& n.GetComponent<AbstractSquare>().isCharacterOn() == false
+					&& n.GetComponent<AbstractSquare>().isItemOn() == false
+					select n;
 
             //床のリストからランダムに取得
             var tmpObj = tmpSquare.ElementAt(Random.Range(0, tmpSquare.Count()));

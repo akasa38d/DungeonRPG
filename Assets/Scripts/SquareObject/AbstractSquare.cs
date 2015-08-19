@@ -106,6 +106,7 @@ public abstract class AbstractSquare : MonoBehaviour
     //調べた時
     public virtual void checkThis() { }
 
+	//チェビシェフ距離
     public GameObject[] aroundSquare(int i, bool aroundOnly = false)
     {
         var aSquare = from n in ObjectManager.Instance.square
@@ -119,4 +120,5 @@ public abstract class AbstractSquare : MonoBehaviour
 
 		return aSquare.Where((n) => n.transform.position != this.transform.position).ToArray ();
     }
+	//マンハッタン距離
 }

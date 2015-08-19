@@ -187,34 +187,54 @@ public class ItemManager : MonoBehaviour
 
     public void turnEnd()
     {
-        Debug.Log("使用したカードを墓地に送るぜ！");
-        //使用したカードをトラッシュに送る
-        trashCard.AddRange(usedCard);
-        trashCount.GetComponent<Text>().text = trashCard.Count().ToString();
+		StartCoroutine ("turnEndCoroutine");
+    }
 
-        //使用したカードをクリア
-        usedCard.Clear();
-        usedCount.GetComponent<Text>().text = usedCard.Count().ToString();
+	IEnumerator turnEndCoroutine()
+	{
+		Debug.Log("使用したカードを墓地に送るぜ！");
+
+		//使用したカードをトラッシュに送る
+		for(int i = 0; i < usedCard.Count(); i++)
+		{
+			if(usedCard[i].expendable == true)
+			{
+				usedCard.Remove(usedCard[i]);
+			}
+		}
+		yield return null;
+
+		trashCard.AddRange(usedCard);
+		trashCount.GetComponent<Text>().text = trashCard.Count().ToString();
+		yield return null;
+
+		//使用したカードをクリア
+		usedCard.Clear();
+		usedCount.GetComponent<Text>().text = usedCard.Count().ToString();
+		yield return null;
 
 		for (int i = 0; i < 6; i ++)
 		{
 			switchingSelect(i, false);
 		}
+		yield return null;
+		
+		for (int i = 0; i < 5; i++)
+		{
+			if (handCard[i].id == 0)
+			{
+				Debug.Log("補充だぜ！");
+				draw(i);
+			}
+		}
 
-        for (int i = 0; i < 5; i++)
-        {
-            if (handCard[i].id == 0)
-            {
-                Debug.Log("補充だぜ！");
-                draw(i);
-            }
-        }
+		yield return null;
 
-		Debug.Log (handNum() + trashCard.Count() + deckCard.Count());
 		if (handNum() + trashCard.Count() + deckCard.Count() > 17) {
 			gameClear();
 		}
-    }
+		yield return null;
+	}
 
     public void Update()
     {

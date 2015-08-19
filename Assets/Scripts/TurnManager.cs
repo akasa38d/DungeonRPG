@@ -11,7 +11,7 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
     //ターンプレイヤー
     public int turnCharacter = 0;
     //ターンカウント
-    public int turnCount = 0;
+    public int turnCount = 1;
 
     public override void Awake()
     {
@@ -57,10 +57,10 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
         //ループ
         if (turnCharacter >= turnPlayer.Count)
         {
-            //			foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Effect"))
-            //			{
-            //				Destroy(obj);
-            //			}
+//			foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Effect"))
+//			{
+//				Destroy(obj);
+//			}
 
             //０番のキャラクタへターンプレイヤーを変更
             turnCharacter = 0;
