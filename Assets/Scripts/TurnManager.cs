@@ -70,7 +70,7 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
             Debug.Log(turnCount + "ターン目開始");
 
             //敵の出現
-            if (turnCount % 2 == 0)
+            if (turnCount % 3 == 0)
             {
                 Debug.Log("敵の出現");
                 DungeonManager.Floor.Instance.prepareEnemy();

@@ -106,12 +106,17 @@ public abstract class AbstractSquare : MonoBehaviour
     //調べた時
     public virtual void checkThis() { }
 
-    public GameObject[] aroundSquare(int i)
+    public GameObject[] aroundSquare(int i, bool aroundOnly = false)
     {
         var aSquare = from n in ObjectManager.Instance.square
                       where Mathf.Abs(this.transform.position.x - n.transform.position.x) <= i * 10
                           && Mathf.Abs(this.transform.position.z - n.transform.position.z) <= i * 10
                       select n;
-        return aSquare.ToArray();
+		if (!aroundOnly)
+		{
+			return aSquare.ToArray ();
+		}
+
+		return aSquare.Where((n) => n.transform.position != this.transform.position).ToArray ();
     }
 }

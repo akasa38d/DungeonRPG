@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class EnemyObject : AbstractCharacterObject
 {
@@ -9,9 +10,6 @@ public class EnemyObject : AbstractCharacterObject
     {
         this.type = Type.Enemy;
         myAttack = new AttackWay("キック", 30, null);
-        Debug.Log("名前は" + this.parameter.cName);
-        Debug.Log("IDは" + this.parameter.id);
-        Debug.Log("攻撃手段：" + myAttack.name);
     }
 
     //基本処理
@@ -37,6 +35,7 @@ public class EnemyObject : AbstractCharacterObject
     //エンドフェイズ
     protected override void endOperation() { base.endOperation(); }
 
+	//仮
     protected override void nextOperation() { base.nextOperation(); }
 
 
@@ -64,63 +63,29 @@ public class EnemyObject : AbstractCharacterObject
     //移動
     void moveTowardTarget(GameObject target)
     {
-        int x = 0;
-        int y = 0;
+		//現在地を取得
+		var squares = from n in ObjectManager.Instance.square
+			where n.transform.position.x == this.gameObject.transform.position.x
+			&& n.transform.position.z == this.gameObject.transform.position.z
+				select n;
 
-        int tempX = (int)target.transform.position.x - (int)this.transform.position.x;
+		//現在地から範囲１以内のマスを取得（現在地含まない）
+		var aroundSquare = squares.ElementAt (0).GetComponent<AbstractSquare> ().aroundSquare (1, true);
 
-        int tempY = (int)target.transform.position.z - (int)this.transform.position.z;
+		//targetに一番近いマスを取得
+		var positions = from n in aroundSquare
+			where n.GetComponent<AbstractSquare>().isCharacterOn() != true
+			orderby Vector3.Distance (n.transform.position, target.transform.position)
+				select n;
 
-        if (tempX != 0) { x = tempX / Mathf.Abs(tempX) * 10; }
+		//移動できるマスがあれば
+		if (positions.Count () != 0)
+		{
+			var position = positions.ElementAt (0);
+			movePosition(position);
+		}
 
-        if (tempY != 0) { y = tempY / Mathf.Abs(tempY) * 10; }
-
-        foreach (GameObject obj in ObjectManager.Instance.square)
-        {
-            if (obj.transform.position.x == this.transform.position.x + x
-                && obj.transform.position.z == this.transform.position.z + y)
-            {
-                if (!obj.GetComponent<AbstractSquare>().isCharacterOn())
-                {
-                    movePosition(obj);
-                    break;
-                }
-
-
-                //ゴリ押し
-                if (obj.GetComponent<AbstractSquare>().isCharacterOn())
-                {
-
-                    foreach (GameObject obj2 in ObjectManager.Instance.square)
-                    {
-                        if (obj2.transform.position.x == this.transform.position.x
-                            && obj2.transform.position.z == this.transform.position.z + y)
-                        {
-                            if (!obj2.GetComponent<AbstractSquare>().isCharacterOn())
-                            {
-                                movePosition(obj2);
-                                break;
-                            }
-                        }
-                        if (obj2.transform.position.x == this.transform.position.x + x
-                            && obj2.transform.position.z == this.transform.position.z)
-                        {
-                            if (!obj2.GetComponent<AbstractSquare>().isCharacterOn())
-                            {
-                                movePosition(obj2);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-
-            }
-
-        }
-
-
-
-        process = Process.End;
-    }
+		//ターン終了
+		process = Process.PreEnd;
+	}
 }

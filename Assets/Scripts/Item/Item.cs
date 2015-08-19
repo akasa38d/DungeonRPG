@@ -14,10 +14,11 @@ public abstract class Item
 
     //変数
     public int id;
-    public int power;			//威力・効果
-    public bool chain;			//チェインできるかどうか
-    public bool expendable;		//消費するかどうか
-    public bool magic;			//魔法であるかどうか
+	public string name;			//名前
+    public int power = 0;			//威力・効果
+    public bool chain = false;			//チェインできるかどうか
+	public bool expendable = false;		//消費するかどうか
+	public bool magic = false;			//魔法であるかどうか
 
     public Item()
     {
@@ -43,9 +44,10 @@ public abstract class Item
 public class NullItem : Item
 {
     public NullItem()
-    {
-        id = 0;
-    }
+	{
+		id = 0;
+		name = "nullです";
+	}
 
     public override Sprite sprite
     {
@@ -67,13 +69,10 @@ public class FlowerItem : Item
     }
 
     public FlowerItem()
-    {
-        id = 1;
-        power = 0;
-        chain = false;
-        expendable = false;
-        magic = false;
-    }
+	{
+		id = 1;
+		name = "花束";
+	}
 }
 
 
@@ -84,31 +83,26 @@ public class SwordItem : Item
 {
     public override Sprite sprite
     {
-        get { return PrefabManager.Instance.swordCard; }
+        get
+		{
+			if(id == 2)
+			{
+				return PrefabManager.Instance.swordCard;
+			}
+			return PrefabManager.Instance.nullCard;
+		}
         set { }
     }
 
-    public SwordItem()
+    public SwordItem(int id = 2)
     {
-        //id(仮)
-        id = 2;
         //変数のセット
-        power = 99;
-        chain = false;
-        expendable = false;
-        magic = false;
-    }
-
-    public SwordItem(int power)
-    {
-        //player関係の設定
-        this.player = GameObject.Find("Player");
-        this.playerScript = player.GetComponent<PlayerObject>();
-        //変数のセット
-        this.power = power;
-        this.chain = false;
-        this.expendable = false;
-        this.magic = false;
+		this.id = id;
+		if (id == 2)
+		{
+			this.name = "短剣";
+			this.power = 99;
+		}
     }
 
     public override void buttonEvent()
@@ -130,27 +124,33 @@ public class SwordItem : Item
             //プレイヤからの距離が１の床で
             if (playerScript.checkOneDistance(player, floor))
             {
-                //キャラクターが乗っているなら
-                if (floor.GetComponent<AbstractSquare>().isCharacterOn())
-                {
                     var tmp = playerScript.pInstantiate(attackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
                     var tmpScript = tmp.GetComponent<AttackButton>();
                     tmpScript.square = floor;
                     tmpScript.attack = this.operation;
-                }
             }
         }
     }
 
-    public override void operation(GameObject obj)
+    public override void operation(GameObject square)
     {
-        Debug.Log("短剣で攻撃！");
-        //ターンエンドのためのコールバックをセット
-        obj.GetComponent<AbstractCharacterObject>().callBack = () => playerScript.process = AbstractCharacterObject.Process.PreEnd;
-        //攻撃のエフェクト
-        if (effect != null) { playerScript.pInstantiate(effect, obj.transform.position); }
-        //ダメージ処理
-        obj.GetComponent<AbstractCharacterObject>().beDameged(this.power);
+		try
+		{
+			//キャラクターが乗っているなら
+			if (square.GetComponent<AbstractSquare>().isCharacterOn())
+			{
+				var target = square.GetComponent<AbstractSquare>().character;
+				Debug.Log("短剣で攻撃！");
+				//ターンエンドのためのコールバックをセット
+				target.GetComponent<AbstractCharacterObject>().callBack = () => {};
+				//ダメージ処理
+				target.GetComponent<AbstractCharacterObject>().beDameged(this.power);
+			}			
+		}
+		finally
+		{
+			playerScript.process = AbstractCharacterObject.Process.PreEnd;
+		}
     }
 }
 
@@ -167,14 +167,8 @@ public class BombItem : Item
 
     public BombItem()
     {
-        //id(仮)
-        id = 2;
-        //変数のセット
+        id = 3;
         power = 99;
-        chain = false;
-        expendable = false;
-        magic = false;
-
         this.effect = PrefabManager.Instance.explosion;
     }
 

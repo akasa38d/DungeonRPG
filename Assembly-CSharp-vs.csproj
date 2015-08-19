@@ -72,6 +72,7 @@
      <Compile Include="Assets\Scripts\SquareObject\AbstractSquare.cs" />
      <Compile Include="Assets\Scripts\SquareObject\PathSquare.cs" />
      <Compile Include="Assets\Scripts\SquareObject\PlaneSquare.cs" />
+     <Compile Include="Assets\Scripts\StartButton.cs" />
      <Compile Include="Assets\Scripts\TurnManager.cs" />
      <Compile Include="Assets\Scripts\UI\CardButton.cs" />
      <Compile Include="Assets\Scripts\UI\LockButton.cs" />

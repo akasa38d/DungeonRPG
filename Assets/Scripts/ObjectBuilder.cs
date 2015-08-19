@@ -56,7 +56,7 @@ public class ItemContainer
     public Item getItem(int id)
     {
         if (id == 1) { return new FlowerItem(); }
-        if (id == 2) { return new SwordItem(); }
+        if (id == 2) { return new SwordItem(2); }
         if (id == 3) { return new BombItem(); }
         return new NullItem();
     }

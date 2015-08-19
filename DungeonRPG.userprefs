@@ -1,21 +1,21 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Item\ItemManager.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\TurnManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\Item\ItemManager.cs" Line="215" Column="2" />
-      <File FileName="Assets\Scripts\Item\Item.cs" Line="74" Column="28" />
-      <File FileName="Assets\Scripts\UI\CardButton.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\UI\LockButton.cs" Line="8" Column="3" />
+      <File FileName="Assets\Scripts\Item\ItemManager.cs" Line="218" Column="2" />
+      <File FileName="Assets\Scripts\Item\Item.cs" Line="49" Column="19" />
+      <File FileName="Assets\Scripts\ObjectManager.cs" Line="21" Column="6" />
+      <File FileName="Assets\Scripts\TurnManager.cs" Line="85" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Scripts" expanded="True">
-              <Node name="Item" expanded="True">
-                <Node name="ItemManager.cs" selected="True" />
-              </Node>
-              <Node name="UI" expanded="True" />
+              <Node name="CharacterObject" expanded="True" />
+              <Node name="Item" expanded="True" />
+              <Node name="Utility" expanded="True" />
+              <Node name="TurnManager.cs" selected="True" />
             </Node>
           </Node>
         </State>

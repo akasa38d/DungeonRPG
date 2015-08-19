@@ -17,6 +17,6 @@ public class AttackButton : AbstractButton
     new void OnMouseUpAsButton()
     {
         base.OnMouseUpAsButton();
-        attack(square.GetComponent<AbstractSquare>().character);
+        attack(square);
     }
 }

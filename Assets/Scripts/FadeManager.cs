@@ -48,6 +48,11 @@ public class FadeManager : SingletonMonoBehaviour<FadeManager>
         StartCoroutine(TransScene(interval, someevent));
     }
 
+	public void LoadLevel2(float interval, string scene)
+	{
+		StartCoroutine(TransScene2(interval, scene));
+	}
+
     /// <summary>
     /// シーン遷移用コルーチン
     /// </summary>
@@ -82,4 +87,31 @@ public class FadeManager : SingletonMonoBehaviour<FadeManager>
 
         this.isFading = false;
     }
+
+	private IEnumerator TransScene2(float interval, string scene)
+	{
+		//だんだん暗く
+		this.isFading = true;
+		float time = 0;
+		while (time <= interval)
+		{
+			this.fadeAlpha = Mathf.Lerp(0f, 1f, time / interval);
+			time += Time.deltaTime;
+			yield return 0;
+		}
+		
+		//シーン切替
+		Application.LoadLevel (scene);
+		
+		//だんだん明るく
+		time = 0;
+		while (time <= interval)
+		{
+			this.fadeAlpha = Mathf.Lerp(1f, 0f, time / interval);
+			time += Time.deltaTime;
+			yield return 0;
+		}
+		
+		this.isFading = false;
+	}
 }

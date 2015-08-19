@@ -6,8 +6,25 @@ using System.Linq;
 
 public class ItemManager : MonoBehaviour
 {
+	//仮
+	public int flowerNum = 0;
+	void gameClear()
+	{
+		FadeManager.Instance.LoadLevel2 (1, "Title");
+	}
+
     //手札
     public Item[] handCard = new Item[6];
+	public int handNum()
+	{
+		Debug.Log (handCard[5].name);
+		if (handCard [5].id == 0)
+		{
+			Debug.Log (5 + "だよ！？");
+			return 5;
+		}
+		return 6;
+	}
     //デッキ
     public List<Item> deckCard = new List<Item>();
     //墓地
@@ -192,6 +209,11 @@ public class ItemManager : MonoBehaviour
                 draw(i);
             }
         }
+
+		Debug.Log (handNum() + trashCard.Count() + deckCard.Count());
+		if (handNum() + trashCard.Count() + deckCard.Count() > 17) {
+			gameClear();
+		}
     }
 
     public void Update()

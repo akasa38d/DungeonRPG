@@ -54,7 +54,6 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
     public override void Awake()
     {
         base.Awake();
-        DontDestroyOnLoad(this.gameObject);
     }
 
     /// <summary>

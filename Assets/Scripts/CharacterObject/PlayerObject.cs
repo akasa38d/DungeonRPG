@@ -13,9 +13,9 @@ public class PlayerObject : AbstractCharacterObject
         this.type = Type.Player;
         this.parameter = PlayerParameter.getPlayerParameter("赤ずきん", 30, 30);
 
-        lvCount.GetComponent<Text>().text = parameter.lv.ToString();
-        hpCount.GetComponent<Text>().text = parameter.hp.ToString() + " / " + parameter.maxHp.ToString();
-        spCount.GetComponent<Text>().text = parameter.sp.ToString() + " / " + parameter.maxSp.ToString();
+		lvCount.GetComponent<Text>().text = parameter.lv.ToString();
+		hpCount.GetComponent<Text>().text = parameter.hp.ToString() + " / " + parameter.maxHp.ToString();
+		spCount.GetComponent<Text>().text = parameter.sp.ToString() + " / " + parameter.maxSp.ToString();
     }
 
     //基本処理
@@ -100,7 +100,7 @@ public class PlayerObject : AbstractCharacterObject
             Debug.Log("アバーッ！！" + this.parameter.cName + "は爆発四散！");
             Instantiate(PrefabManager.Instance.explosion, this.transform.position, Quaternion.identity);
             callBack();
-            Debug.Log("なんちゃって");
+			FadeManager.Instance.LoadLevel2(1, "GameOver");
             yield return null;
         }
         else
