@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Linq;
+using MyUtility;
 
 [System.Serializable]
 public abstract class Item
@@ -75,7 +76,6 @@ public class FlowerItem : Item
 	}
 }
 
-
 /// <summary>
 /// 近接攻撃アイテム（仮）
 /// </summary>
@@ -102,6 +102,7 @@ public class SwordItem : Item
 		{
 			this.name = "短剣";
 			this.power = 99;
+            this.effect = PrefabManager.Instance.explosion;
 		}
     }
 
@@ -122,34 +123,28 @@ public class SwordItem : Item
         foreach (var floor in ObjectManager.Instance.square)
         {
             //プレイヤからの距離が１の床で
-            if (playerScript.checkOneDistance(player, floor))
+            if (player.checkOneDistanceE(floor))
             {
-                    var tmp = playerScript.pInstantiate(attackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
-                    var tmpScript = tmp.GetComponent<AttackButton>();
-                    tmpScript.square = floor;
-                    tmpScript.attack = this.operation;
+                var tmp = playerScript.pInstantiate(attackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
+                var tmpScript = tmp.GetComponent<AttackButton>();
+                tmpScript.square = floor;
+                tmpScript.attack = this.operation;
+                tmpScript.turnEnd = () => playerScript.process = AbstractCharacterObject.Process.PreEnd;
             }
         }
     }
 
     public override void operation(GameObject square)
     {
-		try
+        if (effect != null) { playerScript.pInstantiate(effect, square.transform.position); }
+
+		//キャラクターが乗っているなら
+		if (square.GetComponent<AbstractSquare>().isCharacterOn())
 		{
-			//キャラクターが乗っているなら
-			if (square.GetComponent<AbstractSquare>().isCharacterOn())
-			{
-				var target = square.GetComponent<AbstractSquare>().character;
-				Debug.Log("短剣で攻撃！");
-				//ターンエンドのためのコールバックをセット
-				target.GetComponent<AbstractCharacterObject>().callBack = () => {};
-				//ダメージ処理
-				target.GetComponent<AbstractCharacterObject>().beDameged(this.power);
-			}			
-		}
-		finally
-		{
-			playerScript.process = AbstractCharacterObject.Process.PreEnd;
+			var target = square.GetComponent<AbstractSquare>().character;
+			Debug.Log("短剣で攻撃！");
+			//ダメージ処理
+			target.GetComponent<AbstractCharacterObject>().beDameged(this.power);
 		}
     }
 }
@@ -190,15 +185,17 @@ public class BombItem : Item
         foreach (var floor in ObjectManager.Instance.square)
         {
             //プレイヤからの距離が３の床で
-            if (playerScript.checkDistance(player, floor, 2))
+            if (player.checkDistanceCE(floor, 2))
             {
                 var tmp = playerScript.pInstantiate(extraAttackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
                 var tmpScript = tmp.GetComponent<ExtraAttackButton>();
                 tmpScript.square = floor;
                 tmpScript.attack = this.operation;
+                tmpScript.turnEnd = () => playerScript.process = AbstractCharacterObject.Process.PreEnd;
+
             }
             //プレイヤからの距離が３の床で
-            if (playerScript.checkDistance(player, floor, 3) && !playerScript.checkDistance(player, floor, 2))
+            if (player.checkDistanceCE(floor, 3) && !player.checkDistanceCE(floor, 2))
             {
                 playerScript.pInstantiate(subAttackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
             }
@@ -207,31 +204,78 @@ public class BombItem : Item
 
     public override void operation(GameObject square)
     {
-        try
-        {
-            foreach (var n in square.GetComponent<AbstractSquare>().aroundSquare(1))
-            {
-                if (effect != null) { playerScript.pInstantiate(effect, n.transform.position); }
-            }
+        if (effect != null) { playerScript.pInstantiate(effect, square.transform.position); }
 
-            var target = from n in square.GetComponent<AbstractSquare>().aroundSquare(1)
-                         where n.GetComponent<AbstractSquare>().isCharacterOn()
-                         select n;
-            foreach (var n in target)
-            {
-                var c = n.GetComponent<AbstractSquare>().character;
-                Debug.Log("爆弾で攻撃！");
-                //ターンエンドのためのコールバックをセット
-                c.GetComponent<AbstractCharacterObject>().callBack = () => { };
-                //ダメージ処理
-                c.GetComponent<AbstractCharacterObject>().beDameged(this.power);
-            }
-        }
-        finally
+        if (square.GetComponent<AbstractSquare> ().isCharacterOn())
         {
-            playerScript.process = AbstractCharacterObject.Process.PreEnd;
+            var target = square.GetComponent<AbstractSquare>().character;
+            Debug.Log("爆弾で攻撃！");
+            target.GetComponent<AbstractCharacterObject>().beDameged(this.power);
         }
-
     }
+}
 
+/// <summary>
+/// 斧れ
+/// </summary>
+public class AxeItem : Item
+{
+	public override Sprite sprite
+	{
+		get { return PrefabManager.Instance.axeCard; }
+		set { }
+	}
+	
+	public AxeItem(int id = 4)
+	{
+		//変数のセット
+		this.id = id;
+		if (id == 4)
+		{
+			this.name = "斧";
+			this.power = 99;
+			this.effect = PrefabManager.Instance.explosion;
+		}
+	}
+	
+	public override void buttonEvent()
+	{
+		createButton();
+	}
+	
+	void createButton()
+	{
+		//prefabsの設定
+		var wideAttackButton = PrefabManager.Instance.wideAttackButton;
+
+		//既存のボタンを削除
+		playerScript.deleteButton();
+		
+		foreach (var floor in ObjectManager.Instance.square)
+		{
+			//プレイヤからの距離が１の床で
+			if (player.checkOneDistanceE(floor))
+			{
+				var tmp = playerScript.pInstantiate(wideAttackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
+				var tmpScript = tmp.GetComponent<WideAttackButton>();
+				tmpScript.square = floor;
+
+				//デリゲート
+				tmpScript.attack = this.operation;
+				tmpScript.turnEnd = () => playerScript.process = AbstractCharacterObject.Process.PreEnd;
+			}
+		}
+	}
+	
+	public override void operation(GameObject square)
+	{
+		if (effect != null) { playerScript.pInstantiate(effect, square.transform.position);	}
+
+		if (square.GetComponent<AbstractSquare> ().isCharacterOn())
+		{
+			var target = square.GetComponent<AbstractSquare>().character;
+			Debug.Log("斧で攻撃！");
+			target.GetComponent<AbstractCharacterObject>().beDameged(this.power);
+		}
+	}
 }

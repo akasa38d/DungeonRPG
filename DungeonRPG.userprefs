@@ -1,42 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\SquareObject\AbstractSquare.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\DungeonManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\DungeonManager.cs" Line="368" Column="10" />
+      <File FileName="Assets\Scripts\DungeonManager.cs" Line="191" Column="41" />
       <File FileName="Assets\Scripts\CharacterObject\AbstractCharacterObject.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Item\ItemManager.cs" Line="260" Column="6" />
-      <File FileName="Assets\Scripts\Item\Item.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\ObjectManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\TurnManager.cs" Line="55" Column="27" />
-      <File FileName="Assets\Scripts\SquareObject\AbstractSquare.cs" Line="109" Column="12" />
+      <File FileName="Assets\Resources\DataBase\Dungeon.xml" Line="7" Column="37" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="Assembly-CSharp" expanded="True">
-            <Node name="Scripts" expanded="True">
-              <Node name="CharacterObject" expanded="True" />
-              <Node name="Item" expanded="True" />
-              <Node name="SquareObject" expanded="True">
-                <Node name="AbstractSquare.cs" selected="True" />
-              </Node>
-              <Node name="Utility" expanded="True" />
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="ClassPad">
-        <State expanded="True" selected="True" />
-      </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State>
-          <Value>deckCard.Count</Value>
-          <Value>trashCard.Count</Value>
-          <Value>usedCard.Count</Value>
-          <Value>cardUI</Value>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

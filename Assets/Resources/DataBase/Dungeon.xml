@@ -2,10 +2,10 @@
 
 <dungeons>
     <dungeon id="0">
-        <floorSizeX>2</floorSizeX>
+        <floorSizeX>3</floorSizeX>
         <floorSizeY>2</floorSizeY>
-        <minRoomSize>6</minRoomSize>
-        <maxRoomSize>9</maxRoomSize>
+        <minRoomSize>4</minRoomSize>
+        <maxRoomSize>3</maxRoomSize>
         <enemy EnemyID = "0" frequency = "10">太郎</enemy> 
         <enemy EnemyID = "2" frequency = "10">２郎</enemy> 
         <enemy EnemyID = "3" frequency = "10">４郎</enemy> 

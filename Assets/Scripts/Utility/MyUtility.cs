@@ -54,4 +54,60 @@ namespace MyUtility
             return false;
         }
     }
+
+    /// <summary>
+    /// GameObjectの拡張
+    /// </summary>
+    public static class MyExtensions
+    {
+        public static bool checkOneDistanceE(this GameObject obj, GameObject target)
+        {
+            //距離０なら
+            if (checkDistanceME(obj, target, 0)) { return false; }
+
+            //マンハッタン距離１なら
+            if (checkDistanceME(obj, target, 1)) { return true; }
+
+            //カウント用変数
+            int count = 0;
+            //オブジェクトを調べて
+            foreach (GameObject square in ObjectManager.Instance.square)
+            {
+                //ob1のマンハッタン距離が１かつ
+                if (checkDistanceME(obj, square, 1) && target.checkDistanceME(square, 1))
+                {
+                    //カウントを増やす
+                    count++;
+                }
+            }
+            //カウントが２だったら
+            if (count == 2) { return true; }
+            
+            //ここまでの条件に当てはまらなかったら
+            return false;
+        }
+
+        //チェビシェフ距離（簡易）
+        public static bool checkDistanceCE(this GameObject obj, GameObject target, int i)
+        {
+            if (Mathf.Abs(obj.transform.position.x - target.transform.position.x) <= i * 10)
+            {
+                if (Mathf.Abs(obj.transform.position.z - target.transform.position.z) <= i * 10)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        //マンハッタン距離（簡易）
+        public static bool checkDistanceME(this GameObject obj, GameObject target, int i)
+        {
+            if (Mathf.Abs(obj.transform.position.x - target.transform.position.x)
+                +Mathf.Abs(obj.transform.position.z - target.transform.position.z) <= i * 10)
+            {
+                return true;
+            }
+            return false;
+        }
+    }
 }

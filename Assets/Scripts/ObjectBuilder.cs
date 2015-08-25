@@ -36,7 +36,8 @@ public class ItemContainer
         NullCard = 0,
         Flower = 1,
         Sword = 2,
-        Bomb = 3
+        Bomb = 3,
+		axe = 4
     }
 
 	//IDから生成（出現率と合わせ、XMLから生成）
@@ -58,6 +59,7 @@ public class ItemContainer
         if (id == 1) { return new FlowerItem(); }
         if (id == 2) { return new SwordItem(2); }
         if (id == 3) { return new BombItem(); }
+		if (id == 4) { return new AxeItem(4); }
         return new NullItem();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Linq;
+using MyUtility;
 
 public class EnemyObject : AbstractCharacterObject
 {
@@ -9,7 +10,7 @@ public class EnemyObject : AbstractCharacterObject
     public void Start()
     {
         this.type = Type.Enemy;
-        myAttack = new AttackWay("キック", 30, null);
+        myAttack = new AttackWay("キック", 10, PrefabManager.Instance.explosion);
     }
 
     //基本処理
@@ -44,7 +45,7 @@ public class EnemyObject : AbstractCharacterObject
     {
         var target = ObjectManager.Instance.character[0];
 
-        if (checkOneDistance(this.gameObject, target))
+        if (this.gameObject.checkOneDistanceE(target))
         {
             attackToTarget(target);
         }

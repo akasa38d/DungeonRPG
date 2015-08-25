@@ -1,21 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using MyUtility;
 
 public class PlayerObject : AbstractCharacterObject
 {
-    public GameObject lvCount;
-    public GameObject hpCount;
-    public GameObject spCount;
-
     public void Start()
     {
         this.type = Type.Player;
         this.parameter = PlayerParameter.getPlayerParameter("赤ずきん", 30, 30);
-
-		lvCount.GetComponent<Text>().text = parameter.lv.ToString();
-		hpCount.GetComponent<Text>().text = parameter.hp.ToString() + " / " + parameter.maxHp.ToString();
-		spCount.GetComponent<Text>().text = parameter.sp.ToString() + " / " + parameter.maxSp.ToString();
     }
 
     //基本処理
@@ -39,6 +32,7 @@ public class PlayerObject : AbstractCharacterObject
     //プリエンドフェイズ
     protected override void preEndOperation()
     {
+		parameter.sp--;
         this.gameObject.GetComponent<ItemManager>().preTurnEnd();
         base.preEndOperation();
     }
@@ -70,7 +64,7 @@ public class PlayerObject : AbstractCharacterObject
 
         foreach (var floor in ObjectManager.Instance.square)
         {
-            if (checkOneDistance(this.gameObject, floor))
+            if (this.gameObject.checkOneDistanceE(floor))
             {
                 if (!floor.GetComponent<AbstractSquare>().isCharacterOn())
                 {
@@ -97,16 +91,15 @@ public class PlayerObject : AbstractCharacterObject
         Debug.Log(this.parameter.cName + "は" + damage + "のダメージを受けた");
         if (damage >= this.parameter.hp)
         {
+			parameter.hp -= damage;
             Debug.Log("アバーッ！！" + this.parameter.cName + "は爆発四散！");
             Instantiate(PrefabManager.Instance.explosion, this.transform.position, Quaternion.identity);
-            callBack();
 			FadeManager.Instance.LoadLevel2(1, "GameOver");
             yield return null;
         }
         else
         {
-            this.parameter.hp -= damage;
-            callBack();
+            parameter.hp -= damage;
         }
         yield return null;
     }
@@ -131,4 +124,5 @@ public class PlayerObject : AbstractCharacterObject
         var n = Instantiate(obj, vector3, Quaternion.identity) as GameObject;
         return n;
     }
+
 }

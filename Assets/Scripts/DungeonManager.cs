@@ -22,7 +22,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
     public void getDungeonData(int number)
     {
         XmlNodeList nodes = XMLReader.Instance.dungeonNodes;
-        XmlNode tempNode = nodes[number];
+        XmlNode tempNode = nodes [number];
 
         int count = 0;
         Floor.Instance.enemyDictionary.Clear();
@@ -31,10 +31,22 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
 
         foreach (XmlNode node in tempNode.ChildNodes)
         {
-            if (node.Name == "floorSizeX") { sequenceSizeX = int.Parse(node.InnerText); }
-            if (node.Name == "floorSizeY") { sequenceSizeY = int.Parse(node.InnerText); }
-            if (node.Name == "minRoomSize") { minRoomSize = int.Parse(node.InnerText); }
-            if (node.Name == "maxRoomSize") { maxRoomSize = int.Parse(node.InnerText); }
+            if (node.Name == "floorSizeX")
+            {
+                sequenceSizeX = int.Parse(node.InnerText);
+            }
+            if (node.Name == "floorSizeY")
+            {
+                sequenceSizeY = int.Parse(node.InnerText);
+            }
+            if (node.Name == "minRoomSize")
+            {
+                minRoomSize = int.Parse(node.InnerText);
+            }
+            if (node.Name == "maxRoomSize")
+            {
+                maxRoomSize = int.Parse(node.InnerText);
+            }
             //enemyDictionaryの作成
             if (node.Name == "enemy")
             {
@@ -62,6 +74,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
     public class Floor : Singleton<Floor>
     {
         //部屋クラスを管理
+        public Pillar[,] pillar;
         public Room[,] room;
 
         //部屋の並びのサイズ
@@ -70,11 +83,13 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         //ダンジョンに出現する敵の管理（ID、確率）
         public Dictionary<int, int> enemyDictionary = new Dictionary<int, int>();
         //ダンジョンに出現するアイテムの管理（ID、確率）
-        //		public Dictionary<int, int> itemDictionary = new Dictionary<int, int>();
+        //      public Dictionary<int, int> itemDictionary = new Dictionary<int, int>();
 
         public void setFloor(int x, int y)
         {
             sequenceSize = new MyVector2(x, y);
+            Debug.Log(sequenceSize.x + "と" + sequenceSize.y);
+            pillar = new Pillar[sequenceSize.x, sequenceSize.y];
             room = new Room[sequenceSize.x, sequenceSize.y];
         }
 
@@ -86,40 +101,53 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             {
                 for (int m = 0; m < sequenceSize.x; m++)
                 {
-                    room[m, n] = Room.createRoomTest(m, n);
+                    room [m, n] = Room.createRoomTest(m, n);
+                    pillar [m, n] = new Pillar();
                 }
             }
+
+            Floor.Instance.breakPathFlag();
 
             //部屋をランダムに選ぶ
             int tmpX = Random.Range(0, sequenceSize.x);
             int tmpY = Random.Range(0, sequenceSize.y);
 
-            //選ばれた部屋を実体化
-            room[tmpX, tmpY].createStage();
 
-            room[tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character[0]);
+            //テスト
+            for (int n = 0; n < sequenceSize.y; n ++)
+            {
+                for (int m = 0; m < sequenceSize.x; m ++)
+                {
+                    room [m, n].createStage();
+                }
+            }
+
+            //選ばれた部屋を実体化
+            //           room[tmpX, tmpY].createStage();
+
+            room [tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character [0]);
             for (int i = 1; i < ObjectManager.Instance.character.Count(); i++)
             {
-                room[tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character[i]);
+                room [tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character [i]);
             }
         }
 
         public void createNext(MyVector2 sequence)
         {
-            if (room[sequence.x, sequence.y].isBuild == false)
+            if (room [sequence.x, sequence.y].isBuild == false)
             {
-                room[sequence.x, sequence.y].createStage();
+                room [sequence.x, sequence.y].createStage();
             }
         }
 
         public void destroyPrevious(MyVector2 sequence)
         {
-            room[sequence.x, sequence.y].destroyStage();
+            room [sequence.x, sequence.y].destroyStage();
         }
 
         public void randomizeToSquare(MyVector2 sequence, GameObject obj)
         {
-            room[sequence.x, sequence.y].randomizeToSquare2(obj);
+            room [sequence.x, sequence.y].randomizeToSquare2(obj);
         }
 
         public int getRandomEnemy()
@@ -145,8 +173,70 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             int tmpY = Random.Range(0, sequenceSize.y);
 
             int i = getRandomEnemy();
-            room[tmpX, tmpY].enemyList.Add(new EnemyContainer(i));
+            room [tmpX, tmpY].enemyList.Add(new EnemyContainer(i));
         }
+
+
+
+
+
+        //小路のフラグを折る
+        public void breakPathFlag()
+        {
+            for (int n = 0; n < sequenceSize.y-1; n++)
+            {
+                for (int m = 0; m < sequenceSize.x-1; m++)
+                {
+
+                    if(pillar[m, n].direction == Pillar.Direction.up)
+                    {
+                        room[m,n].path.right = -1;
+                        room[m + 1,n].path.left = -1;
+                    }
+
+                    if(pillar[m, n].direction == Pillar.Direction.down)
+                    {
+                        room[m,n+1].path.right = -1;
+                        room[m+1,n+1].path.left = -1;
+                    }
+
+                    if(pillar[m, n].direction == Pillar.Direction.left)
+                    {
+                        room[m,n].path.up = -1;
+                        room[m,n+1].path.down = -1;
+                    }
+                    if(pillar[m, n].direction == Pillar.Direction.right)
+                    {
+                        room[m+1,n].path.up = -1;
+                        room[m+1,n+1].path.down = -1;
+                    }
+                }
+            }
+        }
+
+
+
+
+
+    }
+
+    /// <summary>
+    /// ダンジョン作成用の柱
+    /// </summary>
+    public class Pillar
+    {
+        public Pillar()
+        {
+            direction = (Direction)Random.Range(0, 4);
+            Debug.Log(direction);
+        }
+        public enum Direction
+        {
+            up = 0,
+            down,
+            left,
+            right };
+        public Direction direction;
     }
 
     /// <summary>
@@ -159,6 +249,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
 
         //大きさ
         public MyVector2 size;
+
         public static MyVector2 randomCreateSize()
         {
             return new MyVector2(Random.Range(minRoomSize, maxRoomSize + 1), Random.Range(minRoomSize, maxRoomSize + 1));
@@ -166,6 +257,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
 
         //シークエンス中の位置
         public MyVector2 sequence;
+
         public static MyVector2 createPosition(int x, int y)
         {
             return new MyVector2(x, y);
@@ -188,6 +280,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                 left = l;
                 right = r;
             }
+
             public static Path randomCreatePath(MyVector2 tempSize)
             {
                 return new Path(Random.Range(0, tempSize.y), Random.Range(0, tempSize.y),
@@ -215,9 +308,10 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             var room = new Room(randomCreateSize(), createPosition(x, y));
             room.path = Path.randomCreatePath(room.size);
 
-			room.itemList.Add(new ItemContainer((int)ItemContainer.type.Sword));
+
+            room.itemList.Add(new ItemContainer((int)ItemContainer.type.Sword));
             room.itemList.Add(new ItemContainer((int)ItemContainer.type.Flower));
-            Debug.Log(room.itemList[1].item);
+            Debug.Log(room.itemList [1].item);
 
             return room;
         }
@@ -285,7 +379,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             int tmpZ;
 
             //up
-            if (sequence.y != Floor.Instance.sequenceSize.y - 1)
+            if (sequence.y != Floor.Instance.sequenceSize.y - 1 && path.up >= 0)
             {
                 tmpX = (path.up + sequence.x * (maxRoomSize + 3)) * 10;
                 tmpZ = (size.x + sequence.y * (maxRoomSize + 3)) * 10;
@@ -296,7 +390,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             }
 
             //down
-            if (sequence.y != 0)
+            if (sequence.y != 0 && path.down >= 0)
             {
                 tmpX = (path.down + sequence.x * (maxRoomSize + 3)) * 10;
                 tmpZ = -10 + (sequence.y * (maxRoomSize + 3)) * 10;
@@ -307,7 +401,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             }
 
             //left
-            if (sequence.x != 0)
+            if (sequence.x != 0 && path.left >= 0)
             {
                 tmpX = (sequence.x * (maxRoomSize + 3) - 1) * 10;
                 tmpZ = (path.left + sequence.y * (maxRoomSize + 3)) * 10;
@@ -318,10 +412,10 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             }
 
             //right
-            if (sequence.x != Floor.Instance.sequenceSize.x - 1)
+            if (sequence.x != Floor.Instance.sequenceSize.x - 1 && path.right >= 0)
             {
                 tmpX = (size.y + sequence.x * (maxRoomSize + 3)) * 10;
-                tmpZ = (path.left + sequence.y * (maxRoomSize + 3)) * 10;
+                tmpZ = (path.right + sequence.y * (maxRoomSize + 3)) * 10;
                 tmp = Instantiate(pathSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
                 tmp.GetComponent<Renderer>().material.color = new Color(0.3f, 0.3f, 1.0f, 1.0f);
                 tmp.GetComponent<PathSquare>().setPathSquare(sequence.x, sequence.y, 1, 0, PathSquare.Direction.right);
@@ -349,17 +443,17 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                 }
             }
 
-			//アイテムを消す
-			foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Item"))
-			{
-				Debug.Log(GameObject.FindGameObjectsWithTag("Item").Count());
-				var i = obj.GetComponent<FieldItem>().item;
-				var v = obj.transform.position;
-				itemList.Add(new ItemContainer(i,v));
-				Destroy(obj);
-			}
+            //アイテムを消す
+            foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Item"))
+            {
+                Debug.Log(GameObject.FindGameObjectsWithTag("Item").Count());
+                var i = obj.GetComponent<FieldItem>().item;
+                var v = obj.transform.position;
+                itemList.Add(new ItemContainer(i, v));
+                Destroy(obj);
+            }
 
-			//罠を消す
+            //罠を消す
 
 
 
@@ -375,11 +469,11 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
 
             //床のリスト
             var tmpSquare = from n in ObjectManager.Instance.square
-				where n.GetComponent<AbstractSquare>().type == AbstractSquare.Type.Normal
-					&& n.GetComponent<AbstractSquare>().sequence.isEqual(this.sequence)
-					&& n.GetComponent<AbstractSquare>().isCharacterOn() == false
-					&& n.GetComponent<AbstractSquare>().isItemOn() == false
-					select n;
+                where n.GetComponent<AbstractSquare>().type == AbstractSquare.Type.Normal
+                && n.GetComponent<AbstractSquare>().sequence.isEqual(this.sequence)
+                && n.GetComponent<AbstractSquare>().isCharacterOn() == false
+                && n.GetComponent<AbstractSquare>().isItemOn() == false
+                    select n;
 
             //床のリストからランダムに取得
             var tmpObj = tmpSquare.ElementAt(Random.Range(0, tmpSquare.Count()));

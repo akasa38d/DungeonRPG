@@ -1,7 +1,11 @@
 ﻿using UnityEngine;
+using System;
 
 public abstract class AbstractButton : MonoBehaviour
 {
+    public Action<GameObject> attack;
+    public Action turnEnd;
+
     //連動するマス
     public GameObject square;
 

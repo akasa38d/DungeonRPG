@@ -51,6 +51,7 @@
      <Compile Include="Assets\Scripts\ButtonScript\ExtraAttackButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\MoveButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\SubAttackButton.cs" />
+     <Compile Include="Assets\Scripts\ButtonScript\WideAttackButton.cs" />
      <Compile Include="Assets\Scripts\CharacterObject\AbstractCharacterObject.cs" />
      <Compile Include="Assets\Scripts\CharacterObject\AbstractCharacterParameter.cs" />
      <Compile Include="Assets\Scripts\CharacterObject\EnemyObject.cs" />
@@ -59,6 +60,10 @@
      <Compile Include="Assets\Scripts\CharacterObject\PlayerParameter.cs" />
      <Compile Include="Assets\Scripts\DungeonManager.cs" />
      <Compile Include="Assets\Scripts\FadeManager.cs" />
+     <Compile Include="Assets\Scripts\GUI\CardButton.cs" />
+     <Compile Include="Assets\Scripts\GUI\DeckGUI.cs" />
+     <Compile Include="Assets\Scripts\GUI\LockButton.cs" />
+     <Compile Include="Assets\Scripts\GUI\StatusGUI.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Item\FieldItem.cs" />
      <Compile Include="Assets\Scripts\Item\Item.cs" />
@@ -74,8 +79,6 @@
      <Compile Include="Assets\Scripts\SquareObject\PlaneSquare.cs" />
      <Compile Include="Assets\Scripts\StartButton.cs" />
      <Compile Include="Assets\Scripts\TurnManager.cs" />
-     <Compile Include="Assets\Scripts\UI\CardButton.cs" />
-     <Compile Include="Assets\Scripts\UI\LockButton.cs" />
      <Compile Include="Assets\Scripts\Utility\MyUtility.cs" />
      <Compile Include="Assets\Scripts\Utility\SingletonMonoBehaviour.cs" />
      <Compile Include="Assets\Scripts\XMLReader.cs" />

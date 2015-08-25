@@ -38,11 +38,6 @@ public class ItemManager : MonoBehaviour
     public GameObject[] cardUI = new GameObject[6];
     public GameObject moveUI;
 
-    //カウント
-    public GameObject usedCount;
-    public GameObject trashCount;
-    public GameObject deckCount;
-
     //準備中
     public bool inProcess = false;
 
@@ -52,7 +47,7 @@ public class ItemManager : MonoBehaviour
         {
             deckCard.Add(new SwordItem());
         }
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 4; i++)
         {
             deckCard.Add(new FlowerItem());
         }
@@ -60,6 +55,10 @@ public class ItemManager : MonoBehaviour
         {
             deckCard.Add(new BombItem());
         }
+		for (int i = 0; i < 2; i++)
+		{
+			deckCard.Add(new AxeItem());
+		}
 
         draw(0);
         draw(1);
@@ -67,10 +66,6 @@ public class ItemManager : MonoBehaviour
         draw(3);
         draw(4);
         setCard(5, new NullItem());
-
-        usedCount.GetComponent<Text>().text = usedCard.Count().ToString();
-        trashCount.GetComponent<Text>().text = trashCard.Count().ToString();
-        deckCount.GetComponent<Text>().text = deckCard.Count().ToString();
     }
 
     public void shuffule(int handNumber)
@@ -90,11 +85,9 @@ public class ItemManager : MonoBehaviour
             Debug.Log("仕切り直しだぜ！");
 
             deckCard.AddRange(trashCard);
-            deckCount.GetComponent<Text>().text = deckCard.Count().ToString();
             yield return null;
 
             trashCard.Clear();
-            trashCount.GetComponent<Text>().text = trashCard.Count().ToString();
             yield return null;
         }
         yield return null;
@@ -161,7 +154,6 @@ public class ItemManager : MonoBehaviour
         var n = deckCard.ElementAt(Random.Range(0, deckCard.Count()));
         handCard[handNumber] = n;
         deckCard.Remove(n);
-        deckCount.GetComponent<Text>().text = deckCard.Count().ToString();
 
         var image = cardUI[handNumber].GetComponent<Image>();
         image.sprite = handCard[handNumber].sprite;
@@ -176,8 +168,7 @@ public class ItemManager : MonoBehaviour
         {
             //使用済みカードに追加
             usedCard.Add(handCard[usingNumber]);
-            usedCount.GetComponent<Text>().text = usedCard.Count().ToString();
-
+  
             //使用したカードをnullカードに変更
             setCard(usingNumber, new NullItem());
 
@@ -205,12 +196,10 @@ public class ItemManager : MonoBehaviour
 		yield return null;
 
 		trashCard.AddRange(usedCard);
-		trashCount.GetComponent<Text>().text = trashCard.Count().ToString();
 		yield return null;
 
 		//使用したカードをクリア
 		usedCard.Clear();
-		usedCount.GetComponent<Text>().text = usedCard.Count().ToString();
 		yield return null;
 
 		for (int i = 0; i < 6; i ++)

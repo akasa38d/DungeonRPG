@@ -6,8 +6,6 @@ public class MoveButton : AbstractButton
 {
     public Action<GameObject> moveDelegate;
 
-    new void Start() { base.Start(); }
-
     new void OnMouseEnter() { base.OnMouseEnter(); }
 
     new void OnMouseExit() { base.OnMouseExit(); }

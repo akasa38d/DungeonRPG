@@ -1,20 +1,14 @@
 ﻿using UnityEngine;
 using System;
 using System.Linq;
+using MyUtility;
 
 public class ExtraAttackButton : AbstractButton
 {
-    public Action<GameObject> attack;
-
-    public override void Start()
-    {
-        base.Start();
-    }
-
     public override void OnMouseEnter()
     {
         this.GetComponent<Collider>().GetComponent<Renderer>().material.color = onMouseEnterColor;
-        foreach (var n in GameObject.FindGameObjectsWithTag("Button").Where((a) => checkDistance(a)))
+        foreach (var n in GameObject.FindGameObjectsWithTag("Button").Where((a) => this.gameObject.checkDistanceCE(a, 1)))
         {
             var a = n.GetComponent<AbstractButton>();
             a.getColor(a.onMouseEnterColor);
@@ -24,7 +18,7 @@ public class ExtraAttackButton : AbstractButton
     public override void OnMouseExit()
     {
         this.GetComponent<Collider>().GetComponent<Renderer>().material.color = defaultColor;
-        foreach (var n in GameObject.FindGameObjectsWithTag("Button").Where((a) => checkDistance(a)))
+        foreach (var n in GameObject.FindGameObjectsWithTag("Button").Where((a) => this.gameObject.checkDistanceCE(a, 1)))
         {
             var a = n.GetComponent<AbstractButton>();
             a.getColor(a.defaultColor);
@@ -34,7 +28,7 @@ public class ExtraAttackButton : AbstractButton
     public override void OnMouseDown()
     {
         this.GetComponent<Collider>().GetComponent<Renderer>().material.color = onMouseUpAsButtonCollor;
-        foreach (var n in GameObject.FindGameObjectsWithTag("Button").Where((a) => checkDistance(a)))
+        foreach (var n in GameObject.FindGameObjectsWithTag("Button").Where((a) => this.gameObject.checkDistanceCE(a, 1)))
         {
             var a = n.GetComponent<AbstractButton>();
             a.getColor(a.onMouseUpAsButtonCollor);
@@ -43,24 +37,19 @@ public class ExtraAttackButton : AbstractButton
 
     public override void OnMouseUpAsButton()
     {
-        this.GetComponent<Collider>().GetComponent<Renderer>().material.color = defaultColor;
-        foreach (var n in GameObject.FindGameObjectsWithTag("Button").Where((a) => checkDistance(a)))
+        try
         {
-            var a = n.GetComponent<AbstractButton>();
-            a.getColor(a.defaultColor);
-        }
-        attack(square);
-    }
-
-    public bool checkDistance(GameObject obj)
-    {
-        if (Mathf.Abs(this.gameObject.transform.position.x - obj.transform.position.x) <= 10)
-        {
-            if (Mathf.Abs(this.gameObject.transform.position.z - obj.transform.position.z) <= 10)
+            this.GetComponent<Collider>().GetComponent<Renderer>().material.color = defaultColor;
+            
+            foreach (var n in GameObject.FindGameObjectsWithTag("Button").Where((a) => this.gameObject.checkDistanceCE(a, 1)))
             {
-                return true;
+                var a = n.GetComponent<AbstractButton>();
+                a.getColor(a.defaultColor);
+                a.attack(a.square);
             }
+        } finally
+        {
+            turnEnd();
         }
-        return false;
     }
 }

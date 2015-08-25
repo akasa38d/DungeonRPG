@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using MyUtility;
 
 /// <summary>
 /// キャラクターオブジェクトの抽象クラス
@@ -98,13 +100,18 @@ public abstract class AbstractCharacterObject : MonoBehaviour
     //攻撃
     public virtual void attackTarget(AttackWay attackWay, GameObject obj)
     {
-        Debug.Log(this.parameter.cName + "が" + attackWay.name + "で攻撃！");
-        //ターンエンドのためのコールバックをセット
-        obj.GetComponent<AbstractCharacterObject>().callBack = () => this.process = Process.PreEnd;
-        //攻撃のエフェクト
-        if (attackWay.effect != null) { Instantiate(attackWay.effect, obj.transform.position, Quaternion.identity); }
-        //ダメージ処理
-        obj.GetComponent<AbstractCharacterObject>().beDameged(attackWay.power);
+		try
+		{
+	        Debug.Log(this.parameter.cName + "が" + attackWay.name + "で攻撃！");
+			//攻撃のエフェクト
+			if (attackWay.effect != null) { Instantiate(attackWay.effect, obj.transform.position, Quaternion.identity); }
+			//ダメージ処理
+			obj.GetComponent<AbstractCharacterObject>().beDameged(attackWay.power);
+		}
+		finally
+		{
+			this.process = Process.PreEnd;
+		}
     }
 
     //攻撃手段
@@ -123,8 +130,7 @@ public abstract class AbstractCharacterObject : MonoBehaviour
     }
 
     //ターン処理させるためのコールバック
-    public delegate void TestEvent();
-    public TestEvent callBack;
+    public Action callBack;
 
     //ダメージを受けた時
     public virtual void beDameged(int damage)
@@ -139,14 +145,12 @@ public abstract class AbstractCharacterObject : MonoBehaviour
         {
             Debug.Log("グワーッ！！" + this.parameter.cName + "は爆発四散！");
             Instantiate(PrefabManager.Instance.explosion, this.transform.position, Quaternion.identity);
-            callBack();
             Destroy(this.gameObject);
             yield return null;
         }
         else
         {
             this.parameter.hp -= damage;
-            callBack();
         }
         yield return null;
     }
@@ -169,66 +173,5 @@ public abstract class AbstractCharacterObject : MonoBehaviour
 
         //フェイズ移行
         this.process = Process.PreEnd;
-    }
-
-    //********************ここからbool********************//
-
-    //チェビシェフ距離１を確認（起点、対象）
-    public bool checkOneDistance(GameObject ob1, GameObject ob2)
-    {
-        //マンハッタン距離１なら
-        if (checkOneDistance_M(ob1, ob2)) { return true; }
-
-        //距離０なら
-        if (checkZeroDistance(ob2)) { return false; }
-
-        //カウント用変数
-        int count = 0;
-        //オブジェクトを調べて
-        foreach (GameObject obj in ObjectManager.Instance.square)
-        {
-            //ob1のマンハッタン距離が１かつ
-            if (checkOneDistance_M(ob1, obj) && checkOneDistance_M(ob2, obj))
-            {
-                //カウントを増やす
-                count++;
-            }
-        }
-        //カウントが２だったら
-        if (count == 2) { return true; }
-
-        //ここまでの条件に当てはまらなかったら
-        return false;
-    }
-
-    //マンハッタン距離１を確認
-    protected bool checkOneDistance_M(GameObject obj1, GameObject obj2)
-    {
-        Vector2 pos1 = new Vector2(obj1.transform.position.x, obj1.transform.position.z);
-        Vector2 pos2 = new Vector2(obj2.transform.position.x, obj2.transform.position.z);
-        if (Vector2.Distance(pos1, pos2) == 10) { return true; }
-        return false;
-    }
-
-    //距離０を確認（対象）
-    protected bool checkZeroDistance(GameObject obj)
-    {
-        Vector2 pos1 = new Vector2(this.transform.position.x, this.transform.position.z);
-        Vector2 pos2 = new Vector2(obj.transform.position.x, obj.transform.position.z);
-        if (pos1 == pos2) { return true; }
-        return false;
-    }
-
-    //仮
-    public bool checkDistance(GameObject obj1, GameObject obj2, int i)
-    {
-        if (Mathf.Abs(obj1.transform.position.x - obj2.transform.position.x) <= i * 10)
-        {
-            if (Mathf.Abs(obj1.transform.position.z - obj2.transform.position.z) <= i * 10)
-            {
-                return true;
-            }
-        }
-        return false;
     }
 }

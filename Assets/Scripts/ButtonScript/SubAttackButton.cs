@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
+using System;
 
 public class SubAttackButton : AbstractButton
 {
-
     public new void Start()
     {
         this.defaultColor = new Color(1.0f, 1.0f, 1.0f, 0.0f);

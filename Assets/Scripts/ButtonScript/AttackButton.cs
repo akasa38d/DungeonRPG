@@ -4,10 +4,6 @@ using System.Collections;
 
 public class AttackButton : AbstractButton
 {
-    public Action<GameObject> attack;
-
-    new void Start() { base.Start(); }
-
     new void OnMouseEnter() { base.OnMouseEnter(); }
 
     new void OnMouseExit() { base.OnMouseExit(); }
@@ -17,6 +13,13 @@ public class AttackButton : AbstractButton
     new void OnMouseUpAsButton()
     {
         base.OnMouseUpAsButton();
-        attack(square);
+        try
+        {
+            attack(square);
+        }
+        finally
+        {
+            turnEnd();
+        }
     }
 }
