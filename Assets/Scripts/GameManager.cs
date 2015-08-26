@@ -3,8 +3,6 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject testButton;
-
     void Start()
     {
         ObjectManager.Instance.setCharacter();

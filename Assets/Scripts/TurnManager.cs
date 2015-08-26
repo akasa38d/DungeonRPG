@@ -49,6 +49,7 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
         if (turnPlayer[turnCharacter].process == AbstractCharacterObject.Process.Next)
         {
             turnPlayer[turnCharacter].process = AbstractCharacterObject.Process.Start;
+
             turnCharacter++;
         }
 
@@ -57,28 +58,28 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
         //ループ
         if (turnCharacter >= turnPlayer.Count)
         {
-//			foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Effect"))
-//			{
-//				Destroy(obj);
-//			}
-
-            //０番のキャラクタへターンプレイヤーを変更
-            turnCharacter = 0;
-            //ターン数増加
-            turnCount++;
-
-            Debug.Log(turnCount + "ターン目開始");
-
-            //敵の出現
-            if (turnCount % 3 == 0)
-            {
-                Debug.Log("敵の出現");
-                DungeonManager.Floor.Instance.prepareEnemy();
-            }
+            endOperation();
         }
-
+        
         yield return null;
     }
 
+    public void endOperation()
+    {
+        //０番のキャラクタへターンプレイヤーを変更
+        turnCharacter = 0;
+
+        //ターン数増加
+        turnCount++;
+
+        Debug.Log(turnCount + "ターン目開始");
+        
+        //敵の出現
+        if (turnCount % 3 == 0)
+        {
+            Debug.Log("敵の出現");
+            DungeonManager.Floor.Instance.prepareEnemy();
+        }
+    }
 
 }

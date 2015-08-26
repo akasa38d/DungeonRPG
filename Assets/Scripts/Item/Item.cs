@@ -74,6 +74,12 @@ public class FlowerItem : Item
 		id = 1;
 		name = "花束";
 	}
+
+    public override void buttonEvent()
+    {
+        //既存のボタンを削除
+        playerScript.deleteButton();
+    }
 }
 
 /// <summary>
@@ -279,3 +285,9 @@ public class AxeItem : Item
 		}
 	}
 }
+
+public class knuckleItem : Item
+{
+
+}
+

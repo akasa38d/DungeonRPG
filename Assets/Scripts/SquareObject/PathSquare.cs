@@ -8,7 +8,6 @@ using MyUtility;
 /// </summary>
 public class PathSquare : AbstractSquare
 {
-    public enum Direction { up, down, left, right }
     public Direction direction = Direction.down;
 
     public MyVector2 nextSequence;

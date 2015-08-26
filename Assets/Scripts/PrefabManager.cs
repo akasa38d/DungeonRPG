@@ -11,6 +11,7 @@ public class PrefabManager : SingletonMonoBehaviour<PrefabManager>
     //Square系
     public GameObject square;
     public GameObject pathSquare;
+    public GameObject stairSquare;
 
     //Button系
     public GameObject attackButton;

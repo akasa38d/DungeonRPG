@@ -110,4 +110,7 @@ namespace MyUtility
             return false;
         }
     }
+
+    //方角
+    public enum Direction { up = 0, down, left, right }
 }
