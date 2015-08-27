@@ -9,17 +9,9 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
 {
     public MapManager mapManager;
 
-    //id
-    public int id;
-
-
-    //部屋の数
-    public static int sequenceSizeX;
-    public static int sequenceSizeY;
-
-    //部屋の最大サイズ
-    static int minRoomSize;
-    static int maxRoomSize;
+    public Floor floor;
+    public Pillar[,] pillar;
+    public Room[,] room;
 
     public override void Awake()
     {
@@ -29,11 +21,11 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
     void Start()
     {
         getDungeonData(0);
-        Floor.Instance.setFloor(sequenceSizeX, sequenceSizeY);
-        mapManager.getSequenceSize(sequenceSizeX, sequenceSizeY);
-
-        Floor.Instance.mapManager = this.mapManager;
-        Floor.Instance.createTest();
+        mapManager.getSequenceSize(floor.sequenceSize.x, floor.sequenceSize.y);
+        pillar = new Pillar[floor.sequenceSize.x, floor.sequenceSize.y];
+        room = new Room[floor.sequenceSize.x, floor.sequenceSize.y];
+        
+        createTest();
     }
 
     //データをロードしてパラメータを作成
@@ -43,92 +35,75 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         XmlNode tempNode = nodes [number];
 
         int count = 0;
-        Floor.Instance.enemyDictionary.Clear();
+        floor = new Floor();
 
-        id = int.Parse(tempNode.Attributes.GetNamedItem("id").Value);
+        floor.id = int.Parse(tempNode.Attributes.GetNamedItem("id").Value);
 
         foreach (XmlNode node in tempNode.ChildNodes)
         {
             if (node.Name == "floorSizeX")
             {
-                sequenceSizeX = int.Parse(node.InnerText);
+                floor.sequenceSize.x = int.Parse(node.InnerText);
             }
             if (node.Name == "floorSizeY")
             {
-                sequenceSizeY = int.Parse(node.InnerText);
+                floor.sequenceSize.y = int.Parse(node.InnerText);
             }
             if (node.Name == "minRoomSize")
             {
-                minRoomSize = int.Parse(node.InnerText);
+                floor.minRoomSize = int.Parse(node.InnerText);
             }
             if (node.Name == "maxRoomSize")
             {
-                maxRoomSize = int.Parse(node.InnerText);
+                floor.maxRoomSize = int.Parse(node.InnerText);
             }
             //enemyDictionaryの作成
             if (node.Name == "enemy")
             {
                 int EnemyID = int.Parse(node.Attributes.GetNamedItem("EnemyID").Value);
                 int frequency = int.Parse(node.Attributes.GetNamedItem("frequency").Value);
-                Floor.Instance.enemyDictionary.Add(EnemyID, frequency);
+                floor.enemyDictionary.Add(EnemyID, frequency);
                 count++;
             }
         }
     }
 
-
-    /// <summary>
-    /// ダンジョンの階層ひとつを管理するシングルトンクラス
-    /// </summary>
-    public class Floor : Singleton<Floor>
+    //一番最初の処理
+    public void createTest()
     {
-        //部屋クラスを管理
-        public Pillar[,] pillar;
-        public Room[,] room;
-        //マップ管理
-        public MapManager mapManager;
-        //部屋の並びのサイズ
-        public MyVector2 sequenceSize;      
-        //ダンジョンに出現する敵の管理（ID、確率）
-        public Dictionary<int, int> enemyDictionary = new Dictionary<int, int>();
-        //ダンジョンに出現するアイテムの管理（ID、確率）
-        //      public Dictionary<int, int> itemDictionary = new Dictionary<int, int>();
-
-        public void setFloor(int x, int y)
+        for (int n = 0; n < floor.sequenceSize.y; n++)
         {
-            sequenceSize = new MyVector2(x, y);
-            pillar = new Pillar[sequenceSize.x, sequenceSize.y];
-            room = new Room[sequenceSize.x, sequenceSize.y];
+            for (int m = 0; m < floor.sequenceSize.x; m++)
+            {
+                room [m, n] = Room.createRoomTest(m, n);
+                pillar [m, n] = new Pillar();
+            }
+        }
+        
+        getGoalPos();
+
+        breakPathFlag();
+
+        //部屋をランダムに選ぶ
+        int tmpX = Random.Range(0, floor.sequenceSize.x);
+        int tmpY = Random.Range(0, floor.sequenceSize.y);
+
+        //選ばれた部屋を実体化
+        room[tmpX, tmpY].createStage();
+        //キャラクターをランダムに配置
+        for (int i = 0; i < ObjectManager.Instance.character.Count(); i++)
+        {
+            room [tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character [i]);
+        }
+        
+        if(!mapManager.room[tmpX, tmpY])
+        {
+            mapManager.room[tmpX, tmpY] = true;
+            Debug.Log(tmpX + "," + tmpY + "部屋ができたYO！FIRST！");
+            //地図上に作成する
         }
 
-        //一番最初の処理
-        public void createTest()
-        {
-            for (int n = 0; n < sequenceSize.y; n++)
-            {
-                for (int m = 0; m < sequenceSize.x; m++)
-                {
-                    room [m, n] = Room.createRoomTest(m, n);
-                    pillar [m, n] = new Pillar();
-                }
-            }
-
-            Direction dir = goalDir();
-            getGoalRoom(dir);
-            for (int n = 0; n < sequenceSize.y; n ++)
-            {
-                for (int m = 0; m < sequenceSize.x; m ++)
-                {
-                    if(room[m,n].isGoal){
-                        room[m,n].getGoalPos(dir);
-                    }
-                }
-            }
-            breakPathFlag();
-            //部屋をランダムに選ぶ
-            int tmpX = Random.Range(0, sequenceSize.x);
-            int tmpY = Random.Range(0, sequenceSize.y);
-/*
+        /*
             //テスト
             for (int n = 0; n < sequenceSize.y; n ++)
             {
@@ -137,142 +112,163 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                     room [m, n].createStage();
                 }
             }
-*/
-            //選ばれた部屋を実体化
-            room[tmpX, tmpY].createStage();
-            //キャラクターをランダムに配置
-            for (int i = 0; i < ObjectManager.Instance.character.Count(); i++)
-            {
-                room [tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character [i]);
-            }
+        */
+    }
 
-            if(!mapManager.room[tmpX, tmpY])
+    //ゴールの方角を決定
+    public Direction getGoalDir()
+    {
+        int num = Random.Range(0, floor.sequenceSize.x * 2 + floor.sequenceSize.y * 2);
+        if (num > floor.sequenceSize.x * 2 + floor.sequenceSize.y) { return Direction.right; }
+        if (num > floor.sequenceSize.x * 2) { return Direction.left; }
+        if (num > floor.sequenceSize.x) { return Direction.down; }
+        return Direction.up;
+    }
+
+    //ゴールになる部屋を選ぶ
+    public void getGoalRoom(Direction dir)         
+    {
+        int num;
+        if (dir == Direction.up)
+        {
+            num = Random.Range(0, floor.sequenceSize.x);
+            room[num, 0].isGoal = true;
+        }
+        if (dir == Direction.down)
+        {
+            num = Random.Range(0, floor.sequenceSize.x);
+            room[num, floor.sequenceSize.y-1].isGoal = true;
+        }
+        if (dir == Direction.left)
+        {
+            num = Random.Range(0, floor.sequenceSize.y);
+            room[0, num].isGoal = true;
+        }if(dir == Direction.right)
+        {
+            num = Random.Range(0, floor.sequenceSize.y);
+            room[floor.sequenceSize.x-1, num].isGoal = true;
+        }
+    }
+
+    //ゴールの位置を決定
+    public void getGoalPos()
+    {
+        Direction dir = getGoalDir();
+        getGoalRoom(dir);
+        for (int n = 0; n < floor.sequenceSize.y; n ++)
+        {
+            for (int m = 0; m < floor.sequenceSize.x; m ++)
             {
-                mapManager.room[tmpX, tmpY] = true;
-                Debug.Log(tmpX + "," + tmpY + "部屋ができたYO！FIRST！");
+                if(room[m,n].isGoal)
+                {
+                    room[m,n].getGoalPos(dir);
+                }
+            }
+        }
+    }
+    
+    //小路のフラグを折る
+    public void breakPathFlag()
+    {
+        for (int n = 0; n < floor.sequenceSize.y-1; n++)
+        {
+            for (int m = 0; m < floor.sequenceSize.x-1; m++)
+            {
+                if(pillar[m, n].direction == Direction.up)
+                {
+                    room[m,n].path.right = -1;
+                    room[m + 1,n].path.left = -1;
+                }
+                
+                if(pillar[m, n].direction == Direction.down)
+                {
+                    room[m,n+1].path.right = -1;
+                    room[m+1,n+1].path.left = -1;
+                }
+                
+                if(pillar[m, n].direction == Direction.left)
+                {
+                    room[m,n].path.up = -1;
+                    room[m,n+1].path.down = -1;
+                }
+                if(pillar[m, n].direction == Direction.right)
+                {
+                    room[m+1,n].path.up = -1;
+                    room[m+1,n+1].path.down = -1;
+                }
+            }
+        }
+    }
+
+    //次の部屋を作成
+    public void createNext(MyVector2 sequence)
+    {
+        if (room [sequence.x, sequence.y].isBuild == false)
+        {
+            room [sequence.x, sequence.y].createStage();
+            if(!mapManager.room[sequence.x, sequence.y])
+            {
+                mapManager.room[sequence.x, sequence.y] = true;
+                Debug.Log(sequence.x + "," + sequence.y + "部屋ができたYO！");
                 //地図上に作成する
             }
         }
+    }
 
-        //ゴールの方角を決定
-        Direction goalDir()
+    public void randomizeToSquare(MyVector2 sequence, GameObject obj)
+    {
+        room [sequence.x, sequence.y].randomizeToSquare2(obj);
+    }
+    
+    //敵を出現率に従ってランダムに選び、IDを返す
+    public int getRandomEnemy()
+    {
+        int accumulation = 0;
+        int randomNumber = Random.Range(1, floor.enemyDictionary.Values.Sum());
+        for (int i = 0; i < floor.enemyDictionary.Count; i++)
         {
-            int num = Random.Range(0, sequenceSize.x * 2 + sequenceSize.y * 2);
-            if (num > sequenceSize.x * 2 + sequenceSize.y) { return Direction.right; }
-            if (num > sequenceSize.x * 2) { return Direction.left; }
-            if (num > sequenceSize.x) { return Direction.down; }
-            return Direction.up;
-        }
-
-        //ゴールになる部屋を選ぶ
-        void getGoalRoom(Direction dir)         
-        {
-            int num;
-            if (dir == Direction.up)
+            if ((floor.enemyDictionary.ElementAt(i).Value + accumulation) >= randomNumber)
             {
-                num = Random.Range(0, sequenceSize.x);
-                room[num, 0].isGoal = true;
+                return floor.enemyDictionary.ElementAt(i).Key;
             }
-            if (dir == Direction.down)
-            {
-                num = Random.Range(0, sequenceSize.x);
-                room[num, sequenceSize.y-1].isGoal = true;
-            }
-            if (dir == Direction.left)
-            {
-                num = Random.Range(0, sequenceSize.y);
-                room[0, num].isGoal = true;
-            }if(dir == Direction.right)
-            {
-                num = Random.Range(0, sequenceSize.y);
-                room[sequenceSize.x-1, num].isGoal = true;
-            }
+            accumulation += floor.enemyDictionary.ElementAt(i).Value;
         }
+        return 0;
+    }
+    
+    //
+    public void prepareEnemy()
+    {
+        //ランダムに部屋を選ぶ
+        int tmpX = Random.Range(0, floor.sequenceSize.x);
+        int tmpY = Random.Range(0, floor.sequenceSize.y);
+        int i = getRandomEnemy();
+        room [tmpX, tmpY].enemyList.Add(new EnemyContainer(i));
+    }
+    
+    //前の部屋を消す
+    public void destroyPrevious(MyVector2 sequence)
+    {
+        room [sequence.x, sequence.y].destroyStage();
+    }
+    
+    /// <summary>
+    /// ダンジョンの階層ひとつを管理するクラス
+    /// </summary>
+    public class Floor
+    {
+        public int id;
+        public MyVector2 sequenceSize = new MyVector2();
+        public int minRoomSize;
+        public int maxRoomSize;
 
-        //次の部屋を作成
-        public void createNext(MyVector2 sequence)
-        {
-            if (room [sequence.x, sequence.y].isBuild == false)
-            {
-                room [sequence.x, sequence.y].createStage();
-                if(!mapManager.room[sequence.x, sequence.y])
-                {
-                    mapManager.room[sequence.x, sequence.y] = true;
-                    Debug.Log(sequence.x + "," + sequence.y + "部屋ができたYO！");
-                    //地図上に作成する
-                }
-            }
-        }
 
-        //前の部屋を消す
-        public void destroyPrevious(MyVector2 sequence)
-        {
-            room [sequence.x, sequence.y].destroyStage();
-        }
+        //ダンジョンに出現する敵の管理（ID、確率）
+        public Dictionary<int, int> enemyDictionary = new Dictionary<int, int>();
+        //ダンジョンに出現するアイテムの管理（ID、確率）
+        //      public Dictionary<int, int> itemDictionary = new Dictionary<int, int>();
 
-        public void randomizeToSquare(MyVector2 sequence, GameObject obj)
-        {
-            room [sequence.x, sequence.y].randomizeToSquare2(obj);
-        }
 
-        //敵を出現率に従ってランダムに選び、IDを返す
-        public int getRandomEnemy()
-        {
-            int accumulation = 0;
-            int randomNumber = Random.Range(1, enemyDictionary.Values.Sum());
-            for (int i = 0; i < enemyDictionary.Count; i++)
-            {
-                if ((enemyDictionary.ElementAt(i).Value + accumulation) >= randomNumber)
-                {
-                    return enemyDictionary.ElementAt(i).Key;
-                }
-                accumulation += enemyDictionary.ElementAt(i).Value;
-            }
-            return 0;
-        }
-
-        //
-        public void prepareEnemy()
-        {
-            //ランダムに部屋を選ぶ
-            int tmpX = Random.Range(0, sequenceSize.x);
-            int tmpY = Random.Range(0, sequenceSize.y);
-            int i = getRandomEnemy();
-            room [tmpX, tmpY].enemyList.Add(new EnemyContainer(i));
-        }
-
-        //小路のフラグを折る
-        public void breakPathFlag()
-        {
-            for (int n = 0; n < sequenceSize.y-1; n++)
-            {
-                for (int m = 0; m < sequenceSize.x-1; m++)
-                {
-                    if(pillar[m, n].direction == Direction.up)
-                    {
-                        room[m,n].path.right = -1;
-                        room[m + 1,n].path.left = -1;
-                    }
-
-                    if(pillar[m, n].direction == Direction.down)
-                    {
-                        room[m,n+1].path.right = -1;
-                        room[m+1,n+1].path.left = -1;
-                    }
-
-                    if(pillar[m, n].direction == Direction.left)
-                    {
-                        room[m,n].path.up = -1;
-                        room[m,n+1].path.down = -1;
-                    }
-                    if(pillar[m, n].direction == Direction.right)
-                    {
-                        room[m+1,n].path.up = -1;
-                        room[m+1,n+1].path.down = -1;
-                    }
-                }
-            }
-        }
     }
 
     /// <summary>
@@ -309,7 +305,9 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
 
         public static MyVector2 randomCreateSize()
         {
-            return new MyVector2(Random.Range(minRoomSize, maxRoomSize + 1), Random.Range(minRoomSize, maxRoomSize + 1));
+            var floor = DungeonManager.Instance.floor;
+            return new MyVector2(Random.Range(floor.minRoomSize, floor.maxRoomSize + 1),
+                                 Random.Range(floor.minRoomSize, floor.maxRoomSize + 1));
         }
 
         //シークエンス中の位置
@@ -354,6 +352,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             var room = new Room(randomCreateSize(), createPosition(x, y));
             room.path = Path.randomCreatePath(room.size);
 
+            //test
             room.itemList.Add(new ItemContainer((int)ItemContainer.type.Sword));
             room.itemList.Add(new ItemContainer((int)ItemContainer.type.Flower));
 
@@ -376,13 +375,14 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         //通常の床を設置
         void createStagePlane()
         {
-            GameObject square = PrefabManager.Instance.square;
+            var floor = DungeonManager.Instance.floor;
+            var square = PrefabManager.Instance.square;
             for (int n = 0; n < size.x; n++)
             {
                 for (int m = 0; m < size.y; m++)
                 {
-                    int x = (m + sequence.x * (maxRoomSize + 3)) * 10;
-                    int z = (n + sequence.y * (maxRoomSize + 3)) * 10;
+                    int x = (m + sequence.x * (floor.maxRoomSize + 3)) * 10;
+                    int z = (n + sequence.y * (floor.maxRoomSize + 3)) * 10;
                     GameObject tmp = Instantiate(square, new Vector3(x, 50, z), Quaternion.identity) as GameObject;
                     tmp.GetComponent<AbstractSquare>().sequence = new MyVector2(sequence.x, sequence.y);
                 }
@@ -392,16 +392,17 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         //小路を設置
         void createStagePath()
         {
-            GameObject pathSquare = PrefabManager.Instance.pathSquare;
+            var floor = DungeonManager.Instance.floor;
+            var pathSquare = PrefabManager.Instance.pathSquare;
             GameObject tmp;
             int tmpX;
             int tmpZ;
 
             //up
-            if (sequence.y != Floor.Instance.sequenceSize.y - 1 && path.up >= 0)
+            if (sequence.y != floor.sequenceSize.y - 1 && path.up >= 0)
             {
-                tmpX = (path.up + sequence.x * (maxRoomSize + 3)) * 10;
-                tmpZ = (size.x + sequence.y * (maxRoomSize + 3)) * 10;
+                tmpX = (path.up + sequence.x * (floor.maxRoomSize + 3)) * 10;
+                tmpZ = (size.x + sequence.y * (floor.maxRoomSize + 3)) * 10;
                 tmp = Instantiate(pathSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
                 tmp.GetComponent<Renderer>().material.color = new Color(0.3f, 0.3f, 1.0f, 1.0f);
                 tmp.GetComponent<PathSquare>().setPathSquare(sequence.x, sequence.y, 0, 1, Direction.up);
@@ -410,8 +411,8 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             //down
             if (sequence.y != 0 && path.down >= 0)
             {
-                tmpX = (path.down + sequence.x * (maxRoomSize + 3)) * 10;
-                tmpZ = -10 + (sequence.y * (maxRoomSize + 3)) * 10;
+                tmpX = (path.down + sequence.x * (floor.maxRoomSize + 3)) * 10;
+                tmpZ = -10 + (sequence.y * (floor.maxRoomSize + 3)) * 10;
                 tmp = Instantiate(pathSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
                 tmp.GetComponent<Renderer>().material.color = new Color(0.3f, 0.3f, 1.0f, 1.0f);
                 tmp.GetComponent<PathSquare>().setPathSquare(sequence.x, sequence.y, 0, -1, Direction.down);
@@ -420,18 +421,18 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             //left
             if (sequence.x != 0 && path.left >= 0)
             {
-                tmpX = (sequence.x * (maxRoomSize + 3) - 1) * 10;
-                tmpZ = (path.left + sequence.y * (maxRoomSize + 3)) * 10;
+                tmpX = (sequence.x * (floor.maxRoomSize + 3) - 1) * 10;
+                tmpZ = (path.left + sequence.y * (floor.maxRoomSize + 3)) * 10;
                 tmp = Instantiate(pathSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
                 tmp.GetComponent<Renderer>().material.color = new Color(0.3f, 0.3f, 1.0f, 1.0f);
                 tmp.GetComponent<PathSquare>().setPathSquare(sequence.x, sequence.y, -1, 0, Direction.left);
             }
 
             //right
-            if (sequence.x != Floor.Instance.sequenceSize.x - 1 && path.right >= 0)
+            if (sequence.x != floor.sequenceSize.x - 1 && path.right >= 0)
             {
-                tmpX = (size.y + sequence.x * (maxRoomSize + 3)) * 10;
-                tmpZ = (path.right + sequence.y * (maxRoomSize + 3)) * 10;
+                tmpX = (size.y + sequence.x * (floor.maxRoomSize + 3)) * 10;
+                tmpZ = (path.right + sequence.y * (floor.maxRoomSize + 3)) * 10;
                 tmp = Instantiate(pathSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
                 tmp.GetComponent<Renderer>().material.color = new Color(0.3f, 0.3f, 1.0f, 1.0f);
                 tmp.GetComponent<PathSquare>().setPathSquare(sequence.x, sequence.y, 1, 0, Direction.right);
@@ -442,36 +443,37 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         {
             if (isGoal)
             {
-                GameObject stairSquare = PrefabManager.Instance.stairSquare;                
+                var floor = DungeonManager.Instance.floor;
+                var stairSquare = PrefabManager.Instance.stairSquare;                
                 GameObject tmp;
                 int tmpX;
                 int tmpZ;
                 if (goalDir == Direction.up)
                 {
-                    tmpX = (goalPos + sequence.x * (maxRoomSize + 3)) * 10;
-                    tmpZ = -10 + (sequence.y * (maxRoomSize + 3)) * 10;
+                    tmpX = (goalPos + sequence.x * (floor.maxRoomSize + 3)) * 10;
+                    tmpZ = -10 + (sequence.y * (floor.maxRoomSize + 3)) * 10;
                     tmp = Instantiate(stairSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
                     tmp.GetComponent<Renderer>().material.color = new Color(1.0f, 0.3f, 0.3f, 1.0f);
                     
                 }
                 if (goalDir == Direction.down)
                 {
-                    tmpX = (goalPos + sequence.x * (maxRoomSize + 3)) * 10;
-                    tmpZ = (size.x + sequence.y * (maxRoomSize + 3)) * 10;
+                    tmpX = (goalPos + sequence.x * (floor.maxRoomSize + 3)) * 10;
+                    tmpZ = (size.x + sequence.y * (floor.maxRoomSize + 3)) * 10;
                     tmp = Instantiate(stairSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
                     tmp.GetComponent<Renderer>().material.color = new Color(1.0f, 0.3f, 0.3f, 1.0f);
                 }
                 if (goalDir == Direction.left)
                 {
-                    tmpX = (sequence.x * (maxRoomSize + 3) - 1) * 10;
-                    tmpZ = (goalPos + sequence.y * (maxRoomSize + 3)) * 10;
+                    tmpX = (sequence.x * (floor.maxRoomSize + 3) - 1) * 10;
+                    tmpZ = (goalPos + sequence.y * (floor.maxRoomSize + 3)) * 10;
                     tmp = Instantiate(stairSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
                     tmp.GetComponent<Renderer>().material.color = new Color(1.0f, 0.3f, 0.3f, 1.0f);
                 }
                 if(goalDir == Direction.right)
                 {
-                    tmpX = (size.y + sequence.x * (maxRoomSize + 3)) * 10;
-                    tmpZ = (goalPos + sequence.y * (maxRoomSize + 3)) * 10;
+                    tmpX = (size.y + sequence.x * (floor.maxRoomSize + 3)) * 10;
+                    tmpZ = (goalPos + sequence.y * (floor.maxRoomSize + 3)) * 10;
                     tmp = Instantiate(stairSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
                     tmp.GetComponent<Renderer>().material.color = new Color(1.0f, 0.3f, 0.3f, 1.0f);
                 }

@@ -32,9 +32,10 @@ namespace MyUtility
     /// </summary>
     public class MyVector2
     {
-        public readonly int x;
-        public readonly int y;
+        public int x;
+        public int y;
 
+        public MyVector2() { }
         public MyVector2(int x, int y)
         {
             this.x = x;

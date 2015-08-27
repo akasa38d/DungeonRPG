@@ -21,13 +21,11 @@ public class ObjectManager : SingletonMonoBehaviour<ObjectManager>
     {
         //一旦クリアー
         character.Clear();
-
         //playerを優先してセット
         character.Add(GameObject.Find("Player"));
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Character"))
         {
-            if (obj != character[0])
-            {
+            if (obj.GetComponent<AbstractCharacterObject>().type == AbstractCharacterObject.Type.Enemy){
                 character.Add(obj);
             }
         }

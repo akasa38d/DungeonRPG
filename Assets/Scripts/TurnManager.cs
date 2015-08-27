@@ -48,8 +48,8 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
 
         if (turnPlayer[turnCharacter].process == AbstractCharacterObject.Process.Next)
         {
+            //ダメージ処理してたら待つように
             turnPlayer[turnCharacter].process = AbstractCharacterObject.Process.Start;
-
             turnCharacter++;
         }
         yield return null;
@@ -73,7 +73,7 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
         if (turnCount % 3 == 0)
         {
             Debug.Log("敵の出現");
-            DungeonManager.Floor.Instance.prepareEnemy();
+            DungeonManager.Instance.prepareEnemy();
         }
         DungeonManager.Instance.mapManager.checkFloorDanger();
     }

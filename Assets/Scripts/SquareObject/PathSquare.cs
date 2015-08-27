@@ -32,17 +32,14 @@ public class PathSquare : AbstractSquare
 
     IEnumerator enterThisCoroutine()
     {
-        var floor = DungeonManager.Floor.Instance;
-
-        FadeManager.Instance.LoadLevel(1, () => pathEvent(floor));
-
+        FadeManager.Instance.LoadLevel(1, () => pathEvent());
         yield return null;
     }
-    public void pathEvent(DungeonManager.Floor floor)
+    public void pathEvent()
     {
-        floor.destroyPrevious(sequence);
-        floor.createNext(nextSequence);
-        floor.randomizeToSquare(nextSequence, ObjectManager.Instance.character[0]);
+        DungeonManager.Instance.destroyPrevious(sequence);
+        DungeonManager.Instance.createNext(nextSequence);
+        DungeonManager.Instance.randomizeToSquare(nextSequence, ObjectManager.Instance.character[0]);
         TurnManager.Instance.turnCharacter = 0;
     }
 }

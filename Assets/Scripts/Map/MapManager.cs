@@ -41,9 +41,9 @@ public class MapManager : MonoBehaviour  {
 
     int checkRoomDanger(int m, int n)
     {
-        if(DungeonManager.Floor.Instance.room[m,n].enemyList.Count > 2) { return 3; }
-        if(DungeonManager.Floor.Instance.room[m,n].enemyList.Count > 1) { return 2; }
-        if(DungeonManager.Floor.Instance.room[m,n].enemyList.Count > 0) { return 1; }
+        if(DungeonManager.Instance.room[m,n].enemyList.Count > 2) { return 3; }
+        if(DungeonManager.Instance.room[m,n].enemyList.Count > 1) { return 2; }
+        if(DungeonManager.Instance.room[m,n].enemyList.Count > 0) { return 1; }
         return 0;
     }
 }
