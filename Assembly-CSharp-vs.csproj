@@ -60,7 +60,6 @@
      <Compile Include="Assets\Scripts\CharacterObject\PlayerObject.cs" />
      <Compile Include="Assets\Scripts\CharacterObject\PlayerParameter.cs" />
      <Compile Include="Assets\Scripts\DungeonManager.cs" />
-     <Compile Include="Assets\Scripts\FadeManager.cs" />
      <Compile Include="Assets\Scripts\GUI\CardButton.cs" />
      <Compile Include="Assets\Scripts\GUI\DeckGUI.cs" />
      <Compile Include="Assets\Scripts\GUI\LockButton.cs" />
@@ -72,6 +71,7 @@
      <Compile Include="Assets\Scripts\Junk\DrawPosition.cs" />
      <Compile Include="Assets\Scripts\Junk\FloorBuilder.cs" />
      <Compile Include="Assets\Scripts\Junk\XMLTest.cs" />
+     <Compile Include="Assets\Scripts\Map\MapManager.cs" />
      <Compile Include="Assets\Scripts\ObjectBuilder.cs" />
      <Compile Include="Assets\Scripts\ObjectManager.cs" />
      <Compile Include="Assets\Scripts\PrefabManager.cs" />
@@ -81,6 +81,7 @@
      <Compile Include="Assets\Scripts\SquareObject\StairSquare.cs" />
      <Compile Include="Assets\Scripts\StartButton.cs" />
      <Compile Include="Assets\Scripts\TurnManager.cs" />
+     <Compile Include="Assets\Scripts\Utility\FadeManager.cs" />
      <Compile Include="Assets\Scripts\Utility\MyUtility.cs" />
      <Compile Include="Assets\Scripts\Utility\SingletonMonoBehaviour.cs" />
      <Compile Include="Assets\Scripts\XMLReader.cs" />

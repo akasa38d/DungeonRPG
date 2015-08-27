@@ -1,10 +1,9 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\DungeonManager.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Map\MapManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\DungeonManager.cs" Line="156" Column="9" />
-      <File FileName="Assets\Scripts\PrefabManager.cs" Line="19" Column="41" />
-      <File FileName="Assets\Resources\DataBase\Dungeon.xml" Line="20" Column="15" />
+      <File FileName="Assets\Scripts\CharacterObject\PlayerParameter.cs" Line="15" Column="31" />
+      <File FileName="Assets\Scripts\Map\MapManager.cs" Line="12" Column="30" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -203,7 +203,10 @@ public class BombItem : Item
             //プレイヤからの距離が３の床で
             if (player.checkDistanceCE(floor, 3) && !player.checkDistanceCE(floor, 2))
             {
-                playerScript.pInstantiate(subAttackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
+                var tmp = playerScript.pInstantiate(subAttackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
+                var tmpScript = tmp.GetComponent<SubAttackButton>();
+                tmpScript.square = floor;
+                tmpScript.attack = this.operation;
             }
         }
     }

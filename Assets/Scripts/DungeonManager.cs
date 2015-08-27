@@ -7,8 +7,11 @@ using MyUtility;
 
 public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
 {
+    public MapManager mapManager;
+
     //id
     public int id;
+
 
     //部屋の数
     public static int sequenceSizeX;
@@ -21,6 +24,16 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
     public override void Awake()
     {
         base.Awake();
+    }
+
+    void Start()
+    {
+        getDungeonData(0);
+        Floor.Instance.setFloor(sequenceSizeX, sequenceSizeY);
+        mapManager.getSequenceSize(sequenceSizeX, sequenceSizeY);
+
+        Floor.Instance.mapManager = this.mapManager;
+        Floor.Instance.createTest();
     }
 
     //データをロードしてパラメータを作成
@@ -72,10 +85,10 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         //部屋クラスを管理
         public Pillar[,] pillar;
         public Room[,] room;
-
+        //マップ管理
+        public MapManager mapManager;
         //部屋の並びのサイズ
-        public MyVector2 sequenceSize;
-
+        public MyVector2 sequenceSize;      
         //ダンジョンに出現する敵の管理（ID、確率）
         public Dictionary<int, int> enemyDictionary = new Dictionary<int, int>();
         //ダンジョンに出現するアイテムの管理（ID、確率）
@@ -91,7 +104,6 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         //一番最初の処理
         public void createTest()
         {
-            //予め部屋と柱のデータを登録
             for (int n = 0; n < sequenceSize.y; n++)
             {
                 for (int m = 0; m < sequenceSize.x; m++)
@@ -101,9 +113,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                 }
             }
 
-            //ゴールのある部屋と方角を決定
             Direction dir = goalDir();
-            Debug.Log("方角は" + dir);
             getGoalRoom(dir);
             for (int n = 0; n < sequenceSize.y; n ++)
             {
@@ -114,14 +124,10 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                     }
                 }
             }
-
-            //道を分断して迷路を作成
             breakPathFlag();
-
             //部屋をランダムに選ぶ
             int tmpX = Random.Range(0, sequenceSize.x);
             int tmpY = Random.Range(0, sequenceSize.y);
-
 /*
             //テスト
             for (int n = 0; n < sequenceSize.y; n ++)
@@ -131,17 +137,21 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                     room [m, n].createStage();
                 }
             }
-
 */
             //選ばれた部屋を実体化
             room[tmpX, tmpY].createStage();
-
-            room [tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character [0]);
-            for (int i = 1; i < ObjectManager.Instance.character.Count(); i++)
+            //キャラクターをランダムに配置
+            for (int i = 0; i < ObjectManager.Instance.character.Count(); i++)
             {
                 room [tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character [i]);
             }
 
+            if(!mapManager.room[tmpX, tmpY])
+            {
+                mapManager.room[tmpX, tmpY] = true;
+                Debug.Log(tmpX + "," + tmpY + "部屋ができたYO！FIRST！");
+                //地図上に作成する
+            }
         }
 
         //ゴールの方角を決定
@@ -179,12 +189,18 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             }
         }
 
-
+        //次の部屋を作成
         public void createNext(MyVector2 sequence)
         {
             if (room [sequence.x, sequence.y].isBuild == false)
             {
                 room [sequence.x, sequence.y].createStage();
+                if(!mapManager.room[sequence.x, sequence.y])
+                {
+                    mapManager.room[sequence.x, sequence.y] = true;
+                    Debug.Log(sequence.x + "," + sequence.y + "部屋ができたYO！");
+                    //地図上に作成する
+                }
             }
         }
 
@@ -215,13 +231,12 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             return 0;
         }
 
-        //用確認
+        //
         public void prepareEnemy()
         {
             //ランダムに部屋を選ぶ
             int tmpX = Random.Range(0, sequenceSize.x);
             int tmpY = Random.Range(0, sequenceSize.y);
-
             int i = getRandomEnemy();
             room [tmpX, tmpY].enemyList.Add(new EnemyContainer(i));
         }
@@ -233,7 +248,6 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             {
                 for (int m = 0; m < sequenceSize.x-1; m++)
                 {
-
                     if(pillar[m, n].direction == Direction.up)
                     {
                         room[m,n].path.right = -1;
@@ -267,10 +281,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
     /// </summary>
     public class Pillar
     {
-        public Pillar()
-        {
-            direction = (Direction)Random.Range(0, 4);
-        }
+        public Pillar() { direction = (Direction)Random.Range(0, 4); }
         public Direction direction;
     }
 
@@ -352,7 +363,19 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         //＊＊＊＊＊＊＊＊＊＊　　　　　ステージの生成　　　　　＊＊＊＊＊＊＊＊＊＊//
         public void createStage()
         {
-            //床の設置
+            createStagePlane();
+            createStagePath();
+            createStageGoal();
+            createStageEnemy();
+            createStageItem();
+            //createStageTrap();
+
+            isBuild = true;
+        }
+
+        //通常の床を設置
+        void createStagePlane()
+        {
             GameObject square = PrefabManager.Instance.square;
             for (int n = 0; n < size.x; n++)
             {
@@ -364,32 +387,15 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                     tmp.GetComponent<AbstractSquare>().sequence = new MyVector2(sequence.x, sequence.y);
                 }
             }
-
-            //小路の生成
-            createStagePath();
-
-            createStageGoal();
-
-            //敵の生成
-            createStageEnemy();
-
-            //アイテムの生成
-            createStageItem();
-
-            isBuild = true;
         }
 
         //小路を設置
         void createStagePath()
         {
             GameObject pathSquare = PrefabManager.Instance.pathSquare;
-
             GameObject tmp;
             int tmpX;
             int tmpZ;
-
-
-
 
             //up
             if (sequence.y != Floor.Instance.sequenceSize.y - 1 && path.up >= 0)
@@ -440,7 +446,6 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                 GameObject tmp;
                 int tmpX;
                 int tmpZ;
-
                 if (goalDir == Direction.up)
                 {
                     tmpX = (goalPos + sequence.x * (maxRoomSize + 3)) * 10;
@@ -451,8 +456,6 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                 }
                 if (goalDir == Direction.down)
                 {
-                    
-                    
                     tmpX = (goalPos + sequence.x * (maxRoomSize + 3)) * 10;
                     tmpZ = (size.x + sequence.y * (maxRoomSize + 3)) * 10;
                     tmp = Instantiate(stairSquare, new Vector3(tmpX, 50, tmpZ), Quaternion.identity) as GameObject;
@@ -484,7 +487,6 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                     var obj = Instantiate(n.prefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
                     obj.GetComponent<AbstractCharacterObject>().parameter = n.parameter;
                     Debug.Log(n.parameter.cName + "ですにゃあ");
-                    Debug.Log(obj.GetComponent<AbstractCharacterObject>().parameter.cName + "ですにゃん");
                     randomizeToSquare2(obj);
                 }
             }
@@ -503,7 +505,6 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                         newobj.GetComponent<FieldItem>().item = n.item;
                         return;
                     }
-
                     var obj = Instantiate(PrefabManager.Instance.item) as GameObject;
                     obj.GetComponent<FieldItem>().item = n.item;
                     randomizeToSquare2(obj);
@@ -559,6 +560,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                 && n.GetComponent<AbstractSquare>().sequence.isEqual(this.sequence)
                 && n.GetComponent<AbstractSquare>().isCharacterOn() == false
                 && n.GetComponent<AbstractSquare>().isItemOn() == false
+                    //&& n.GetComponent<AbstractSquare>().isTrapOn() == false
                     select n;
 
             //床のリストからランダムに取得

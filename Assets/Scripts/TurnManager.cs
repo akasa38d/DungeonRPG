@@ -52,15 +52,13 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
 
             turnCharacter++;
         }
-
         yield return null;
 
         //ループ
         if (turnCharacter >= turnPlayer.Count)
         {
             endOperation();
-        }
-        
+        }        
         yield return null;
     }
 
@@ -68,18 +66,15 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
     {
         //０番のキャラクタへターンプレイヤーを変更
         turnCharacter = 0;
-
         //ターン数増加
         turnCount++;
-
-        Debug.Log(turnCount + "ターン目開始");
-        
+        Debug.Log(turnCount + "ターン目開始");        
         //敵の出現
         if (turnCount % 3 == 0)
         {
             Debug.Log("敵の出現");
             DungeonManager.Floor.Instance.prepareEnemy();
         }
+        DungeonManager.Instance.mapManager.checkFloorDanger();
     }
-
 }
