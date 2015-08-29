@@ -169,6 +169,7 @@ public class BombItem : Item
     public BombItem()
     {
         id = 3;
+        this.name = "爆弾";
         power = 99;
 		expendable = true;
         this.effect = PrefabManager.Instance.explosion;

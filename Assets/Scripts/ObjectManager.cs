@@ -25,14 +25,17 @@ public class ObjectManager : SingletonMonoBehaviour<ObjectManager>
         character.Add(GameObject.Find("Player"));
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Character"))
         {
-            if (obj.GetComponent<AbstractCharacterObject>().type == AbstractCharacterObject.Type.Enemy){
-                character.Add(obj);
+            if (obj.GetComponent<AbstractCharacterObject>().type == AbstractCharacterObject.Type.Enemy)
+            {
+                if(obj.GetComponent<AbstractCharacterObject>().parameter.hp > 0)
+                {
+                    character.Add(obj);
+                }
             }
         }
 
         //各スクリプトをセット
         characterScript.Clear();
-
         characterScript.Add(character[0].GetComponent<PlayerObject>());
         characterScript[0].id = 0;
         for (int i = 1; i < character.Count; i++)

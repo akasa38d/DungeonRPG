@@ -118,24 +118,17 @@ public class ItemManager : MonoBehaviour
     void use(int handNumber)
     {
 		switchingSelect (handNumber, true);
-
-        Debug.Log("このカードを使うぜ！");
-        
+        Debug.Log("このカードを使うぜ！");        
         usingNumber = handNumber;
-
         handCard[handNumber].buttonEvent();
     }
 
 	void change(int handNumber)
 	{
 		switchingSelect (handNumber, false);
-
 		usingNumber = handNumber;
-
 		handCard [handNumber].changeOperation ();
 	}
-
-
 
     public void draw(int handNumber)
     {
@@ -198,7 +191,6 @@ public class ItemManager : MonoBehaviour
 		trashCard.AddRange(usedCard);
 		yield return null;
 
-		//使用したカードをクリア
 		usedCard.Clear();
 		yield return null;
 
@@ -216,30 +208,23 @@ public class ItemManager : MonoBehaviour
 				draw(i);
 			}
 		}
-
-		yield return null;
-
-		if (handNum() + trashCard.Count() + deckCard.Count() > 17) {
-			gameClear();
-		}
 		yield return null;
 	}
 
     public void Update()
     {
-        if (this.gameObject.GetComponent<PlayerObject>().process != AbstractCharacterObject.Process.Main)
+        if (this.gameObject.GetComponent<PlayerObject>().process == AbstractCharacterObject.Process.Main)
         {
             foreach (var n in cardUI)
             {
-				n.GetComponent<Button>().interactable = false;
+                n.GetComponent<Button>().interactable = true;
             }
         }
-
-        if (this.gameObject.GetComponent<PlayerObject>().process == AbstractCharacterObject.Process.Main)
+        else
         {
-            for (int i = 0; i < 6; i++)
+            foreach (var n in cardUI)
             {
-                cardUI[i].GetComponent<Button>().interactable = true;
+                n.GetComponent<Button>().interactable = false;
             }
         }
     }

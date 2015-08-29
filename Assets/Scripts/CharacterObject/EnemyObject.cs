@@ -19,6 +19,7 @@ public class EnemyObject : AbstractCharacterObject
     //スタンバイフェイズ
     protected override void startOperation()
     {
+        Debug.Log("ステンバーイ");
         ObjectManager.Instance.setCharacter();
         ObjectManager.Instance.setSquare();
         base.startOperation();
@@ -27,6 +28,7 @@ public class EnemyObject : AbstractCharacterObject
     //メインフェイズ
     protected override void mainOperation()
     {
+        Debug.Log("メイーン");
         searchTarget();
     }
 

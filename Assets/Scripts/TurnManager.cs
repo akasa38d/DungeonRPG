@@ -49,6 +49,7 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
         if (turnPlayer[turnCharacter].process == AbstractCharacterObject.Process.Next)
         {
             //ダメージ処理してたら待つように
+            ObjectManager.Instance.setCharacter();
             turnPlayer[turnCharacter].process = AbstractCharacterObject.Process.Start;
             turnCharacter++;
         }

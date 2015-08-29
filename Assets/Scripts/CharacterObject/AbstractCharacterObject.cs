@@ -88,6 +88,7 @@ public abstract class AbstractCharacterObject : MonoBehaviour
     //エンドフェイズ処理
     protected virtual void endOperation()
     {
+
         process = Process.Next;
     }
 
@@ -143,6 +144,7 @@ public abstract class AbstractCharacterObject : MonoBehaviour
         Debug.Log(this.parameter.cName + "は" + damage + "のダメージを受けた");
         if (damage >= this.parameter.hp)
         {
+            this.parameter.hp = 0;
             Debug.Log("グワーッ！！" + this.parameter.cName + "は爆発四散！");
             Instantiate(PrefabManager.Instance.explosion, this.transform.position, Quaternion.identity);
             Destroy(this.gameObject);
