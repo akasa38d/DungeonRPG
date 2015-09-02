@@ -54,12 +54,13 @@ public class ItemContainer
     }
 
 	//IDから対応するアイテムを格納
-    public Item getItem(int id)
+    public Item getItem(int ID)
     {
-        if (id == 1) { return new FlowerItem(); }
-        if (id == 2) { return new SwordItem(2); }
-        if (id == 3) { return new BombItem(); }
-		if (id == 4) { return new AxeItem(4); }
+        if (ID == 1) { return new FlowerItem(); }
+        if (ID == 2) { return new SwordItem(2); }
+        if (ID == 3) { return new BombItem(); }
+        if (ID == 4) { return new AxeItem(4); }
+        if (ID == 12) { return new BreadItem(12); }
         return new NullItem();
     }
 }

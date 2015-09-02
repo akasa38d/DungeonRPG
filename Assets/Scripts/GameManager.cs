@@ -1,20 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GameManager : MonoBehaviour
+namespace MyScript
 {
-    void Awake()
+    public class GameManager : MonoBehaviour
     {
-        Application.targetFrameRate = 60;
-    }
+        void Awake()
+        {
+            Application.targetFrameRate = 60;
+        }
 
-    void Start()
-    {
-        ObjectManager.Instance.setCharacter();
-	}
+        void Start()
+        {
+            ObjectManager.Instance.setCharacter();
+        }
 
-    void Update()
-    {
-        TurnManager.Instance.operation();
+        void Update()
+        {
+            TurnManager.Instance.operation();
+        }
     }
 }

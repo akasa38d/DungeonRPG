@@ -3,22 +3,22 @@
 <enemies>
     <enemy id="0">
         <cName><![CDATA[太郎]]></cName>
-        <maxHp>10</maxHp>
+        <maxHp>8</maxHp>
         <atk>1</atk>
     </enemy>
     <enemy id="1">
         <cName><![CDATA[次郎]]></cName>
-        <maxHp>20</maxHp>
+        <maxHp>9</maxHp>
         <atk>2</atk>
     </enemy>
         <enemy id="2">
         <cName><![CDATA[三郎]]></cName>
-        <maxHp>30</maxHp>
+        <maxHp>10</maxHp>
         <atk>3</atk>
     </enemy>
         <enemy id="3">
         <cName><![CDATA[四郎]]></cName>
-        <maxHp>40</maxHp>
+        <maxHp>11</maxHp>
         <atk>4</atk>
     </enemy>
 	<enemy id="4">

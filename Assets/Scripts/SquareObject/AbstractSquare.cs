@@ -36,13 +36,13 @@ public abstract class AbstractSquare : MonoBehaviour
     }
 
     //誰かが乗っているか（タイプ指定）
-    public virtual bool isCharacterOn(AbstractCharacterObject.Type type)
+    public virtual bool isCharacterOn(AbstractCharacter.Type type)
     {
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Character"))
         {
             if (checkZeroDistance(obj))
             {
-                if (obj.GetComponent<AbstractCharacterObject>().type == type)
+                if (obj.GetComponent<AbstractCharacter>().type == type)
                 {
                     character = obj;
                     return true;
@@ -94,7 +94,7 @@ public abstract class AbstractSquare : MonoBehaviour
     //乗った時
     public virtual void enterThis()
     {
-        if (isCharacterOn(AbstractCharacterObject.Type.Player))
+        if (isCharacterOn(AbstractCharacter.Type.Player))
         {
             if (isItemOn())
             {

@@ -19,6 +19,7 @@ public class PrefabManager : SingletonMonoBehaviour<PrefabManager>
     public GameObject extraAttackButton;
 	public GameObject wideAttackButton;
     public GameObject subAttackButton;
+    public GameObject cureButton;
 
     //effect系
     public GameObject explosion;
@@ -42,8 +43,10 @@ public class PrefabManager : SingletonMonoBehaviour<PrefabManager>
 
     //カードのsprite
     public Sprite swordCard;
+    public Sprite knifeCard;
     public Sprite flowerCard;
     public Sprite nullCard;
     public Sprite bombCard;
 	public Sprite axeCard;
+    public Sprite breadMCard;
 }

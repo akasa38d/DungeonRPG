@@ -19,7 +19,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_5_1_1;UNITY_5_1;UNITY_5;ENABLE_NEW_BUGREPORTER;ENABLE_2D_PHYSICS;ENABLE_4_6_FEATURES;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_PHYSICS_PHYSX3;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_UNET;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_LICENSE;ENABLE_AUDIOMIXER_SUSPEND;ENABLE_EDITOR_METRICS;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;INCLUDE_DIRECTX12;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;ENABLE_LOCALIZATION;UNITY_WEBPLAYER;ENABLE_SUBSTANCE;WEBPLUG;ENABLE_TEXTUREID_MAP;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_MONO;ENABLE_PROFILER;DEBUG;TRACE;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_32;UNITY_EDITOR_WIN;CROSS_PLATFORM_INPUT</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_5_1_1;UNITY_5_1;UNITY_5;ENABLE_NEW_BUGREPORTER;ENABLE_2D_PHYSICS;ENABLE_4_6_FEATURES;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_PHYSICS_PHYSX3;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_UNET;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_LICENSE;ENABLE_AUDIOMIXER_SUSPEND;ENABLE_EDITOR_METRICS;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;INCLUDE_DIRECTX12;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;ENABLE_LOCALIZATION;UNITY_WEBPLAYER;ENABLE_SUBSTANCE;WEBPLUG;ENABLE_TEXTUREID_MAP;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_MONO;ENABLE_PROFILER;DEBUG;TRACE;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_32;UNITY_EDITOR_WIN</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -49,20 +49,22 @@
      <Compile Include="Assets\Fantasy Skybox FREE\Scripts\FSPlayer.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\AbstractButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\AttackButton.cs" />
+     <Compile Include="Assets\Scripts\ButtonScript\CureButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\ExtraAttackButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\MoveButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\SubAttackButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\WideAttackButton.cs" />
-     <Compile Include="Assets\Scripts\CharacterObject\AbstractCharacterObject.cs" />
+     <Compile Include="Assets\Scripts\CharacterObject\AbstractCharacter.cs" />
      <Compile Include="Assets\Scripts\CharacterObject\AbstractCharacterParameter.cs" />
-     <Compile Include="Assets\Scripts\CharacterObject\EnemyObject.cs" />
+     <Compile Include="Assets\Scripts\CharacterObject\Enemy.cs" />
      <Compile Include="Assets\Scripts\CharacterObject\EnemyParameter.cs" />
-     <Compile Include="Assets\Scripts\CharacterObject\PlayerObject.cs" />
+     <Compile Include="Assets\Scripts\CharacterObject\Player.cs" />
      <Compile Include="Assets\Scripts\CharacterObject\PlayerParameter.cs" />
      <Compile Include="Assets\Scripts\DungeonManager.cs" />
      <Compile Include="Assets\Scripts\GUI\CardButton.cs" />
      <Compile Include="Assets\Scripts\GUI\DeckGUI.cs" />
-     <Compile Include="Assets\Scripts\GUI\LockButton.cs" />
+     <Compile Include="Assets\Scripts\GUI\OpenButton.cs" />
+     <Compile Include="Assets\Scripts\GUI\StartButton.cs" />
      <Compile Include="Assets\Scripts\GUI\StatusGUI.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Item\FieldItem.cs" />
@@ -79,7 +81,6 @@
      <Compile Include="Assets\Scripts\SquareObject\PathSquare.cs" />
      <Compile Include="Assets\Scripts\SquareObject\PlaneSquare.cs" />
      <Compile Include="Assets\Scripts\SquareObject\StairSquare.cs" />
-     <Compile Include="Assets\Scripts\StartButton.cs" />
      <Compile Include="Assets\Scripts\TurnManager.cs" />
      <Compile Include="Assets\Scripts\Utility\FadeManager.cs" />
      <Compile Include="Assets\Scripts\Utility\MyUtility.cs" />
@@ -172,6 +173,12 @@
  </Reference>
  <Reference Include="UnityEngine.Analytics">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
+ </Reference>
+ <Reference Include="LitJson">
+ <HintPath>C:/Users/keita/Documents/DungeonRPG/Assets/Plugins/JOKER/LitJson.dll</HintPath>
+ </Reference>
+ <Reference Include="NCalc">
+ <HintPath>C:/Users/keita/Documents/DungeonRPG/Assets/Plugins/JOKER/NCalc.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.iOS.Extensions.Xcode">
  <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>

@@ -12,7 +12,7 @@ public class ObjectManager : SingletonMonoBehaviour<ObjectManager>
     public GameObject explosion;
 
     public List<GameObject> character = new List<GameObject>();
-    public List<AbstractCharacterObject> characterScript = new List<AbstractCharacterObject>();
+    public List<AbstractCharacter> characterScript = new List<AbstractCharacter>();
     public List<GameObject> square = new List<GameObject>();
 
     public override void Awake() { base.Awake(); }
@@ -25,9 +25,9 @@ public class ObjectManager : SingletonMonoBehaviour<ObjectManager>
         character.Add(GameObject.Find("Player"));
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Character"))
         {
-            if (obj.GetComponent<AbstractCharacterObject>().type == AbstractCharacterObject.Type.Enemy)
+            if (obj.GetComponent<AbstractCharacter>().type == AbstractCharacter.Type.Enemy)
             {
-                if(obj.GetComponent<AbstractCharacterObject>().parameter.hp > 0)
+                if(obj.GetComponent<AbstractCharacter>().parameter.hp > 0)
                 {
                     character.Add(obj);
                 }
@@ -36,12 +36,10 @@ public class ObjectManager : SingletonMonoBehaviour<ObjectManager>
 
         //各スクリプトをセット
         characterScript.Clear();
-        characterScript.Add(character[0].GetComponent<PlayerObject>());
-        characterScript[0].id = 0;
+        characterScript.Add(character[0].GetComponent<Player>());
         for (int i = 1; i < character.Count; i++)
         {
-            characterScript.Add(character[i].GetComponent<EnemyObject>());
-            characterScript[i].id = i;
+            characterScript.Add(character[i].GetComponent<Enemy>());
         }
     }
 

@@ -50,7 +50,7 @@ public class WideAttackButton : AbstractButton
 			{
 				var a = n.GetComponent<WideAttackButton>();
 				a.getColor(a.defaultColor);
-				a.attack(a.square);
+				a.effect(a.square);
 			}
 		}
 		finally{

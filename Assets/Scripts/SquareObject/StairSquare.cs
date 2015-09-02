@@ -12,7 +12,7 @@ public class StairSquare : AbstractSquare
 	
     public override void enterThis()
     {
-        if (isCharacterOn(AbstractCharacterObject.Type.Player))
+        if (isCharacterOn(AbstractCharacter.Type.Player))
         {
             StartCoroutine(enterThisCoroutine());
         }

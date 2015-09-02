@@ -2,13 +2,18 @@
 
 <dungeons>
     <dungeon id="0">
-        <floorSizeX>4</floorSizeX>
-        <floorSizeY>3</floorSizeY>
+        <floorSizeX>3</floorSizeX>
+        <floorSizeY>4</floorSizeY>
         <minRoomSize>4</minRoomSize>
         <maxRoomSize>6</maxRoomSize>
         <enemy EnemyID = "0" frequency = "10">太郎</enemy> 
         <enemy EnemyID = "2" frequency = "10">２郎</enemy> 
         <enemy EnemyID = "3" frequency = "10">４郎</enemy> 
+        <item ItemID = "1" frequency = "10">花束</item>
+        <item ItemID = "2" frequency = "10">短剣</item>
+        <item ItemID = "3" frequency = "5">爆弾</item>
+        <item ItemID = "4" frequency = "5">斧</item>
+        <item ItemID = "12" frequency = "5">パン</item>
     </dungeon>
     <dungeon id="1">
         <floorSizeX>2</floorSizeX>

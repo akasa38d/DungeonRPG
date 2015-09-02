@@ -33,7 +33,7 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
 
         if (FadeManager.Instance.isFading)
         {
-            turnPlayer[turnCharacter].process = AbstractCharacterObject.Process.Start;
+            turnPlayer[turnCharacter].process = AbstractCharacter.Process.Start;
             turnCharacter = 0;
             yield return 0;
         }
@@ -46,11 +46,11 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
 
         yield return null;
 
-        if (turnPlayer[turnCharacter].process == AbstractCharacterObject.Process.Next)
+        if (turnPlayer[turnCharacter].process == AbstractCharacter.Process.Next)
         {
             //ダメージ処理してたら待つように
             ObjectManager.Instance.setCharacter();
-            turnPlayer[turnCharacter].process = AbstractCharacterObject.Process.Start;
+            turnPlayer[turnCharacter].process = AbstractCharacter.Process.Start;
             turnCharacter++;
         }
         yield return null;

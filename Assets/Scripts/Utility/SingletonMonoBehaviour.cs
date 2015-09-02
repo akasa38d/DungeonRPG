@@ -1,35 +1,44 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
+/// <summary>
+/// Unity用シングルトン
+/// 参考
+/// http://tsubakit1.hateblo.jp/entry/20140709/1404915381
+/// </summary>
+public class SingletonMonoBehaviour<T> : MonoBehaviour where T : SingletonMonoBehaviour<T>
 {
-    private static T instance;
-
-    public static T Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = (T)FindObjectOfType(typeof(T));
-                if (instance == null)
-                {
-                    Debug.LogError(typeof(T) + "is nothing");
+    protected static T instance;
+    public static T Instance {
+        get {
+            if (instance == null) {
+                instance = (T)FindObjectOfType (typeof(T));
+                
+                if (instance == null) {
+                    Debug.LogWarning (typeof(T) + "is nothing");
                 }
-            }
+            }            
             return instance;
         }
     }
-
+    
     public virtual void Awake()
     {
-        checkInstance();
+        CheckInstance();
     }
-    protected bool checkInstance()
+    
+    protected virtual bool CheckInstance()
     {
-        if (this == Instance) { return true; }
+        if( instance == null)
+        {
+            instance = (T)this;
+            return true;
+        }else if( Instance == this )
+        {
+            return true;
+        }
+        
         Destroy(this);
         return false;
     }
-
 }

@@ -5,7 +5,7 @@ public class StatusGUI : MonoBehaviour {
 
 	[SerializeField]
     GameObject player;
-    PlayerObject sPlayer;
+    Player sPlayer;
 
 	[SerializeField]
 	GameObject lvGUI;
@@ -21,7 +21,7 @@ public class StatusGUI : MonoBehaviour {
 
     void Start()
     {
-        sPlayer = player.GetComponent<PlayerObject>();
+        sPlayer = player.GetComponent<Player>();
         tLvGUI = lvGUI.GetComponent<Text>();
         tHpGUI = hpGUI.GetComponent<Text>();
         tSpGUI = spGUI.GetComponent<Text>();

@@ -22,6 +22,10 @@ public class MapManager : MonoBehaviour
 
     GameObject[,] mapRoom;
 
+    int mapSize = 20;
+    int adjustX = 180;
+    int adjustY = 20;
+
     public void getSequenceSize()
     {
         var floor = DungeonManager.Instance.floor;
@@ -81,7 +85,7 @@ public class MapManager : MonoBehaviour
         mapRoom[x, y].transform.SetParent(this.gameObject.transform);
         yield return null;
         mapRoom[x, y].GetComponent<LayoutElement>().ignoreLayout = true;
-        mapRoom[x, y].transform.position = new Vector3(mapRoom[x, y].transform.position.x-x*40 + 70, mapRoom[x, y].transform.position.y-y*40 + 40, mapRoom[x, y].transform.position.z);
+        mapRoom[x, y].transform.position = new Vector3(mapRoom[x, y].transform.position.x-x*mapSize*4 + adjustX, mapRoom[x, y].transform.position.y-y*mapSize*4 + adjustY, mapRoom[x, y].transform.position.z);
     }
 
     void createMapPath(int x, int y)
@@ -101,7 +105,7 @@ public class MapManager : MonoBehaviour
             obj.transform.SetParent(this.gameObject.transform);
             yield return null;
             obj.GetComponent<LayoutElement>().ignoreLayout = true;
-            obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x, mapRoom[x, y].transform.position.y - 10, mapRoom[x, y].transform.position.z);
+            obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x, mapRoom[x, y].transform.position.y - mapSize, mapRoom[x, y].transform.position.z);
         }
         
         //down
@@ -111,7 +115,7 @@ public class MapManager : MonoBehaviour
             obj.transform.SetParent(this.gameObject.transform);
             yield return null;
             obj.GetComponent<LayoutElement>().ignoreLayout = true;
-            obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x, mapRoom[x, y].transform.position.y + 10, mapRoom[x, y].transform.position.z);
+            obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x, mapRoom[x, y].transform.position.y + mapSize, mapRoom[x, y].transform.position.z);
         }
         
         //left
@@ -121,7 +125,7 @@ public class MapManager : MonoBehaviour
             obj.transform.SetParent(this.gameObject.transform);
             yield return null;
             obj.GetComponent<LayoutElement>().ignoreLayout = true;
-            obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x + 10, mapRoom[x, y].transform.position.y, mapRoom[x, y].transform.position.z);
+            obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x + mapSize, mapRoom[x, y].transform.position.y, mapRoom[x, y].transform.position.z);
         }
         
         //right
@@ -131,7 +135,7 @@ public class MapManager : MonoBehaviour
             obj.transform.SetParent(this.gameObject.transform);
             yield return null;
             obj.GetComponent<LayoutElement>().ignoreLayout = true;
-            obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x - 10, mapRoom[x, y].transform.position.y, mapRoom[x, y].transform.position.z);
+            obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x - mapSize, mapRoom[x, y].transform.position.y, mapRoom[x, y].transform.position.z);
         }
         yield return null;
     }
@@ -154,7 +158,7 @@ public class MapManager : MonoBehaviour
                 obj.transform.SetParent(this.gameObject.transform);
                 yield return null;
                 obj.GetComponent<LayoutElement>().ignoreLayout = true;
-                obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x, mapRoom[x, y].transform.position.y + 10, mapRoom[x, y].transform.position.z);
+                obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x, mapRoom[x, y].transform.position.y + mapSize, mapRoom[x, y].transform.position.z);
             }
             if (room.goalDir == Direction.down)
             {
@@ -162,7 +166,7 @@ public class MapManager : MonoBehaviour
                 obj.transform.SetParent(this.gameObject.transform);
                 yield return null;
                 obj.GetComponent<LayoutElement>().ignoreLayout = true;
-                obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x, mapRoom[x, y].transform.position.y - 10, mapRoom[x, y].transform.position.z);
+                obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x, mapRoom[x, y].transform.position.y - mapSize, mapRoom[x, y].transform.position.z);
             }
             if (room.goalDir == Direction.left)
             {
@@ -170,7 +174,7 @@ public class MapManager : MonoBehaviour
                 obj.transform.SetParent(this.gameObject.transform);
                 yield return null;
                 obj.GetComponent<LayoutElement>().ignoreLayout = true;
-                obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x + 10, mapRoom[x, y].transform.position.y, mapRoom[x, y].transform.position.z);
+                obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x - mapSize, mapRoom[x, y].transform.position.y, mapRoom[x, y].transform.position.z);
             }
             if(room.goalDir == Direction.right)
             {
@@ -178,7 +182,7 @@ public class MapManager : MonoBehaviour
                 obj.transform.SetParent(this.gameObject.transform);
                 yield return null;
                 obj.GetComponent<LayoutElement>().ignoreLayout = true;
-                obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x - 10, mapRoom[x, y].transform.position.y, mapRoom[x, y].transform.position.z);
+                obj.transform.position = new Vector3(mapRoom[x, y].transform.position.x + mapSize, mapRoom[x, y].transform.position.y, mapRoom[x, y].transform.position.z);
             }
             yield return null;
         }

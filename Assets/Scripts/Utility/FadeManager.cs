@@ -3,6 +3,8 @@ using System.Collections;
 
 /// <summary>
 /// シーン遷移時のフェードイン・アウトを制御するためのクラス
+/// 参考
+/// http://naichilab.blogspot.jp/2013/12/unity.html
 /// </summary>
 public class FadeManager : SingletonMonoBehaviour<FadeManager>
 {

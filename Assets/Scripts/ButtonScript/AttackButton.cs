@@ -15,7 +15,7 @@ public class AttackButton : AbstractButton
         base.OnMouseUpAsButton();
         try
         {
-            attack(square);
+            effect(square);
         }
         finally
         {

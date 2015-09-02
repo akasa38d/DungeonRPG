@@ -6,21 +6,15 @@ using System.Linq;
 
 public class ItemManager : MonoBehaviour
 {
-	//仮
-	public int flowerNum = 0;
-	void gameClear()
-	{
-		FadeManager.Instance.LoadLevel2 (1, "Title");
-	}
+    [SerializeField]
+    Player player;
 
-    //手札
     public Item[] handCard = new Item[6];
 	public int handNum()
 	{
 		Debug.Log (handCard[5].name);
 		if (handCard [5].id == 0)
 		{
-			Debug.Log (5 + "だよ！？");
 			return 5;
 		}
 		return 6;
@@ -45,7 +39,7 @@ public class ItemManager : MonoBehaviour
     {
         for (int i = 0; i < 2; i++)
         {
-            deckCard.Add(new SwordItem());
+            deckCard.Add(new SwordItem(2));
         }
         for (int i = 0; i < 4; i++)
         {
@@ -59,6 +53,7 @@ public class ItemManager : MonoBehaviour
 		{
 			deckCard.Add(new AxeItem());
 		}
+        deckCard.Add(new BreadItem(12));
 
         draw(0);
         draw(1);
@@ -75,15 +70,8 @@ public class ItemManager : MonoBehaviour
 
     IEnumerator shuffulCoroutine(int handNumber)
     {
-        if (trashCard.Count() == 0)
-        {
-            Debug.Log("なんてことだぜ！");
-        }
-
         if (trashCard.Count() != 0)
         {
-            Debug.Log("仕切り直しだぜ！");
-
             deckCard.AddRange(trashCard);
             yield return null;
 
@@ -98,11 +86,6 @@ public class ItemManager : MonoBehaviour
 	public bool[] isSelect = new bool[6] {false,false,false,false,false,false};
 	public void select(int handNumber)
 	{
-		if (handCard[handNumber].id == 0)
-		{
-			Debug.Log("カードがないぜ！");
-		}
-
 		if (handCard [handNumber].id != 0) {
 			if (!isSelect [handNumber]) {
 				use (handNumber);
@@ -118,7 +101,6 @@ public class ItemManager : MonoBehaviour
     void use(int handNumber)
     {
 		switchingSelect (handNumber, true);
-        Debug.Log("このカードを使うぜ！");        
         usingNumber = handNumber;
         handCard[handNumber].buttonEvent();
     }
@@ -137,13 +119,9 @@ public class ItemManager : MonoBehaviour
 
     IEnumerator drawCoroutine(int handNumber)
     {
-        if (deckCard.Count == 0)
-        {
-            shuffule(handNumber);
-        }
+        if (deckCard.Count == 0) { shuffule(handNumber); }
         yield return null;
 
-        Debug.Log("ドローするぜ！");
         var n = deckCard.ElementAt(Random.Range(0, deckCard.Count()));
         handCard[handNumber] = n;
         deckCard.Remove(n);
@@ -156,9 +134,13 @@ public class ItemManager : MonoBehaviour
 
     public void preTurnEnd()
     {
-        Debug.Log("終了前だぜ！");
         if (usingNumber != -1)
         {
+            if (handCard [usingNumber].chain)
+            {
+                player.additionalTurn++;
+            }
+
             //使用済みカードに追加
             usedCard.Add(handCard[usingNumber]);
   
@@ -176,8 +158,6 @@ public class ItemManager : MonoBehaviour
 
 	IEnumerator turnEndCoroutine()
 	{
-		Debug.Log("使用したカードを墓地に送るぜ！");
-
 		//使用したカードをトラッシュに送る
 		for(int i = 0; i < usedCard.Count(); i++)
 		{
@@ -204,7 +184,6 @@ public class ItemManager : MonoBehaviour
 		{
 			if (handCard[i].id == 0)
 			{
-				Debug.Log("補充だぜ！");
 				draw(i);
 			}
 		}
@@ -213,7 +192,7 @@ public class ItemManager : MonoBehaviour
 
     public void Update()
     {
-        if (this.gameObject.GetComponent<PlayerObject>().process == AbstractCharacterObject.Process.Main)
+        if (this.gameObject.GetComponent<Player>().process == AbstractCharacter.Process.Main)
         {
             foreach (var n in cardUI)
             {

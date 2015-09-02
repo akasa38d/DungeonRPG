@@ -3,7 +3,7 @@ using System;
 
 public abstract class AbstractButton : MonoBehaviour
 {
-    public Action<GameObject> attack;
+    public Action<GameObject> effect;
     public Action turnEnd;
 
     //連動するマス
