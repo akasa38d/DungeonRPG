@@ -12,9 +12,8 @@ public class OpenButton : MonoBehaviour {
     bool onClick;
 	public bool OnClick
 	{
-		set 
+		set
 		{
-            Debug.Log(value);
 			if(value == true)
 			{
 				bottomGroup.GetComponent<Animator>().ResetTrigger("isOpen");

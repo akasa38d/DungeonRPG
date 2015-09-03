@@ -199,7 +199,6 @@ public class FloorBuilder : MonoBehaviour
             }
             if (count > 1)
             {
-                Debug.Log("やっほー");
                 RandomizeFirstPosition(obj);
             }
         }

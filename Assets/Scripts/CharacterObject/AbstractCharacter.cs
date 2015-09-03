@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,8 +19,8 @@ public abstract class AbstractCharacter : MonoBehaviour
     public enum Process { Start, Main, PreEnd, End, Next };
     public Process process;
 
-    //ID（仮）
-    public int id;
+    //現在地
+    public GameObject square;
 
     //追加ターン
     public int additionalTurn = 0;
@@ -28,7 +28,6 @@ public abstract class AbstractCharacter : MonoBehaviour
     //パラメーター
     [SerializeField]
     public AbstractCharacterParameter parameter;
-
 
     //基本処理
     public virtual void operation()
@@ -87,15 +86,11 @@ public abstract class AbstractCharacter : MonoBehaviour
     //エンドフェイズ処理
     protected virtual void endOperation()
     {
-
-        process = Process.Next;
+       process = Process.Next;
     }
-
 
     //仮
     protected virtual void nextOperation() { }
-
-
 
     //攻撃
     public virtual void attackTarget(AttackWay attackWay, GameObject obj)
@@ -159,18 +154,21 @@ public abstract class AbstractCharacter : MonoBehaviour
     //やられた時
     public virtual void beDefeated()
     {
-
+        var player = GameObject.Find("Player");
+        player.GetComponent<Player>().parameter.exp += this.parameter.exp;
     }
 
-
     //移動（メインフェイズ、床を指定すること）
-    public virtual void movePosition(GameObject obj)
+    public virtual void movePosition(GameObject square)
     {
         //対象の場所まで移動
-        this.transform.position = new Vector3(obj.transform.position.x, this.transform.position.y, obj.transform.position.z);
+        this.transform.position = new Vector3(square.transform.position.x, this.transform.position.y, square.transform.position.z);
+
+        //現在地を変更
+        this.square = square;
 
         //床のイベント発生
-        obj.GetComponent<AbstractSquare>().enterThis();
+        square.GetComponent<AbstractSquare>().enterThis();
 
         //フェイズ移行
         this.process = Process.PreEnd;

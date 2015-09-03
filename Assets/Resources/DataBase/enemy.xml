@@ -10,20 +10,24 @@
         <cName><![CDATA[次郎]]></cName>
         <maxHp>9</maxHp>
         <atk>2</atk>
+        <eExp>5</eExp>
     </enemy>
         <enemy id="2">
         <cName><![CDATA[三郎]]></cName>
         <maxHp>10</maxHp>
         <atk>3</atk>
+        <eExp>15</eExp>
     </enemy>
         <enemy id="3">
         <cName><![CDATA[四郎]]></cName>
         <maxHp>11</maxHp>
         <atk>4</atk>
+        <eExp>25</eExp>
     </enemy>
 	<enemy id="4">
-        <cName><![CDATA[誰だコイツ]]></cName>
+        <cName><![CDATA[誰だコイツ（出てきたらバグ）]]></cName>
         <maxHp>40</maxHp>
         <atk>4</atk>
+        <eExp>35</eExp>
     </enemy>
 </enemies>

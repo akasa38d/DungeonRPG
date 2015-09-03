@@ -4,22 +4,17 @@ using System.Collections;
 
 public class AttackButton : AbstractButton
 {
-    new void OnMouseEnter() { base.OnMouseEnter(); }
-
-    new void OnMouseExit() { base.OnMouseExit(); }
-
-    new void OnMouseDown() { base.OnMouseDown(); }
-
-    new void OnMouseUpAsButton()
+    public override void OnMouseUpAsButton()
     {
-        base.OnMouseUpAsButton();
-        try
+        if (!isPointerOverGameObject())
         {
-            effect(square);
-        }
-        finally
-        {
-            turnEnd();
+            try
+            {
+                effect(square);
+            } finally
+            {
+                turnEnd();
+            }
         }
     }
 }

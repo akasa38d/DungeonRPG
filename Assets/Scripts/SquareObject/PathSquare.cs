@@ -39,7 +39,7 @@ public class PathSquare : AbstractSquare
     {
         DungeonManager.Instance.destroyPrevious(sequence);
         DungeonManager.Instance.createNext(nextSequence);
-        DungeonManager.Instance.randomizeToSquare(nextSequence, ObjectManager.Instance.character[0]);
+        DungeonManager.Instance.room[nextSequence.x,nextSequence.y].randomizeToSquareCharacter(ObjectManager.Instance.character[0]);
         TurnManager.Instance.turnCharacter = 0;
     }
 }

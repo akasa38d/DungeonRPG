@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
+using System.Collections;
 using System.Linq;
+using System.Xml;
 using MyUtility;
 
 [System.Serializable]
@@ -13,13 +14,17 @@ public abstract class Item
     public virtual Sprite sprite { get; set; }
     protected GameObject effect;
 
-    //変数
+    //parameter（readonlyにした方がいいか？）
     public int id;
 	public string name;			//名前
+    public string text;                 //説明文
     public int power = 0;			//威力・効果
-    public bool chain = false;			//チェインできるかどうか
+    public bool chain = false;			//再行動できるかどうか
 	public bool expendable = false;		//消費するかどうか
-	public bool magic = false;			//魔法であるかどうか
+	public bool magic = false;			//魔法であるかどうか（仮）
+
+    //管理用
+    public bool changed = false;        //カード交換を使用したか（一時的）
 
     public Item()
     {
@@ -35,8 +40,81 @@ public abstract class Item
     public virtual void operation(GameObject obj) { }
 	public virtual void changeOperation()
 	{
+        this.changed = true;
 		playerScript.process = AbstractCharacter.Process.PreEnd;
 	}
+
+    //loadTest
+    public static Item getItemData(int number)
+    {
+        XmlNodeList nodes = XMLReader.Instance.itemNodes;
+        if(number == 0)
+        {
+            return new NullItem();
+        }
+        XmlNode tempNode = searchNode(number, nodes);
+        Item item = getItemType(number);
+        item.id = number;
+        foreach (XmlNode node in tempNode.ChildNodes)
+        {
+            if (node.Name == "iName") { item.name = node.InnerText; }
+            if (node.Name == "iText") { item.text = node.InnerText; }
+            if (node.Name == "iPower") { item.power = int.Parse(node.InnerText); }
+            if (node.Name == "iChain")
+            {
+                if(int.Parse(node.InnerText) != 0)
+                {
+                    item.chain = true;;
+                }
+            }
+            if (node.Name == "iExpendable") 
+            {
+                if(int.Parse(node.InnerText) != 0)
+                {
+                    item.expendable = true;;
+                }
+            }
+            if (node.Name == "iMagic")
+            {
+                if(int.Parse(node.InnerText) != 0)
+                {
+                    item.magic = true;;
+                }
+            }
+        }
+        return item;
+    }
+
+    static XmlNode searchNode(int number, XmlNodeList nodes)
+    {
+        foreach (XmlNode n in nodes)
+        {
+            if(int.Parse(n.Attributes.GetNamedItem("id").Value) == number)
+            {
+                return n;
+            }
+        }
+        return null;
+    }
+
+    static Item getItemType(int id)
+    {
+        if (id > 70)
+            return new NullItem();
+        if (id > 60)
+            return new FlowerItem();
+        if (id > 50)
+            return new BreadItem();
+        if (id > 40)
+            return new BombItem();
+        if (id > 30)
+            return new KnuckleItem();
+        if (id > 20)
+            return new SpearItem();
+        if (id > 10)
+            return new AxeItem();
+        return new SwordItem();
+    }
 }
 
 /// <summary>
@@ -44,11 +122,7 @@ public abstract class Item
 /// </summary>
 public class NullItem : Item
 {
-    public NullItem()
-	{
-		id = 0;
-		name = "nullです";
-	}
+    public NullItem() { }
 
     public override Sprite sprite
     {
@@ -57,30 +131,6 @@ public class NullItem : Item
     }
 }
 
-/// <summary>
-/// 得点になるアイテム
-/// 手札交換のみ可能
-/// </summary>
-public class FlowerItem : Item
-{
-    public override Sprite sprite
-    {
-        get { return PrefabManager.Instance.flowerCard; }
-        set { }
-    }
-
-    public FlowerItem()
-	{
-		id = 1;
-		name = "花束";
-	}
-
-    public override void buttonEvent()
-    {
-        //既存のボタンを削除
-        playerScript.deleteButton();
-    }
-}
 
 /// <summary>
 /// 近接攻撃アイテム（仮）
@@ -91,27 +141,20 @@ public class SwordItem : Item
     {
         get
 		{
-			if(id == 2)
+			if(id == 1)
 			{
 				return PrefabManager.Instance.knifeCard;
 			}
+            if(id == 2)
+            {
+                return PrefabManager.Instance.swordCard;
+            }
 			return PrefabManager.Instance.nullCard;
 		}
         set { }
     }
 
-    public SwordItem(int id = 2)
-    {
-        //変数のセット
-		this.id = id;
-		if (id == 2)
-		{
-			this.name = "短剣";
-			this.power = 9;
-            this.chain = true;
-            this.effect = PrefabManager.Instance.explosion;
-		}
-    }
+    public SwordItem() { }
 
     public override void buttonEvent()
     {
@@ -169,10 +212,6 @@ public class BombItem : Item
 
     public BombItem()
     {
-        id = 3;
-        this.name = "爆弾";
-        power = 99;
-		expendable = true;
         this.effect = PrefabManager.Instance.explosion;
     }
 
@@ -200,7 +239,6 @@ public class BombItem : Item
                 tmpScript.square = floor;
                 tmpScript.effect = this.operation;
                 tmpScript.turnEnd = () => playerScript.process = AbstractCharacter.Process.PreEnd;
-
             }
             //プレイヤからの距離が３の床で
             if (player.checkDistanceCE(floor, 3) && !player.checkDistanceCE(floor, 2))
@@ -227,7 +265,7 @@ public class BombItem : Item
 }
 
 /// <summary>
-/// 斧れ
+/// 斧
 /// </summary>
 public class AxeItem : Item
 {
@@ -237,16 +275,9 @@ public class AxeItem : Item
 		set { }
 	}
 	
-	public AxeItem(int id = 4)
+	public AxeItem()
 	{
-		//変数のセット
-		this.id = id;
-		if (id == 4)
-		{
-			this.name = "手斧";
-			this.power = 12;
-			this.effect = PrefabManager.Instance.explosion;
-		}
+        this.effect = PrefabManager.Instance.explosion;
 	}
 	
 	public override void buttonEvent()
@@ -273,6 +304,7 @@ public class AxeItem : Item
 
 				//デリゲート
 				tmpScript.effect = this.operation;
+
 				tmpScript.turnEnd = () => playerScript.process = AbstractCharacter.Process.PreEnd;
 			}
 		}
@@ -299,16 +331,9 @@ public class KnuckleItem : Item
         set { }
     }
     
-    public KnuckleItem(int id = 5)
+    public KnuckleItem()
     {
-        //変数のセット
-        this.id = id;
-        if (id == 5)
-        {
-            this.name = "こぶし";
-            this.power = 99;
-            this.effect = PrefabManager.Instance.explosion;
-        }
+        this.effect = PrefabManager.Instance.explosion;
     }
 }
 
@@ -318,7 +343,7 @@ public class BreadItem : Item
     {
         get
         {
-            if(id == 12) 
+            if(id == 52) 
             {
                 return PrefabManager.Instance.breadMCard;
             }
@@ -327,27 +352,7 @@ public class BreadItem : Item
         set { }
     }
     
-    public BreadItem(int id = 12)
-    {
-        //変数のセット
-        this.id = id;
-        if (id == 11)
-        {
-            this.name = "パン（小）";
-            this.power = 25;
-        }
-        if (id == 12)
-        {
-            this.name = "パン（中）";
-            this.power = 50;
-        }
-        if (id == 13)
-        {
-            this.name = "パン（大）";
-            this.power = 100;
-        }
-        this.expendable = true;
-    }
+    public BreadItem() { }
     public override void buttonEvent()
     {
         createButton();
@@ -361,17 +366,15 @@ public class BreadItem : Item
         //既存のボタンを削除
         playerScript.deleteButton();
 
-        foreach (var floor in ObjectManager.Instance.square
-                 .Where((n) => n.GetComponent<AbstractSquare>().isCharacterOn(AbstractCharacter.Type.Player)))
-        {
-            var tmp = playerScript.pInstantiate(cureButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
-            var tmpScript = tmp.GetComponent<CureButton>();
-            tmpScript.square = floor;
+        var floor = playerScript.square;
+        var tmp = playerScript.pInstantiate(cureButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
+        var tmpScript = tmp.GetComponent<CureButton>();
+        tmpScript.square = floor;
 
-            //デリゲート
-            tmpScript.effect = this.operation;
-            tmpScript.turnEnd = () => playerScript.process = AbstractCharacter.Process.PreEnd;
-        }
+        //デリゲート
+        tmpScript.effect = this.operation;
+        tmpScript.turnEnd = () => playerScript.process = AbstractCharacter.Process.PreEnd;
+
     }
 
     public override void operation(GameObject square)
@@ -396,4 +399,28 @@ public class BreadItem : Item
     }
 }
 
+public class SpearItem : Item
+{
+}
+
+/// <summary>
+/// 得点になるアイテム
+/// 手札交換のみ可能
+/// </summary>
+public class FlowerItem : Item
+{
+    public override Sprite sprite
+    {
+        get { return PrefabManager.Instance.flowerCard; }
+        set { }
+    }
+    
+    public FlowerItem() { }
+    
+    public override void buttonEvent()
+    {
+        //既存のボタンを削除
+        playerScript.deleteButton();
+    }
+}
 

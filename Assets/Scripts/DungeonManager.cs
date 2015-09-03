@@ -103,7 +103,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         //キャラクターをランダムに配置
         for (int i = 0; i < ObjectManager.Instance.character.Count(); i++)
         {
-            room [tmpX, tmpY].randomizeToSquare2(ObjectManager.Instance.character [i]);
+            room [tmpX, tmpY].randomizeToSquareCharacter(ObjectManager.Instance.character [i]);
         }
  
         if(!mapManager.room[tmpX, tmpY])
@@ -220,10 +220,6 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         }
     }
 
-    public void randomizeToSquare(MyVector2 sequence, GameObject obj)
-    {
-        room [sequence.x, sequence.y].randomizeToSquare2(obj);
-    }
     
     //敵を出現率に従ってランダムに選び、IDを返す
     int getRandomEnemy()
@@ -515,7 +511,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                     var obj = Instantiate(n.prefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
                     obj.GetComponent<AbstractCharacter>().parameter = n.parameter;
                     Debug.Log(n.parameter.cName + "ですにゃあ");
-                    randomizeToSquare2(obj);
+                    randomizeToSquare(obj);
                 }
             }
             enemyList.Clear();
@@ -535,7 +531,7 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                     }
                     var obj = Instantiate(PrefabManager.Instance.item) as GameObject;
                     obj.GetComponent<FieldItem>().item = n.item;
-                    randomizeToSquare2(obj);
+                    randomizeToSquare(obj);
                 }
             }
             itemList.Clear();
@@ -576,8 +572,29 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
             isBuild = false;
         }
 
+        //オブジェクトをランダムなマスに配置（キャラクター限定）
+        public void randomizeToSquareCharacter(GameObject character)
+        {
+            //すべての床を取得
+            ObjectManager.Instance.setSquare();
+            
+            //床のリスト
+            var tmpSquare = from n in ObjectManager.Instance.square
+                where n.GetComponent<AbstractSquare>().type == AbstractSquare.Type.Normal
+                    && n.GetComponent<AbstractSquare>().sequence.isEqual(this.sequence)
+                    && n.GetComponent<AbstractSquare>().isCharacterOn() == false
+                    && n.GetComponent<AbstractSquare>().isItemOn() == false
+                    //&& n.GetComponent<AbstractSquare>().isTrapOn() == false
+                    select n;
+            
+            //床のリストからランダムに取得して移動
+            var square = tmpSquare.ElementAt(Random.Range(0, tmpSquare.Count()));
+            character.transform.position = new Vector3(square.transform.position.x, 55f, square.transform.position.z);
+            character.GetComponent<AbstractCharacter>().square = square;
+        }
+
         //オブジェクトをランダムなマスに配置
-        public void randomizeToSquare2(GameObject obj)
+        public void randomizeToSquare(GameObject obj)
         {
             //すべての床を取得
             ObjectManager.Instance.setSquare();
@@ -592,10 +609,8 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
                     select n;
 
             //床のリストからランダムに取得
-            var tmpObj = tmpSquare.ElementAt(Random.Range(0, tmpSquare.Count()));
-
-            //取得した位置へ移動
-            obj.transform.position = new Vector3(tmpObj.transform.position.x, 55f, tmpObj.transform.position.z);
+            var square = tmpSquare.ElementAt(Random.Range(0, tmpSquare.Count()));
+            obj.transform.position = new Vector3(square.transform.position.x, 55f, square.transform.position.z);
         }
 
         public void getGoalPos(Direction dir)

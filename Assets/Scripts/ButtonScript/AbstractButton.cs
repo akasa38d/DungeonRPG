@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using System;
 
 public abstract class AbstractButton : MonoBehaviour
@@ -8,7 +9,6 @@ public abstract class AbstractButton : MonoBehaviour
 
     //連動するマス
     public GameObject square;
-
     public Color defaultColor;
     public Color onMouseEnterColor;
     public Color onMouseUpAsButtonCollor;
@@ -21,13 +21,54 @@ public abstract class AbstractButton : MonoBehaviour
         getColor(defaultColor);
     }
 
-    public virtual void OnMouseEnter() { getColor(onMouseEnterColor); }
+    public virtual void OnMouseEnter()
+    {
+        if (!isPointerOverGameObject())
+        {
+            getColor(onMouseEnterColor);
+        }
+    }
 
-    public virtual void OnMouseExit() { getColor(defaultColor); }
+    public virtual void OnMouseExit()
+    {
+        if (!isPointerOverGameObject())
+        {
+            getColor(defaultColor);
+        }
+    }
 
-    public virtual void OnMouseDown() { getColor(onMouseUpAsButtonCollor); }
+    public virtual void OnMouseDown()
+    {
+        if (!isPointerOverGameObject())
+        {
+            getColor(onMouseUpAsButtonCollor);
+        }
+    }
 
-    public virtual void OnMouseUpAsButton() { getColor(defaultColor); }
+    public virtual void OnMouseUpAsButton()
+    {
+        if (!isPointerOverGameObject())
+        {
+            getColor(defaultColor);
+        }
+    }
 
-    public virtual void getColor(Color color) { GetComponent<Collider>().GetComponent<Renderer>().material.color = color; }
+    public virtual void getColor(Color color)
+    {
+        GetComponent<Collider>().GetComponent<Renderer>().material.color = color;
+    }
+
+    //uGUIとの競合を防ぐ
+    protected bool isPointerOverGameObject()
+    {
+        EventSystem current = EventSystem.current;
+        if (current != null)
+        {
+            if (current.IsPointerOverGameObject())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

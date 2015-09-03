@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Linq;
 using MyUtility;
@@ -19,7 +19,6 @@ public class Enemy : AbstractCharacter
     //スタンバイフェイズ
     protected override void startOperation()
     {
-        Debug.Log("ステンバーイ");
         ObjectManager.Instance.setCharacter();
         ObjectManager.Instance.setSquare();
         base.startOperation();
@@ -28,7 +27,6 @@ public class Enemy : AbstractCharacter
     //メインフェイズ
     protected override void mainOperation()
     {
-        Debug.Log("メイーン");
         searchTarget();
     }
 

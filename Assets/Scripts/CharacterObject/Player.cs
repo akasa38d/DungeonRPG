@@ -76,7 +76,7 @@ public class Player : AbstractCharacter
                     var tmp = Instantiate(moveButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z), Quaternion.identity) as GameObject;
                     var tmpScript = tmp.GetComponent<MoveButton>();
                     tmpScript.square = floor;
-                    tmpScript.moveDelegate = movePosition;
+                    tmpScript.effect = movePosition;
                 }
             }
         }

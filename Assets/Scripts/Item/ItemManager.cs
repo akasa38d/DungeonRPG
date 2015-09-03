@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -19,7 +19,7 @@ public class ItemManager : MonoBehaviour
 		}
 		return 6;
 	}
-    //デッキ
+    //デッキccc
     public List<Item> deckCard = new List<Item>();
     //墓地
     public List<Item> trashCard = new List<Item>();
@@ -35,25 +35,35 @@ public class ItemManager : MonoBehaviour
     //準備中
     public bool inProcess = false;
 
+    //*****discription関係*****//
+    [SerializeField]
+    GameObject discription;
+
+    [SerializeField]
+    GameObject cardImage;
+
+    [SerializeField]
+    Text cardText;
+
     public void Start()
     {
         for (int i = 0; i < 2; i++)
         {
-            deckCard.Add(new SwordItem(2));
-        }
-        for (int i = 0; i < 4; i++)
-        {
-            deckCard.Add(new FlowerItem());
+            deckCard.Add(Item.getItemData(1));  //knife
         }
         for (int i = 0; i < 2; i++)
         {
-            deckCard.Add(new BombItem());
+            deckCard.Add(Item.getItemData(11)); //hatchet
         }
-		for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 2; i++)
+        {
+            deckCard.Add(Item.getItemData(41)); //bomb
+        }
+		for (int i = 0; i < 4; i++)
 		{
-			deckCard.Add(new AxeItem());
+            deckCard.Add(Item.getItemData(61)); //flower
 		}
-        deckCard.Add(new BreadItem(12));
+        deckCard.Add(Item.getItemData(52)); //bread
 
         draw(0);
         draw(1);
@@ -131,9 +141,10 @@ public class ItemManager : MonoBehaviour
         yield return null;
     }
 
-
     public void preTurnEnd()
     {
+        closeDiscription();
+
         if (usingNumber != -1)
         {
             if (handCard [usingNumber].chain)
@@ -159,13 +170,18 @@ public class ItemManager : MonoBehaviour
 	IEnumerator turnEndCoroutine()
 	{
 		//使用したカードをトラッシュに送る
-		for(int i = 0; i < usedCard.Count(); i++)
-		{
-			if(usedCard[i].expendable == true)
-			{
-				usedCard.Remove(usedCard[i]);
-			}
-		}
+		for (int i = 0; i < usedCard.Count(); i++)
+        {
+            Debug.Log(usedCard [i].expendable);
+            if (usedCard [i].expendable == true && usedCard [i].changed == false)
+            {
+                usedCard.Remove(usedCard [i]);
+            }
+            else
+            {
+                usedCard [i].changed = false;
+            }
+        }
 		yield return null;
 
 		trashCard.AddRange(usedCard);
@@ -222,8 +238,32 @@ public class ItemManager : MonoBehaviour
 		var child = cardUI[number].transform.FindChild("change");
 		child.GetComponent<Text> ().enabled = flag;
 	}
+
+    //unity上で設定
 	public void ResetSelect(int handNumber)
 	{
 		switchingSelect(handNumber, false);
 	}
+
+    //unity上で設定
+    public void openDiscription(int handNumber)
+    {
+        if (handCard [handNumber].id != 0)
+        {
+            discription.GetComponent<Image>().enabled = true;
+            cardImage.GetComponent<Image>().enabled = true;
+            cardImage.GetComponent<Image>().sprite = handCard [handNumber].sprite;
+            cardText.GetComponent<Text>().enabled = true;
+            cardText.text = handCard [handNumber].name + "\n" + handCard [handNumber].text;
+        }
+    }
+
+    //unity上で設定・ターン終了時にも使用
+    public void closeDiscription()
+    {
+        discription.GetComponent<Image>().enabled = false;
+        cardImage.GetComponent<Image>().enabled = false;
+        cardText.text = "";
+        cardText.GetComponent<Text>().enabled = false;
+    }
 }

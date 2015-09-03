@@ -13,4 +13,5 @@ public abstract class AbstractCharacterParameter
     public int maxSp;
     public int sp;
     public int atk;
+    public int exp;
 }

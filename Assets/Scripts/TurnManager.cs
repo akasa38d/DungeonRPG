@@ -28,7 +28,10 @@ public class TurnManager : SingletonMonoBehaviour<TurnManager>
     {
         var turnPlayer = ObjectManager.Instance.characterScript;
 
-        turnPlayer[turnCharacter].operation();
+        if (turnPlayer [turnCharacter].parameter.hp > 0)
+        {
+            turnPlayer [turnCharacter].operation();
+        }
         yield return null;
 
         if (FadeManager.Instance.isFading)

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<items>
+    <item id="1">
+        <iName><![CDATA[短剣]]></iName>
+        <iText><![CDATA[連続攻撃が可能な小振りの短剣]]></iText>
+        <iPower>9</iPower>
+        <iChain>1</iChain>
+        <iExpendable>0</iExpendable>
+        <iMagic>0</iMagic> 
+    </item>
+    <item id="2">
+        <iName><![CDATA[鉄の剣]]></iName>
+        <iText><![CDATA[一般的な剣。だが、剣が落ちている状況は一般的ではない]]></iText>
+        <iPower>10</iPower>
+        <iChain>0</iChain>
+        <iExpendable>0</iExpendable>
+        <iMagic>0</iMagic> 
+    </item> 
+    <item id="11">
+        <iName><![CDATA[まさかり]]></iName>
+        <iText><![CDATA[大木を切るには心許ないものの、鮫を切るには十二分]]></iText>
+        <iPower>12</iPower>
+        <iChain>0</iChain>
+        <iExpendable>0</iExpendable>
+        <iMagic>0</iMagic> 
+    </item>    
+    <item id="41">
+        <iName><![CDATA[ダイナマイト]]></iName>
+        <iText><![CDATA[圧倒的な威力を持つが巻き込まれればもちろん命はない。正式な画像もない]]></iText>
+        <iPower>99</iPower>
+        <iChain>0</iChain>
+        <iExpendable>1</iExpendable>
+        <iMagic>0</iMagic> 
+    </item>
+    <item id="52">
+        <iName><![CDATA[パン（中）]]></iName>
+        <iText><![CDATA[拾い食いは良くない]]></iText>
+        <iPower>50</iPower>
+        <iChain>0</iChain>
+        <iExpendable>0</iExpendable>
+        <iMagic>0</iMagic> 
+    </item> 
+    <item id="61">
+        <iName><![CDATA[花]]></iName>
+        <iText><![CDATA[観賞用。お祖母ちゃんにプレゼントしよう。画像は関係ありません]]></iText>
+        <iPower>0</iPower>
+        <iChain>0</iChain>
+        <iExpendable>0</iExpendable>
+        <iMagic>0</iMagic> 
+    </item>
+</items>
