@@ -242,11 +242,16 @@ public class DungeonManager : SingletonMonoBehaviour<DungeonManager>
         //ランダムに部屋を選ぶ
         int tmpX = Random.Range(0, floor.sequenceSize.x);
         int tmpY = Random.Range(0, floor.sequenceSize.y);
+        if (room [tmpX, tmpY].isBuild)
+        {
+            prepareEnemy();
+        }
         if (room [tmpX, tmpY].enemyList.Count < maxEnemy)
         {
             int i = getRandomEnemy();
             room [tmpX, tmpY].enemyList.Add(new EnemyContainer(i));
         }
+        return;
     }
 
     //アイテムを出現率に従ってランダムに選び、IDを返す

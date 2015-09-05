@@ -1,6 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Item\ItemManager.cs">
+    <Files>
+      <File FileName="Assets\Scripts\Item\ItemManager.cs" Line="191" Column="30" />
+      <File FileName="DungeonRPG.sln" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Utility\DestroyParticle.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Utility\DestroyedAfterParticleSystem.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

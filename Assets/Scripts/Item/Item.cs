@@ -10,40 +10,40 @@ public abstract class Item
 {
     protected GameObject player;
     protected Player playerScript;
-
+    
     public virtual Sprite sprite { get; set; }
     protected GameObject effect;
-
+    
     //parameter（readonlyにした方がいいか？）
     public int id;
-	public string name;			//名前
-    public string text;                 //説明文
-    public int power = 0;			//威力・効果
-    public bool chain = false;			//再行動できるかどうか
-	public bool expendable = false;		//消費するかどうか
-	public bool magic = false;			//魔法であるかどうか（仮）
-
+    public string name;         //名前
+    public string text;             //説明文
+    public int power = 0;           //威力・効果
+    public bool chain = false;          //再行動できるかどうか
+    public bool expendable = false;     //消費するかどうか
+    public bool magic = false;          //魔法であるかどうか（仮）
+    
     //管理用
     public bool changed = false;        //カード交換を使用したか（一時的）
-
+    
     public Item()
     {
         //player関係の設定
         this.player = GameObject.Find("Player");
         this.playerScript = player.GetComponent<Player>();
     }
-
+    
     //ボタンを押した時に発生するイベント
     public virtual void buttonEvent() { }
     //実際に行われる処理処理
     public virtual void operation() { }
     public virtual void operation(GameObject obj) { }
-	public virtual void changeOperation()
-	{
+    public virtual void changeOperation()
+    {
         this.changed = true;
-		playerScript.process = AbstractCharacter.Process.PreEnd;
-	}
-
+        playerScript.process = AbstractCharacter.Process.PreEnd;
+    }
+    
     //loadTest
     public static Item getItemData(int number)
     {
@@ -64,27 +64,27 @@ public abstract class Item
             {
                 if(int.Parse(node.InnerText) != 0)
                 {
-                    item.chain = true;;
+                    item.chain = true;
                 }
             }
             if (node.Name == "iExpendable") 
             {
                 if(int.Parse(node.InnerText) != 0)
                 {
-                    item.expendable = true;;
+                    item.expendable = true;
                 }
             }
             if (node.Name == "iMagic")
             {
                 if(int.Parse(node.InnerText) != 0)
                 {
-                    item.magic = true;;
+                    item.magic = true;
                 }
             }
         }
         return item;
     }
-
+    
     static XmlNode searchNode(int number, XmlNodeList nodes)
     {
         foreach (XmlNode n in nodes)
@@ -96,7 +96,7 @@ public abstract class Item
         }
         return null;
     }
-
+    
     static Item getItemType(int id)
     {
         if (id > 70)
@@ -123,7 +123,7 @@ public abstract class Item
 public class NullItem : Item
 {
     public NullItem() { }
-
+    
     public override Sprite sprite
     {
         get { return PrefabManager.Instance.nullCard; }
@@ -140,36 +140,39 @@ public class SwordItem : Item
     public override Sprite sprite
     {
         get
-		{
-			if(id == 1)
-			{
-				return PrefabManager.Instance.knifeCard;
-			}
+        {
+            if(id == 1)
+            {
+                return PrefabManager.Instance.knifeCard;
+            }
             if(id == 2)
             {
                 return PrefabManager.Instance.swordCard;
             }
-			return PrefabManager.Instance.nullCard;
-		}
+            return PrefabManager.Instance.nullCard;
+        }
         set { }
     }
-
-    public SwordItem() { }
-
+    
+    public SwordItem()
+    {
+        this.effect = PrefabManager.Instance.explosion;
+    }
+    
     public override void buttonEvent()
     {
         createButton();
     }
-
+    
     //攻撃用ボタンを生成
     void createButton()
     {
         //prefabsの設定
         var attackButton = PrefabManager.Instance.attackButton;
-
+        
         //既存のボタンを削除
         playerScript.deleteButton();
-
+        
         foreach (var floor in ObjectManager.Instance.square)
         {
             //プレイヤからの距離が１の床で
@@ -183,23 +186,163 @@ public class SwordItem : Item
             }
         }
     }
-
+    
     public override void operation(GameObject square)
     {
         if (effect != null) { playerScript.pInstantiate(effect, square.transform.position); }
-
-		//キャラクターが乗っているなら
-		if (square.GetComponent<AbstractSquare>().isCharacterOn())
-		{
-			var target = square.GetComponent<AbstractSquare>().character;
-			Debug.Log(this.name + "で攻撃！");
-			//ダメージ処理
-			target.GetComponent<AbstractCharacter>().beDameged(this.power);
-		}
+        
+        //キャラクターが乗っているなら
+        if (square.GetComponent<AbstractSquare>().isCharacterOn())
+        {
+            var target = square.GetComponent<AbstractSquare>().character;
+            Debug.Log(this.name + "で攻撃！");
+            //ダメージ処理
+            target.GetComponent<AbstractCharacter>().beDameged(this.power);
+        }
     }
 }
 
 /// <summary>
+/// 斧
+/// </summary>
+public class AxeItem : Item
+{
+    public override Sprite sprite
+    {
+        get { return PrefabManager.Instance.axeCard; }
+        set { }
+    }
+    
+    public AxeItem()
+    {
+        this.effect = PrefabManager.Instance.explosion;
+    }
+    
+    public override void buttonEvent()
+    {
+        createButton();
+    }
+    
+    void createButton()
+    {
+        //prefabsの設定
+        var wideAttackButton = PrefabManager.Instance.wideAttackButton;
+        
+        //既存のボタンを削除
+        playerScript.deleteButton();
+        
+        foreach (var floor in ObjectManager.Instance.square)
+        {
+            //プレイヤからの距離が１の床で
+            if (player.checkOneDistanceE(floor))
+            {
+                var tmp = playerScript.pInstantiate(wideAttackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
+                var tmpScript = tmp.GetComponent<WideAttackButton>();
+                tmpScript.square = floor;
+                
+                //デリゲート
+                tmpScript.effect = this.operation;
+                tmpScript.turnEnd = () => playerScript.process = AbstractCharacter.Process.PreEnd;
+            }
+        }
+    }
+    
+    public override void operation(GameObject square)
+    {
+        if (effect != null) { playerScript.pInstantiate(effect, square.transform.position); }
+        
+        if (square.GetComponent<AbstractSquare> ().isCharacterOn())
+        {
+            var target = square.GetComponent<AbstractSquare>().character;
+            Debug.Log(this.name + "で攻撃！");
+            target.GetComponent<AbstractCharacter>().beDameged(this.power);
+        }
+    }
+}
+
+public class KnuckleItem : Item
+{
+    public override Sprite sprite
+    {
+        get { return PrefabManager.Instance.knuckleCard; }
+        set { }
+    }
+    
+    public KnuckleItem()
+    {
+        this.effect = PrefabManager.Instance.explosion;
+    }
+
+    public override void buttonEvent()
+    {
+        createButton();
+    }
+    
+    void createButton()
+    {
+        //prefabsの設定
+        var extraMoveButton = PrefabManager.Instance.extraMoveButton;
+        var subAttackButton = PrefabManager.Instance.subAttackButton;
+        
+        //既存のボタンを削除
+        playerScript.deleteButton();
+
+        foreach (var floor in ObjectManager.Instance.square)
+        {
+            if (player.checkOneDistanceE(floor))
+            {
+                if (!floor.GetComponent<AbstractSquare>().isCharacterOn())
+                {
+                    var tmp = playerScript.pInstantiate(extraMoveButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z)) as GameObject;
+                    var tmpScript = tmp.GetComponent<ExtraMoveButton>();
+                    tmpScript.square = floor;
+                    tmpScript.effect = this.operation;
+                    tmpScript.turnEnd = () => playerScript.process = AbstractCharacter.Process.PreEnd;
+
+                    var target = floor.GetComponent<AbstractSquare>().extendSquare(player);
+                    if(target != null)
+                    {
+                        var tmp2 = playerScript.pInstantiate(subAttackButton, new Vector3(target.transform.position.x, target.transform.position.y + 0.005f, target.transform.position.z)) as GameObject;
+                        var tmp2Script = tmp2.GetComponent<SubAttackButton>();
+                        tmp2Script.square = target;
+                        tmp2Script.effect = this.operation2;
+
+                        tmpScript.subAttackButton = tmp2;
+                    }
+                }
+            }
+        }
+    }
+
+    public override void operation(GameObject square)
+    {
+        //対象の場所まで移動
+        player.transform.position = new Vector3(square.transform.position.x, player.transform.position.y, square.transform.position.z);
+        
+        //現在地を変更
+        playerScript.square = square;
+        
+        //床のイベント発生
+        square.GetComponent<AbstractSquare>().enterThis();      
+    }
+
+    public void operation2(GameObject square)
+    {
+        if (effect != null) { playerScript.pInstantiate(effect, square.transform.position); }
+        
+        if (square.GetComponent<AbstractSquare> ().isCharacterOn())
+        {
+            var target = square.GetComponent<AbstractSquare>().character;
+            Debug.Log(this.name + "で攻撃！");
+            target.GetComponent<AbstractCharacter>().beDameged(this.power);
+        }
+    }
+}
+
+public class SpearItem : Item
+{
+}
+
 /// 爆弾
 /// </summary>
 public class BombItem : Item
@@ -209,26 +352,26 @@ public class BombItem : Item
         get { return PrefabManager.Instance.bombCard; }
         set { }
     }
-
+    
     public BombItem()
     {
         this.effect = PrefabManager.Instance.explosion;
     }
-
+    
     public override void buttonEvent()
     {
         createButton();
     }
-
+    
     void createButton()
     {
         //prefabsの設定
         var extraAttackButton = PrefabManager.Instance.extraAttackButton;
         var subAttackButton = PrefabManager.Instance.subAttackButton;
-
+        
         //既存のボタンを削除
         playerScript.deleteButton();
-
+        
         foreach (var floor in ObjectManager.Instance.square)
         {
             //プレイヤからの距離が３の床で
@@ -250,90 +393,17 @@ public class BombItem : Item
             }
         }
     }
-
+    
     public override void operation(GameObject square)
     {
         if (effect != null) { playerScript.pInstantiate(effect, square.transform.position); }
-
-        if (square.GetComponent<AbstractSquare> ().isCharacterOn())
+        
+        if (square.GetComponent<AbstractSquare>().isCharacterOn())
         {
             var target = square.GetComponent<AbstractSquare>().character;
             Debug.Log("爆弾で攻撃！");
             target.GetComponent<AbstractCharacter>().beDameged(this.power);
         }
-    }
-}
-
-/// <summary>
-/// 斧
-/// </summary>
-public class AxeItem : Item
-{
-	public override Sprite sprite
-	{
-		get { return PrefabManager.Instance.axeCard; }
-		set { }
-	}
-	
-	public AxeItem()
-	{
-        this.effect = PrefabManager.Instance.explosion;
-	}
-	
-	public override void buttonEvent()
-	{
-		createButton();
-	}
-	
-	void createButton()
-	{
-		//prefabsの設定
-		var wideAttackButton = PrefabManager.Instance.wideAttackButton;
-
-		//既存のボタンを削除
-		playerScript.deleteButton();
-		
-		foreach (var floor in ObjectManager.Instance.square)
-		{
-			//プレイヤからの距離が１の床で
-			if (player.checkOneDistanceE(floor))
-			{
-				var tmp = playerScript.pInstantiate(wideAttackButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
-				var tmpScript = tmp.GetComponent<WideAttackButton>();
-				tmpScript.square = floor;
-
-				//デリゲート
-				tmpScript.effect = this.operation;
-
-				tmpScript.turnEnd = () => playerScript.process = AbstractCharacter.Process.PreEnd;
-			}
-		}
-	}
-	
-	public override void operation(GameObject square)
-	{
-		if (effect != null) { playerScript.pInstantiate(effect, square.transform.position);	}
-
-		if (square.GetComponent<AbstractSquare> ().isCharacterOn())
-		{
-			var target = square.GetComponent<AbstractSquare>().character;
-			Debug.Log(this.name + "で攻撃！");
-			target.GetComponent<AbstractCharacter>().beDameged(this.power);
-		}
-	}
-}
-
-public class KnuckleItem : Item
-{
-    public override Sprite sprite
-    {
-        get { return PrefabManager.Instance.axeCard; }
-        set { }
-    }
-    
-    public KnuckleItem()
-    {
-        this.effect = PrefabManager.Instance.explosion;
     }
 }
 
@@ -343,7 +413,7 @@ public class BreadItem : Item
     {
         get
         {
-            if(id == 52) 
+            if (id == 52)
             {
                 return PrefabManager.Instance.breadMCard;
             }
@@ -357,35 +427,35 @@ public class BreadItem : Item
     {
         createButton();
     }
-
+    
     void createButton()
     {
         //prefabsの設定
         var cureButton = PrefabManager.Instance.cureButton;
-
+        
         //既存のボタンを削除
         playerScript.deleteButton();
-
+        
         var floor = playerScript.square;
         var tmp = playerScript.pInstantiate(cureButton, new Vector3(floor.transform.position.x, floor.transform.position.y + 0.005f, floor.transform.position.z));
         var tmpScript = tmp.GetComponent<CureButton>();
         tmpScript.square = floor;
-
+        
         //デリゲート
         tmpScript.effect = this.operation;
         tmpScript.turnEnd = () => playerScript.process = AbstractCharacter.Process.PreEnd;
-
+        
     }
-
+    
     public override void operation(GameObject square)
     {
         if (effect != null) { playerScript.pInstantiate(effect, square.transform.position); }
-
-        if (square.GetComponent<AbstractSquare> ().isCharacterOn())
+        
+        if (square.GetComponent<AbstractSquare>().isCharacterOn())
         {
             var target = square.GetComponent<AbstractSquare>().character;
-
-            if(target.GetComponent<AbstractCharacter>().parameter.sp + this.power > 100)
+            
+            if (target.GetComponent<AbstractCharacter>().parameter.sp + this.power > 100)
             {
                 target.GetComponent<AbstractCharacter>().parameter.sp = 100;
                 Debug.Log("SPが満タンになった！");
@@ -397,10 +467,6 @@ public class BreadItem : Item
             }
         }
     }
-}
-
-public class SpearItem : Item
-{
 }
 
 /// <summary>
@@ -423,4 +489,3 @@ public class FlowerItem : Item
         playerScript.deleteButton();
     }
 }
-

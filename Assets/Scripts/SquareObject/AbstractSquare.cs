@@ -135,4 +135,22 @@ public abstract class AbstractSquare : MonoBehaviour
 		
 		return aSquare.Where((n) => n.transform.position != this.transform.position).ToArray ();
 	}
+
+    public GameObject extendSquare(GameObject obj)
+    {
+        foreach(var next in aroundSquare(1, true))
+        {
+            if(next.transform.position.x == this.transform.position.x * 2 - obj.transform.position.x)
+            {
+                if(next.transform.position.z == this.transform.position.z * 2 - obj.transform.position.z)
+                {
+                    if(this.gameObject.checkOneDistanceE(next))
+                    {
+                        return next;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

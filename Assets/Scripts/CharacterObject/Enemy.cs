@@ -10,7 +10,7 @@ public class Enemy : AbstractCharacter
     public void Start()
     {
         this.type = Type.Enemy;
-        myAttack = new AttackWay("キック", 10, PrefabManager.Instance.explosion);
+        myAttack = new AttackWay("キック", 9, PrefabManager.Instance.explosion);
     }
 
     //基本処理

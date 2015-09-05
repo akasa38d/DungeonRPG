@@ -5,6 +5,8 @@ using MyUtility;
 
 public class Player : AbstractCharacter
 {
+    int turnCount = 0;
+
     public void Start()
     {
         this.type = Type.Player;
@@ -32,30 +34,35 @@ public class Player : AbstractCharacter
     //プリエンドフェイズ
     protected override void preEndOperation()
     {
-		parameter.sp--;
+        if(parameter.sp > 0)
+            parameter.sp--;
+
         this.gameObject.GetComponent<ItemManager>().preTurnEnd();
+
         base.preEndOperation();
     }
 
     //エンドフェイズ
     protected override void endOperation()
     {
+        turnCount++;
+        if (turnCount % 2 == 0)
+            if(parameter.maxHp > parameter.hp)
+                parameter.hp++;
+
         if (parameter.sp <= 0)
-        {
+            parameter.hp--;
+
+        if (parameter.hp <= 0)
             FadeManager.Instance.LoadLevel2(1, "GameOver");
-        }
 
         this.gameObject.GetComponent<ItemManager>().turnEnd();
+
         base.endOperation();
     }
 
     //ターン終了
     protected override void nextOperation() { }
-
-    public void moveButtonEvent()
-    {
-
-    }
 
     //移動用ボタンを生成
     public void createMoveButton()

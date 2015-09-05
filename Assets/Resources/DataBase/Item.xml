@@ -24,9 +24,17 @@
         <iChain>0</iChain>
         <iExpendable>0</iExpendable>
         <iMagic>0</iMagic> 
-    </item>    
+    </item>
+    <item id="31">
+        <iName><![CDATA[ナックルガード]]></iName>
+        <iText><![CDATA[踏み込む力を拳に込めて]]></iText>
+        <iPower>11</iPower>
+        <iChain>0</iChain>
+        <iExpendable>0</iExpendable>
+        <iMagic>0</iMagic> 
+    </item>
     <item id="41">
-        <iName><![CDATA[ダイナマイト]]></iName>
+        <iName><![CDATA[爆薬]]></iName>
         <iText><![CDATA[圧倒的な威力を持つが巻き込まれればもちろん命はない。正式な画像もない]]></iText>
         <iPower>99</iPower>
         <iChain>0</iChain>

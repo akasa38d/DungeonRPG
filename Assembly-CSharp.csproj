@@ -51,6 +51,7 @@
      <Compile Include="Assets\Scripts\ButtonScript\AttackButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\CureButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\ExtraAttackButton.cs" />
+     <Compile Include="Assets\Scripts\ButtonScript\ExtraMoveButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\MoveButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\SubAttackButton.cs" />
      <Compile Include="Assets\Scripts\ButtonScript\WideAttackButton.cs" />
@@ -61,7 +62,6 @@
      <Compile Include="Assets\Scripts\CharacterObject\Player.cs" />
      <Compile Include="Assets\Scripts\CharacterObject\PlayerParameter.cs" />
      <Compile Include="Assets\Scripts\DungeonManager.cs" />
-     <Compile Include="Assets\Scripts\GUI\CardButton.cs" />
      <Compile Include="Assets\Scripts\GUI\DeckGUI.cs" />
      <Compile Include="Assets\Scripts\GUI\OpenButton.cs" />
      <Compile Include="Assets\Scripts\GUI\StartButton.cs" />
@@ -82,6 +82,8 @@
      <Compile Include="Assets\Scripts\SquareObject\PlaneSquare.cs" />
      <Compile Include="Assets\Scripts\SquareObject\StairSquare.cs" />
      <Compile Include="Assets\Scripts\TurnManager.cs" />
+     <Compile Include="Assets\Scripts\Utility\DestroyParticle.cs" />
+     <Compile Include="Assets\Scripts\Utility\DestroyedAfterParticleSystem.cs" />
      <Compile Include="Assets\Scripts\Utility\FadeManager.cs" />
      <Compile Include="Assets\Scripts\Utility\MyUtility.cs" />
      <Compile Include="Assets\Scripts\Utility\SingletonMonoBehaviour.cs" />

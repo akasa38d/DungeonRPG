@@ -141,6 +141,7 @@ public abstract class AbstractCharacter : MonoBehaviour
             this.parameter.hp = 0;
             Debug.Log("グワーッ！！" + this.parameter.cName + "は爆発四散！");
             Instantiate(PrefabManager.Instance.explosion, this.transform.position, Quaternion.identity);
+            beDefeated();
             Destroy(this.gameObject);
             yield return null;
         }
@@ -156,6 +157,7 @@ public abstract class AbstractCharacter : MonoBehaviour
     {
         var player = GameObject.Find("Player");
         player.GetComponent<Player>().parameter.exp += this.parameter.exp;
+        Debug.Log(this.parameter.exp + "の経験値を入手");
     }
 
     //移動（メインフェイズ、床を指定すること）

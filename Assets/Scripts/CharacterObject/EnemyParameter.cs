@@ -19,6 +19,7 @@ public class EnemyParameter : AbstractCharacterParameter
             if (node.Name == "cName") { parameter.cName = node.InnerText; }
             if (node.Name == "maxHp") { parameter.maxHp = int.Parse(node.InnerText); }
             if (node.Name == "atk") { parameter.atk = int.Parse(node.InnerText); }
+            if (node.Name == "eExp") { parameter.exp = int.Parse(node.InnerText); }
         }
         parameter.hp = parameter.maxHp;
 

@@ -47,17 +47,13 @@ public class ItemManager : MonoBehaviour
 
     public void Start()
     {
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 3; i++)
         {
             deckCard.Add(Item.getItemData(1));  //knife
         }
         for (int i = 0; i < 2; i++)
         {
-            deckCard.Add(Item.getItemData(11)); //hatchet
-        }
-        for (int i = 0; i < 2; i++)
-        {
-            deckCard.Add(Item.getItemData(41)); //bomb
+            deckCard.Add(Item.getItemData(11)); //axe
         }
 		for (int i = 0; i < 4; i++)
 		{
@@ -201,6 +197,7 @@ public class ItemManager : MonoBehaviour
 			if (handCard[i].id == 0)
 			{
 				draw(i);
+                yield return null;
 			}
 		}
 		yield return null;
