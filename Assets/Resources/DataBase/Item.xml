@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <items>
     <item id="1">
@@ -46,7 +46,7 @@
         <iText><![CDATA[拾い食いは良くない]]></iText>
         <iPower>50</iPower>
         <iChain>0</iChain>
-        <iExpendable>0</iExpendable>
+        <iExpendable>1</iExpendable>
         <iMagic>0</iMagic> 
     </item> 
     <item id="61">
